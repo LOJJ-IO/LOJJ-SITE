@@ -11,7 +11,10 @@ export default function Home() {
         "@id": `${siteUrl}#org`,
         name: "LOJJ",
         url: siteUrl,
-        logo: `${siteUrl}/favicon.png`,
+        logo: {
+          "@type": "ImageObject",
+          url: `${siteUrl}/favicon.png`,
+        },
         sameAs: ["https://www.linkedin.com/company/lojj"],
       },
       {
@@ -19,6 +22,7 @@ export default function Home() {
         "@id": `${siteUrl}#website`,
         url: siteUrl,
         name: "LOJJ",
+        inLanguage: "en",
         publisher: { "@id": `${siteUrl}#org` },
       },
       {

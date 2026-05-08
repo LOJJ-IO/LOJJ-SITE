@@ -17,12 +17,16 @@ export const metadata: Metadata = {
     template: "%s | LOJJ",
   },
   description:
-    "LOJJ is the AI-powered operations platform for hotels — handling guest calls, FAQ automation, task tracking, housekeeping, and work orders in one place.",
+    "AI hotel operations platform for guest FAQs, calls, task tracking, housekeeping, and work orders—in one place.",
   verification: {
     google: "ZMr7VRuKNlesOU6iEI1eTLLoEoNU8jW2dKOWL2YsuMY",
   },
   alternates: {
     canonical: "/",
+    languages: {
+      "en": "/",
+      "x-default": "/",
+    },
   },
   icons: {
     icon: "/favicon.ico",
@@ -33,7 +37,7 @@ export const metadata: Metadata = {
     siteName: "LOJJ",
     title: "LOJJ — AI operations platform for hotels",
     description:
-      "LOJJ is the AI-powered operations platform for hotels — handling guest calls, FAQ automation, task tracking, housekeeping, and work orders in one place.",
+      "AI hotel operations platform for guest FAQs, calls, task tracking, housekeeping, and work orders—in one place.",
     images: [
       {
         url: "/concierge-cart.png",
@@ -47,7 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "LOJJ — AI operations platform for hotels",
     description:
-      "Guest calls, hotel FAQ automation, task tracking, housekeeping, and work orders in one place.",
+      "Guest FAQs, calls, task tracking, housekeeping, and work orders—in one place.",
     images: ["/concierge-cart.png"],
   },
   robots: {
