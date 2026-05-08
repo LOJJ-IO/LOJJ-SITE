@@ -160,6 +160,66 @@ export default function LandingMarkup() {
         </section>
 
         <section
+          id="faq"
+          className="landing-section w-full flex justify-center mt-20 md:mt-28"
+          aria-labelledby="faq-heading"
+        >
+          <div className="w-[95%] max-w-7xl">
+            <div className="section-heading-stack">
+              <span className="section-ghost-h2" aria-hidden>
+                FAQ
+              </span>
+              <h2 id="faq-heading" className="landing-h2">
+                Front desk FAQ automation, without the chaos
+              </h2>
+            </div>
+            <p className="landing-sub">
+              If you’re searching for ways to reduce front desk phone calls, handle repetitive guest
+              questions, and track what staff are doing across shifts—this is what LOJJ is built for.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6 mt-8">
+              <details className="landing-card">
+                <summary className="landing-h3">How do I reduce front desk phone calls?</summary>
+                <p className="landing-p mt-3">
+                  Give guests self‑service information (FAQs, policies, hours, parking, Wi‑Fi) and a
+                  simple way to submit requests. LOJJ acts as a digital concierge so common questions
+                  get answered without a call.
+                </p>
+              </details>
+
+              <details className="landing-card">
+                <summary className="landing-h3">What if my front desk is understaffed?</summary>
+                <p className="landing-p mt-3">
+                  When staffing is tight, consistency matters more. LOJJ reduces interruptions by
+                  automating hotel guest FAQs and routing requests into clear tasks—so fewer issues
+                  bounce back to managers.
+                </p>
+              </details>
+
+              <details className="landing-card">
+                <summary className="landing-h3">How can I track hotel staff tasks?</summary>
+                <p className="landing-p mt-3">
+                  LOJJ is a hotel task management system that keeps requests visible, assigned, and
+                  updated. You can see what’s in progress, what’s done, and what’s blocked—without
+                  chasing radio calls.
+                </p>
+              </details>
+
+              <details className="landing-card">
+                <summary className="landing-h3">
+                  Can guests access info via QR codes or self‑service pages?
+                </summary>
+                <p className="landing-p mt-3">
+                  Yes. Many hotels use QR code guest information pages so guests can find answers
+                  quickly. LOJJ helps you structure and maintain that information so it stays current.
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section
           id="waitlist"
           className="landing-section w-full flex justify-center mt-20 md:mt-28"
         >

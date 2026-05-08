@@ -8,11 +8,55 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lojj.io";
+
 export const metadata: Metadata = {
-  title: "LOJJ.io",
-  description: "Better reviews. Faster service. Higher revenue.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "LOJJ | Digital concierge + task tracking for hotels",
+    template: "%s | LOJJ",
+  },
+  description:
+    "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place. LOJJ helps hotels deliver faster service and better reviews.",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/favicon.ico",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "LOJJ",
+    title: "LOJJ | Digital concierge + task tracking for hotels",
+    description:
+      "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place. LOJJ helps hotels deliver faster service and better reviews.",
+    images: [
+      {
+        url: "/concierge-cart.png",
+        width: 1200,
+        height: 630,
+        alt: "LOJJ — hotel digital concierge and task management",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LOJJ | Digital concierge + task tracking for hotels",
+    description:
+      "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place.",
+    images: ["/concierge-cart.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
