@@ -13,11 +13,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lojj.io";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "LOJJ | Digital concierge + task tracking for hotels",
+    default: "LOJJ — AI operations platform for hotels",
     template: "%s | LOJJ",
   },
   description:
-    "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place. LOJJ helps hotels deliver faster service and better reviews.",
+    "LOJJ is the AI-powered operations platform for hotels — handling guest calls, FAQ automation, task tracking, housekeeping, and work orders in one place.",
   alternates: {
     canonical: "/",
   },
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "LOJJ",
-    title: "LOJJ | Digital concierge + task tracking for hotels",
+    title: "LOJJ — AI operations platform for hotels",
     description:
-      "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place. LOJJ helps hotels deliver faster service and better reviews.",
+      "LOJJ is the AI-powered operations platform for hotels — handling guest calls, FAQ automation, task tracking, housekeeping, and work orders in one place.",
     images: [
       {
         url: "/concierge-cart.png",
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LOJJ | Digital concierge + task tracking for hotels",
+    title: "LOJJ — AI operations platform for hotels",
     description:
-      "Reduce front desk phone calls, automate hotel guest FAQs, and track staff tasks in one place.",
+      "Guest calls, hotel FAQ automation, task tracking, housekeeping, and work orders in one place.",
     images: ["/concierge-cart.png"],
   },
   robots: {
