@@ -62,8 +62,8 @@ export default function LandingMarkup() {
                   Your best, every time
                 </h1>
                 <p className="text-white/90 text-base md:text-xl font-semibold leading-relaxed max-w-2xl">
-                  The first hospitality platform designed to replicate peak staff performance for a
-                  consistent guest experience.
+                  A hospitality platform built to help every shift deliver the same great guest
+                  experience.
                 </p>
               </div>
 
@@ -100,22 +100,21 @@ export default function LandingMarkup() {
               <div className="landing-card">
                 <h3 className="landing-h3">New staff</h3>
                 <p className="landing-p">
-                  High turnover means your team lacks answers. Guests wait while junior staff
-                  struggle.
+                  High turnover leaves your team without answers. Guests wait while junior staff
+                  scramble.
                 </p>
               </div>
               <div className="landing-card">
                 <h3 className="landing-h3">Tired managers</h3>
                 <p className="landing-p">
-                  Constant interruptions for routine fixes. No time to lead because you’re
-                  firefighting.
+                  You get interrupted for routine fixes. You’re firefighting, so leadership slips.
                 </p>
               </div>
               <div className="landing-card">
                 <h3 className="landing-h3">Lost handoffs</h3>
                 <p className="landing-p">
-                  Guest requests stack up, messages get lost between shifts, and there’s no clear
-                  view of what’s already been done.
+                  Guest requests pile up, notes get missed between shifts, and it’s unclear what’s
+                  already been handled.
                 </p>
               </div>
             </div>
@@ -134,8 +133,9 @@ export default function LandingMarkup() {
               <h2 className="landing-h2">Meet your expert team</h2>
             </div>
             <p className="landing-sub">
-              LOJJ plugs into your site and systems to handle routine guest questions, track tasks
-              in real-time, and improve reviews—so your team can stay on the floor.
+              LOJJ connects to your site and tools to handle common guest questions, keep tasks
+              updated as they change, and help you get better reviews—so your team can stay on
+              the floor.
             </p>
 
             <div className="mt-4">
@@ -151,9 +151,9 @@ export default function LandingMarkup() {
               <h2 className="landing-h2">The win</h2>
               <h3 className="landing-h3 win-subhead">Uninterrupted breaks</h3>
               <p className="landing-p win-copy">
-                AI guides the team. Managers stay quiet until they are actually needed. Operations
-                feel more controlled, guest experiences become more reliable, and that shows up in
-                better reviews and stronger revenue.
+                LOJJ gives staff guidance. Managers step in only when they are needed. Operations run
+                smoother, guests get steadier service, and that shows up in better reviews and more
+                revenue.
               </p>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function LandingMarkup() {
             <div className="waitlist-heading">
               <h2 className="landing-h2">Start today</h2>
               <p className="landing-sub">
-                Secure your spot on the waitlist for the future of hospitality management.
+                Join the waitlist to get early access to LOJJ.
               </p>
             </div>
             <div className="waitlist-card">
