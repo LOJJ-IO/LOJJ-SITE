@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   },
   description:
     "LOJJ is the AI-powered operations platform for hotels — handling guest calls, FAQ automation, task tracking, housekeeping, and work orders in one place.",
+  verification: {
+    google: "ZMr7VRuKNlesOU6iEI1eTLLoEoNU8jW2dKOWL2YsuMY",
+  },
   alternates: {
     canonical: "/",
   },
