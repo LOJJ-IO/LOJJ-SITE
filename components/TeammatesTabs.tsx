@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 
 const TEAMMATES = [
   {
@@ -97,51 +98,36 @@ export function TeammatesTabs() {
           } ${phase === "enter" ? "pane-enter" : ""}`}
         >
           <div className="backdrop-blur-sm glass-blur-plane glass-plane-pane" aria-hidden />
-          <div className="glass-content">
-            <TabsList>
+          <div className="glass-content frost-pane-content">
+            <div className="frost-pane-body">
               {TEAMMATES.map((teammate) => (
-                <TabsTrigger key={teammate.id} value={teammate.id}>
-                  {teammate.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {TEAMMATES.map((teammate) => (
-              <TabsContent key={teammate.id} value={teammate.id}>
-                <div className="feature-kicker">{teammate.kicker}</div>
-                <h3 className="landing-h3">{teammate.heading}</h3>
-                <ul className="feature-list">
-                  {teammate.bullets.map((line, i) => (
-                    <li key={i}>{line}</li>
-                  ))}
-                </ul>
-              </TabsContent>
-            ))}
-
-            <div className="carousel-dots" aria-label="Teammates carousel indicators">
-              {TEAMMATES.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  className={`carousel-dot ${t.id === activeTab ? "is-active" : ""}`}
-                  aria-label={`Show ${t.label}`}
-                  aria-current={t.id === activeTab}
-                  onClick={() => {
-                    const next = t.id;
-                    if (next === activeTab) return;
-                    pendingTab.current = next;
-                    if (timer.current) window.clearTimeout(timer.current);
-                    setPhase("exit");
-                    timer.current = window.setTimeout(() => {
-                      const v = pendingTab.current ?? next;
-                      setActiveTab(v);
-                      setPhase("pre-enter");
-                      window.requestAnimationFrame(() => setPhase("enter"));
-                      timer.current = window.setTimeout(() => setPhase("idle"), 360);
-                    }, 220);
-                  }}
-                />
+                <TabsContent key={teammate.id} value={teammate.id} className="pane-content">
+                  <div className="feature-kicker">{teammate.kicker}</div>
+                  <h3 className="landing-h3">{teammate.heading}</h3>
+                  <ul className="feature-list">
+                    {teammate.bullets.map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                </TabsContent>
               ))}
             </div>
+
+            <TabsList
+              className="pane-tabs-list pane-segmented"
+              aria-label="Teammates carousel"
+            >
+              {TEAMMATES.map((teammate) => (
+                <TabsPrimitive.Trigger
+                  key={teammate.id}
+                  value={teammate.id}
+                  data-slot="tabs-trigger"
+                  className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap px-3.5 py-3 text-sm font-extrabold tracking-tight outline-none transition-all hover:-translate-y-px hover:opacity-95 focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:pointer-events-none disabled:opacity-50 data-[state=active]:rounded-full data-[state=active]:border-white/35 data-[state=active]:bg-[rgba(34,61,20,0.75)] data-[state=active]:text-white data-[state=active]:shadow-md"
+                >
+                  {teammate.label}
+                </TabsPrimitive.Trigger>
+              ))}
+            </TabsList>
           </div>
         </div>
         <div className="teammates-phone-wrap" aria-hidden>

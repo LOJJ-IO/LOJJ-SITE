@@ -50,7 +50,7 @@ export default function LandingMarkup() {
       </nav>
 
       <main className="landing-main w-full">
-        <section className="relative w-full flex justify-center pt-28 md:pt-32">
+        <section className="relative w-full min-h-screen flex items-center justify-center pt-28 md:pt-32 pb-16 md:pb-24">
           <div
             id="dynamic-hero-box"
             className="visible backdrop-blur-sm hero-glass glass-surface w-[92%] max-w-[920px] min-h-[420px] md:min-h-[520px] flex flex-col items-center justify-center text-center px-6 py-10 md:px-16 md:py-14 relative overflow-hidden shadow-2xl"
