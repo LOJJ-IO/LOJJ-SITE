@@ -1,10 +1,37 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { submitWaitlistForm } from "@/lib/waitlistSubmit";
 
 import LandingMarkup from "./LandingMarkup";
+import LoadingOverlay from "./LoadingOverlay";
+
 export default function LandingPage() {
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [doorsOpen, setDoorsOpen] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(true);
+
+  // Called by ScrollCanvas as frames load
+  const handleLoadProgress = useCallback((pct: number) => {
+    setLoadingProgress((prev) => {
+      // Only move forward, never backward
+      const next = Math.min(100, Math.round(pct));
+      return next > prev ? next : prev;
+    });
+  }, []);
+
+  // Once all frames are loaded, open the doors
+  useEffect(() => {
+    if (loadingProgress >= 100 && !doorsOpen) {
+      setDoorsOpen(true);
+    }
+  }, [loadingProgress, doorsOpen]);
+
+  // Called by LoadingOverlay after door animation completes
+  const handleOverlayComplete = useCallback(() => {
+    setOverlayVisible(false);
+  }, []);
+
   useEffect(() => {
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
@@ -19,37 +46,6 @@ export default function LandingPage() {
     const scrollTop = () => window.scrollTo(0, 0);
     scrollTop();
     window.addEventListener("load", scrollTop);
-
-    const mobileMenu = document.getElementById("mobile-menu");
-    const hamburgerBtn = document.getElementById("hamburger-btn");
-    const closeMenu = document.getElementById("close-menu");
-    const mainNav = document.getElementById("main-nav");
-
-    const updateNavScrollState = () => {
-      const hasScrolled = window.scrollY > 2;
-      if (mainNav) {
-        mainNav.setAttribute("data-scrolled", hasScrolled ? "true" : "false");
-      }
-    };
-    updateNavScrollState();
-    window.requestAnimationFrame(updateNavScrollState);
-    window.addEventListener("scroll", updateNavScrollState, { passive: true });
-
-    const openMenu = () => {
-      mobileMenu?.classList.remove("invisible", "opacity-0");
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    };
-    const closeMenuFn = () => {
-      mobileMenu?.classList.add("invisible", "opacity-0");
-      document.body.style.overflow = "auto";
-      document.documentElement.style.overflow = "auto";
-    };
-
-    hamburgerBtn?.addEventListener("click", openMenu);
-    closeMenu?.addEventListener("click", closeMenuFn);
-    const menuLinks = mobileMenu?.querySelectorAll("a") ?? [];
-    menuLinks.forEach((link) => link.addEventListener("click", closeMenuFn));
 
     const footerForm = document.getElementById("footer-signup") as HTMLFormElement | null;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -159,10 +155,6 @@ export default function LandingPage() {
 
     return () => {
       window.removeEventListener("load", scrollTop);
-      window.removeEventListener("scroll", updateNavScrollState);
-      hamburgerBtn?.removeEventListener("click", openMenu);
-      closeMenu?.removeEventListener("click", closeMenuFn);
-      menuLinks.forEach((link) => link.removeEventListener("click", closeMenuFn));
       footerForm?.removeEventListener("submit", onSubmit);
       formInputs.forEach((input) => {
         input.removeEventListener("input", onInput);
@@ -174,7 +166,16 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center relative">
-      <LandingMarkup />
+      {overlayVisible && (
+        <LoadingOverlay
+          progress={loadingProgress}
+          onComplete={handleOverlayComplete}
+        />
+      )}
+      <LandingMarkup
+        doorsOpen={doorsOpen}
+        onLoadProgress={handleLoadProgress}
+      />
     </div>
   );
 }
