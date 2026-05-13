@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PhoneMockup from "@/components/PhoneMockup";
-import type { DemoAction, DemoQueueItem, DemoReviewGuest, DemoTopic, SolutionDefinition } from "@/lib/solutions";
+import { DEMO_OPS_BASE_QUEUE, useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
+import MagePhoneChat from "@/components/solutions/MagePhoneChat";
+import type { DemoQueueItem, DemoTopic, SolutionDefinition } from "@/lib/solutions";
 
 type SolutionWindowProps = {
   solution: SolutionDefinition;
@@ -14,46 +16,166 @@ const priorityClass: Record<DemoQueueItem["priority"], string> = {
   low: "demo-priority-low",
 };
 
-function GuestDemo({ actions = [] }: { actions?: DemoAction[] }) {
-  const [activeId, setActiveId] = useState(actions[0]?.id ?? "");
-  const active = useMemo(() => actions.find((item) => item.id === activeId) ?? actions[0], [actions, activeId]);
+type CtxMenuState = { x: number; y: number } | null;
+
+function DemoWindowChrome({
+  anchor,
+  ariaLabel,
+  children,
+  onCopyLink,
+  onResetScenario,
+}: {
+  anchor: string;
+  ariaLabel: string;
+  children: React.ReactNode;
+  onCopyLink: () => void;
+  onResetScenario: () => void;
+}) {
+  const [menu, setMenu] = useState<CtxMenuState>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
+
+  const closeMenu = useCallback(() => setMenu(null), []);
+
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu();
+    };
+    const onPointer = (e: MouseEvent | PointerEvent) => {
+      const t = e.target as Node | null;
+      if (shellRef.current?.contains(t)) return;
+      closeMenu();
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onPointer);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onPointer);
+    };
+  }, [menu, closeMenu]);
+
+  const onContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenu({ x: e.clientX, y: e.clientY });
+  };
 
   return (
-    <>
-      <div className="demo-action-list" role="group" aria-label="Guest prompts">
-        {actions.map((action) => (
+    <div
+      ref={shellRef}
+      className="solution-window solution-window--ctx"
+      role="region"
+      aria-label={ariaLabel}
+      onContextMenu={onContextMenu}
+    >
+      {children}
+      {menu ? (
+        <div
+          className="demo-ctx-menu"
+          style={{ left: menu.x, top: menu.y }}
+          role="menu"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <button
-            key={action.id}
             type="button"
-            className="demo-chip"
-            onClick={() => setActiveId(action.id)}
+            className="demo-ctx-item"
+            role="menuitem"
+            onClick={() => {
+              onCopyLink();
+              closeMenu();
+            }}
           >
-            {action.label}
+            Copy link to this section
           </button>
-        ))}
-      </div>
-      {active ? (
-        <div className="demo-response-box" aria-live="polite">
-          {active.response}
-          {active.meta ? <div className="demo-response-meta">{active.meta}</div> : null}
+          <button
+            type="button"
+            className="demo-ctx-item"
+            role="menuitem"
+            onClick={() => {
+              onResetScenario();
+              closeMenu();
+            }}
+          >
+            Reset demo scenario
+          </button>
+          <a className="demo-ctx-item demo-ctx-link" href={`#${anchor}`} role="menuitem" onClick={closeMenu}>
+            Jump to heading
+          </a>
         </div>
       ) : null}
-    </>
+    </div>
   );
 }
 
-function OpsDemo({ queue = [] }: { queue?: DemoQueueItem[] }) {
-  const [activeId, setActiveId] = useState(queue[0]?.id ?? "");
-  const active = useMemo(() => queue.find((item) => item.id === activeId) ?? queue[0], [queue, activeId]);
+function GuestDesktopPanel() {
+  const {
+    guestMessages,
+    guestSuggestions,
+    guestPickSuggestion,
+  } = useDemoSimulation();
+
+  return (
+    <div className="demo-guest-desktop">
+      <p className="demo-guest-desktop-lead">
+        This pane mirrors the phone transcript. Use either surface — both advance the same fixed storyline.
+      </p>
+      <div className="demo-guest-desktop-thread" aria-live="polite">
+        {guestMessages.length === 0 ? (
+          <p className="demo-guest-desktop-empty">Waiting for the first message from the phone…</p>
+        ) : (
+          guestMessages.map((m) => (
+            <div key={m.id} className={`demo-guest-line demo-guest-line--${m.role}`}>
+              <span className="demo-guest-role">{m.role === "user" ? "Guest" : "Mage"}</span>
+              <p>{m.body}</p>
+              <span className="demo-guest-time">{m.time}</span>
+            </div>
+          ))
+        )}
+      </div>
+      {guestSuggestions.length > 0 ? (
+        <div className="demo-action-list" role="group" aria-label="Guest prompts (desktop)">
+          {guestSuggestions.map((s) => (
+            <button key={s.id} type="button" className="demo-chip" onClick={() => guestPickSuggestion(s.id)}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function OpsDemoSynced() {
+  const { opsExtraQueue } = useDemoSimulation();
+  const merged = useMemo(
+    () => [...opsExtraQueue, ...DEMO_OPS_BASE_QUEUE],
+    [opsExtraQueue],
+  );
+  const [activeId, setActiveId] = useState(merged[0]?.id ?? "");
+  const active = useMemo(
+    () => merged.find((item) => item.id === activeId) ?? merged[0],
+    [merged, activeId],
+  );
+
+  useEffect(() => {
+    if (merged.length && !merged.some((r) => r.id === activeId)) {
+      setActiveId(merged[0].id);
+    }
+  }, [merged, activeId]);
 
   return (
     <>
+      <p className="demo-ops-preview-note">
+        <strong>Ops preview:</strong> when Guest Expert creates a follow-up in the scripted chat, it lands
+        here in real time — same payload your team would see in Ops Lead.
+      </p>
       <div className="demo-queue" role="listbox" aria-label="Ops task queue">
-        {queue.map((item) => (
+        {merged.map((item) => (
           <button
             key={item.id}
             type="button"
-            className={`demo-row ${item.id === active?.id ? "demo-row-active" : ""}`}
+            className={`demo-row ${item.id === active?.id ? "demo-row-active" : ""} ${
+              item.id === "demo-late-checkout" ? "demo-row-synced" : ""
+            }`}
             onClick={() => setActiveId(item.id)}
             role="option"
             aria-selected={item.id === active?.id}
@@ -80,23 +202,36 @@ function OpsDemo({ queue = [] }: { queue?: DemoQueueItem[] }) {
   );
 }
 
-function ReviewsDemo({ guests = [] }: { guests?: DemoReviewGuest[] }) {
-  const [activeId, setActiveId] = useState(guests[0]?.id ?? "");
-  const [sent, setSent] = useState(false);
-  const active = useMemo(() => guests.find((item) => item.id === activeId) ?? guests[0], [guests, activeId]);
+function ReviewsDemoSynced() {
+  const {
+    reviewGuests,
+    reviewActiveGuestId,
+    reviewInviteSentForId,
+    reviewPickSuggestion,
+    reviewSuggestions,
+    reviewSetActiveGuest,
+  } = useDemoSimulation();
+
+  const active = useMemo(
+    () => reviewGuests.find((g) => g.id === reviewActiveGuestId) ?? reviewGuests[0],
+    [reviewGuests, reviewActiveGuestId],
+  );
 
   return (
     <>
+      <p className="demo-reviews-sync-note">
+        <strong>Review Specialist preview:</strong> sending an invite from the phone demo updates this board
+        and highlights Maya&apos;s row when the scripted flow completes.
+      </p>
       <div className="demo-queue" role="listbox" aria-label="Review candidates">
-        {guests.map((guest) => (
+        {reviewGuests.map((guest) => (
           <button
             key={guest.id}
             type="button"
-            className={`demo-row ${guest.id === active?.id ? "demo-row-active" : ""}`}
-            onClick={() => {
-              setActiveId(guest.id);
-              setSent(false);
-            }}
+            className={`demo-row ${guest.id === active?.id ? "demo-row-active" : ""} ${
+              reviewInviteSentForId === guest.id ? "demo-row-synced" : ""
+            }`}
+            onClick={() => reviewSetActiveGuest(guest.id)}
             role="option"
             aria-selected={guest.id === active?.id}
           >
@@ -106,29 +241,35 @@ function ReviewsDemo({ guests = [] }: { guests?: DemoReviewGuest[] }) {
             </div>
             <div className="demo-row-bottom">
               <span>{guest.signal}</span>
-              <span>Eligible now</span>
+              <span>{reviewInviteSentForId === guest.id ? "Invite queued" : "Eligible now"}</span>
             </div>
           </button>
         ))}
       </div>
       {active ? (
         <div className="demo-selection" aria-live="polite">
-          {!sent ? (
+          {reviewInviteSentForId === active.id ? (
             <>
-              <strong>{active.name}</strong> is a strong candidate for outreach after a positive Guest
-              Expert interaction.
+              Review request queued for <strong>{active.name}</strong> with Google and Tripadvisor links (demo
+              only).
             </>
           ) : (
             <>
-              Review request sent to <strong>{active.name}</strong>. Link includes Google and Tripadvisor
-              options.
+              <strong>{active.name}</strong> is surfaced here when Review Specialist receives a positive Guest
+              Expert signal. Use the phone to run the outreach script.
             </>
           )}
         </div>
       ) : null}
-      <button type="button" className="demo-chip" onClick={() => setSent(true)}>
-        Send review request
-      </button>
+      {reviewSuggestions.length > 0 ? (
+        <div className="demo-action-list" role="group" aria-label="Review actions (desktop)">
+          {reviewSuggestions.map((s) => (
+            <button key={s.id} type="button" className="demo-chip" onClick={() => reviewPickSuggestion(s.id)}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </>
   );
 }
@@ -141,12 +282,7 @@ function ManagerDemo({ topics = [] }: { topics?: DemoTopic[] }) {
     <>
       <div className="demo-action-list" role="group" aria-label="AI manager topics">
         {topics.map((topic) => (
-          <button
-            key={topic.id}
-            type="button"
-            className="demo-chip"
-            onClick={() => setActiveId(topic.id)}
-          >
+          <button key={topic.id} type="button" className="demo-chip" onClick={() => setActiveId(topic.id)}>
             {topic.title}
           </button>
         ))}
@@ -161,6 +297,22 @@ function ManagerDemo({ topics = [] }: { topics?: DemoTopic[] }) {
 }
 
 export default function SolutionWindow({ solution }: SolutionWindowProps) {
+  const demo = useDemoSimulation();
+
+  const copyLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}#${solution.anchor}`;
+    void navigator.clipboard.writeText(url).catch(() => null);
+  };
+
+  const resetScenario = () => {
+    if (solution.id === "guest") demo.resetGuestDemo();
+    else if (solution.id === "ops") demo.resetOpsExtras();
+    else if (solution.id === "reviews") demo.resetReviewDemo();
+    else if (solution.id === "manager") {
+      /* local state lives inside ManagerDemo — soft reset via reload section not ideal; no-op */
+    }
+  };
+
   return (
     <article id={solution.anchor} className="solution-panel glass-panel-clear">
       <div className="solution-grid">
@@ -174,12 +326,40 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
             ))}
           </ul>
           <p className="solution-note">{solution.panelNote}</p>
-          {solution.phoneImage ? (
+          {solution.id === "guest" ? (
+            <PhoneMockup alt="Mage guest chat (interactive demo)">
+              <MagePhoneChat
+                variant="guest"
+                title="Mage"
+                messages={demo.guestMessages}
+                suggestions={demo.guestSuggestions}
+                onPickSuggestion={demo.guestPickSuggestion}
+              />
+            </PhoneMockup>
+          ) : null}
+          {solution.id === "reviews" ? (
+            <PhoneMockup alt="Mage review outreach (interactive demo)">
+              <MagePhoneChat
+                variant="reviews"
+                title="Mage"
+                badge="Reviews"
+                messages={demo.reviewMessages}
+                suggestions={demo.reviewSuggestions}
+                onPickSuggestion={demo.reviewPickSuggestion}
+              />
+            </PhoneMockup>
+          ) : null}
+          {solution.id === "manager" && solution.phoneImage ? (
             <PhoneMockup image={solution.phoneImage} alt={`${solution.heading} mobile interface`} />
           ) : null}
         </div>
 
-        <div className="solution-window" role="region" aria-label={`${solution.heading} interactive demo`}>
+        <DemoWindowChrome
+          anchor={solution.anchor}
+          ariaLabel={`${solution.heading} interactive demo`}
+          onCopyLink={copyLink}
+          onResetScenario={resetScenario}
+        >
           <div className="solution-window-bar">
             <span className="window-dots" aria-hidden>
               <span className="window-dot" />
@@ -191,12 +371,12 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
           </div>
           <div className="solution-window-body">
             <p className="demo-subtitle">{solution.demo.subtitle}</p>
-            {solution.id === "guest" ? <GuestDemo actions={solution.demo.actions} /> : null}
-            {solution.id === "ops" ? <OpsDemo queue={solution.demo.queue} /> : null}
-            {solution.id === "reviews" ? <ReviewsDemo guests={solution.demo.guests} /> : null}
+            {solution.id === "guest" ? <GuestDesktopPanel /> : null}
+            {solution.id === "ops" ? <OpsDemoSynced /> : null}
+            {solution.id === "reviews" ? <ReviewsDemoSynced /> : null}
             {solution.id === "manager" ? <ManagerDemo topics={solution.demo.topics} /> : null}
           </div>
-        </div>
+        </DemoWindowChrome>
       </div>
     </article>
   );

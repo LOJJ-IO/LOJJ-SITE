@@ -600,6 +600,331 @@
             transition: opacity 220ms ease;
         }
 
+        .phone-screen--interactive {
+            object-fit: unset;
+            display: flex;
+            flex-direction: column;
+            background: #f4f4f5;
+            overflow: hidden;
+        }
+
+        .mage-phone-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            color: #0a0a0a;
+        }
+
+        .mage-phone-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 12px 10px 10px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            flex-shrink: 0;
+        }
+
+        .mage-phone-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .mage-phone-logo {
+            color: #111;
+            flex-shrink: 0;
+        }
+
+        .mage-phone-title-stack {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .mage-phone-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .mage-phone-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #525252;
+        }
+
+        .mage-phone-icon-btn {
+            border: none;
+            background: transparent;
+            padding: 4px;
+            cursor: default;
+            color: #262626;
+            border-radius: 8px;
+        }
+
+        .mage-phone-thread {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
+        }
+
+        .mage-phone-empty {
+            margin: auto 8px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #737373;
+            line-height: 1.45;
+        }
+
+        .mage-phone-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .mage-phone-row--user {
+            justify-content: flex-end;
+        }
+
+        .mage-phone-row--assistant {
+            justify-content: flex-start;
+        }
+
+        .mage-phone-bubble {
+            max-width: 92%;
+            border-radius: 18px;
+            padding: 10px 12px 22px;
+            position: relative;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+        }
+
+        .mage-phone-bubble--user {
+            background: #0a0a0a;
+            color: #fafafa;
+        }
+
+        .mage-phone-bubble--assistant {
+            background: #ececee;
+            color: #111;
+        }
+
+        .mage-phone-bubble-text {
+            margin: 0;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            white-space: pre-wrap;
+        }
+
+        .mage-phone-time {
+            position: absolute;
+            bottom: 6px;
+            right: 10px;
+            font-size: 0.62rem;
+            opacity: 0.55;
+        }
+
+        .mage-phone-row--assistant .mage-phone-time {
+            left: 10px;
+            right: auto;
+        }
+
+        .mage-phone-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 10px 6px;
+            background: #f4f4f5;
+            border-top: 1px solid #e7e7e7;
+            flex-shrink: 0;
+        }
+
+        .mage-phone-chip {
+            border: 1px solid #d4d4d8;
+            background: #fff;
+            color: #111;
+            font-size: 0.68rem;
+            font-weight: 650;
+            padding: 7px 10px;
+            border-radius: 9999px;
+            cursor: pointer;
+            text-align: left;
+            line-height: 1.25;
+        }
+
+        .mage-phone-chip:hover {
+            background: #f4f4f5;
+        }
+
+        .mage-phone-composer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px 10px;
+            background: #fff;
+            border-top: 1px solid #e5e5e5;
+            flex-shrink: 0;
+        }
+
+        .mage-phone-input-faux {
+            flex: 1;
+            border-radius: 9999px;
+            background: #f4f4f5;
+            border: 1px solid #e5e5e5;
+            padding: 9px 14px;
+            font-size: 0.78rem;
+            color: #a3a3a3;
+        }
+
+        .mage-phone-composer-icon {
+            color: #525252;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .demo-ops-preview-note,
+        .demo-reviews-sync-note {
+            margin: 0;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, 0.78);
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(0, 0, 0, 0.22);
+        }
+
+        .demo-ops-preview-note strong,
+        .demo-reviews-sync-note strong {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .demo-row-synced {
+            border-color: rgba(120, 220, 160, 0.55) !important;
+            box-shadow: 0 0 0 1px rgba(120, 220, 160, 0.25);
+        }
+
+        .demo-guest-desktop-lead {
+            margin: 0;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, 0.76);
+        }
+
+        .demo-guest-desktop-thread {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-guest-desktop-empty {
+            margin: 0;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .demo-guest-line {
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+
+        .demo-guest-line--user {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-end;
+            margin-left: 12%;
+        }
+
+        .demo-guest-line--assistant {
+            background: rgba(255, 255, 255, 0.06);
+            margin-right: 12%;
+        }
+
+        .demo-guest-role {
+            display: block;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 4px;
+        }
+
+        .demo-guest-line p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .demo-guest-time {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .solution-window--ctx {
+            position: relative;
+        }
+
+        .demo-ctx-menu {
+            position: fixed;
+            z-index: 400;
+            min-width: 200px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(12, 22, 20, 0.96);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+            padding: 4px;
+            transform: translate(-4px, -4px);
+        }
+
+        .demo-ctx-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 0.82rem;
+            padding: 9px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .demo-ctx-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        a.demo-ctx-link {
+            text-decoration: none;
+        }
+
+        .demo-guest-desktop {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         @media (min-width: 900px) {
             .teammates-grid {
                 grid-template-columns: 1.05fr 0.95fr;

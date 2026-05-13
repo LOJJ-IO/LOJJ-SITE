@@ -63,7 +63,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     phoneImage: "/teammates/ai-manager.png",
     demo: {
       title: "Guest chat demo",
-      subtitle: "Click a guest prompt to see the live response.",
+      subtitle: "Use the Mage phone or this pane — same script. Late checkout adds a live row in Ops Lead below.",
       actions: [
         {
           id: "wifi",
@@ -103,7 +103,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     panelNote: "Every assignment and status update stays visible across shifts.",
     demo: {
       title: "Task board demo",
-      subtitle: "Click a task row to inspect priority and ETA.",
+      subtitle: "Ops preview: scripted Guest Expert follow-ups surface here at the top of the queue.",
       queue: [
         {
           id: "q1",
@@ -144,7 +144,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     phoneImage: "/teammates/review-specialist.png",
     demo: {
       title: "Review outreach demo",
-      subtitle: "Select a guest and send a review invite.",
+      subtitle: "Phone + board stay in sync — send the scripted invite and watch Maya’s row update.",
       guests: [
         { id: "g1", name: "Maya R.", signal: "Resolved checkout request", score: 92 },
         { id: "g2", name: "Daniel K.", signal: "Praised concierge speed", score: 88 },

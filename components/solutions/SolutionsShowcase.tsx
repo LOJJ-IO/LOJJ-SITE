@@ -1,4 +1,5 @@
 import SolutionWindow from "@/components/solutions/SolutionWindow";
+import { DemoSimulationProvider } from "@/components/solutions/DemoSimulationContext";
 import { SOLUTIONS } from "@/lib/solutions";
 
 export default function SolutionsShowcase() {
@@ -16,11 +17,13 @@ export default function SolutionsShowcase() {
           Specialist, and AI Manager work together.
         </p>
 
-        <div className="solutions-wrap">
-          {SOLUTIONS.map((solution) => (
-            <SolutionWindow key={solution.id} solution={solution} />
-          ))}
-        </div>
+        <DemoSimulationProvider>
+          <div className="solutions-wrap">
+            {SOLUTIONS.map((solution) => (
+              <SolutionWindow key={solution.id} solution={solution} />
+            ))}
+          </div>
+        </DemoSimulationProvider>
       </div>
     </section>
   );
