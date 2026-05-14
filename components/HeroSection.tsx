@@ -87,11 +87,14 @@ export default function HeroSection({ ready, onLoadProgress }: HeroSectionProps)
     <section ref={sectionRef} className="hero-scroll-runway w-full self-stretch" aria-label="Hero">
       <div className="hero-scroll-spacer" aria-hidden />
       <div ref={pinLayerRef} className="hero-pin-layer hero-pin-layer--before">
-        <ScrollCanvas
-          progressRef={progressRef}
-          ready={ready}
-          onLoadProgress={onLoadProgress}
-        />
+        <div className="hero-canvas-shell">
+          <ScrollCanvas
+            progressRef={progressRef}
+            ready={ready}
+            onLoadProgress={onLoadProgress}
+          />
+        </div>
+        <p className="hero-tagline">Your best, every time.</p>
       </div>
     </section>
   );
