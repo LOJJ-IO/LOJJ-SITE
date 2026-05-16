@@ -85,8 +85,8 @@ export default function HeroWaitlistDialog() {
         >
           <DialogHeader>
             <DialogTitle>Join the waitlist</DialogTitle>
-            <DialogDescription>
-              Same details as the footer form — we&apos;ll reach out when spots open.
+            <DialogDescription className="mb-6 sm:mb-8">
+              We&apos;ll reach out once LOJJ is ready for your hotel
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>

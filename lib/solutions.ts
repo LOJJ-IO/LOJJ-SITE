@@ -39,7 +39,7 @@ export type SolutionDefinition = {
   demo: {
     title: string;
     subtitle: string;
-    /** Width ÷ height for the interactive desktop preview (default 16 / 9). */
+    /** Unused; shell height follows content. Kept for optional future use. */
     aspectRatio?: number;
     /** Shown in an info-tooltip next to the subtitle row (optional). */
     subtitleTooltip?: string;
@@ -64,7 +64,6 @@ export const SOLUTIONS: SolutionDefinition[] = [
     panelNote: "When a stay goes well, Guest Expert flags that moment for Review Specialist.",
     phoneImage: "/teammates/ai-manager.png",
     demo: {
-      aspectRatio: 16 / 9,
       title: "Guest chat",
       subtitle:
         "Use the Mage phone or this pane — the same storyline runs in both places. Late checkout adds a live row in Ops Lead below.",

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const MIN_WIDTH_PX = 300;
+const MIN_WIDTH_PX = 260;
+const MIN_HEIGHT_PX = 200;
+const MAX_HEIGHT_PX = 1200;
 
 type Edge = "e" | "s" | "se";
 
@@ -15,23 +17,22 @@ type DragSession = {
 };
 
 type ResizableDemoWindowProps = {
-  aspectRatio: number;
   className?: string;
   children: React.ReactNode;
 };
 
 /**
- * Desktop preview shell: drag east / south / south-east edges to resize.
- * Cursor + hit targets make resize affordance obvious; width is clamped to the grid column.
+ * Desktop preview shell: drag edges to resize. Width is capped to the demo column.
+ * Height follows content by default; south / south-east drags set an explicit height.
  */
 export default function ResizableDemoWindow({
-  aspectRatio,
   className,
   children,
 }: ResizableDemoWindowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const sessionRef = useRef<DragSession | null>(null);
   const [widthPx, setWidthPx] = useState<number | null>(null);
+  const [heightPx, setHeightPx] = useState<number | null>(null);
   const [dragging, setDragging] = useState<Edge | null>(null);
 
   const maxWidth = useCallback(() => {
@@ -49,21 +50,29 @@ export default function ResizableDemoWindow({
       const s = sessionRef.current;
       if (!s) return;
       const maxW = maxWidth();
-      const minH = MIN_WIDTH_PX / aspectRatio;
-      let w = s.startW;
       const dx = e.clientX - s.startX;
       const dy = e.clientY - s.startY;
 
-      if (s.edge === "e" || s.edge === "se") {
-        w = Math.min(maxW, Math.max(MIN_WIDTH_PX, s.startW + dx));
+      if (s.edge === "e") {
+        const w = Math.min(maxW, Math.max(MIN_WIDTH_PX, s.startW + dx));
+        setWidthPx(w);
       } else if (s.edge === "s") {
-        const newH = Math.max(minH, s.startH + dy);
-        w = Math.min(maxW, Math.max(MIN_WIDTH_PX, newH * aspectRatio));
+        const h = Math.min(
+          MAX_HEIGHT_PX,
+          Math.max(MIN_HEIGHT_PX, s.startH + dy),
+        );
+        setHeightPx(h);
+      } else {
+        const w = Math.min(maxW, Math.max(MIN_WIDTH_PX, s.startW + dx));
+        const h = Math.min(
+          MAX_HEIGHT_PX,
+          Math.max(MIN_HEIGHT_PX, s.startH + dy),
+        );
+        setWidthPx(w);
+        setHeightPx(h);
       }
-
-      setWidthPx(w);
     },
-    [aspectRatio, maxWidth],
+    [maxWidth],
   );
 
   useEffect(() => {
@@ -106,6 +115,7 @@ export default function ResizableDemoWindow({
   const onDoubleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setWidthPx(null);
+    setHeightPx(null);
   }, []);
 
   return (
@@ -115,13 +125,17 @@ export default function ResizableDemoWindow({
       style={{
         width: widthPx != null ? `${Math.round(widthPx)}px` : "100%",
         maxWidth: "100%",
+        minWidth: 0,
+        height: heightPx != null ? `${Math.round(heightPx)}px` : "auto",
+        minHeight: 0,
+        overflow: heightPx != null ? "auto" : undefined,
         marginInline: widthPx != null ? "auto" : undefined,
-        aspectRatio,
         position: "relative",
         touchAction: dragging ? "none" : undefined,
+        boxSizing: "border-box",
       }}
       onDoubleClick={onDoubleClick}
-      title="Drag edges to resize. Double-click to reset width."
+      title="Drag edges to resize. Double-click to reset size."
     >
       {children}
       <div

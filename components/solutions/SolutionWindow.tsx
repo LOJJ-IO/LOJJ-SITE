@@ -20,17 +20,13 @@ const priorityClass: Record<DemoQueueItem["priority"], string> = {
 
 type CtxMenuState = { x: number; y: number } | null;
 
-const DEFAULT_DEMO_ASPECT_RATIO = 16 / 9;
-
 function DemoWindowChrome({
-  aspectRatio = DEFAULT_DEMO_ASPECT_RATIO,
   anchor,
   ariaLabel,
   children,
   onCopyLink,
   onResetScenario,
 }: {
-  aspectRatio?: number;
   anchor: string;
   ariaLabel: string;
   children: React.ReactNode;
@@ -73,7 +69,7 @@ function DemoWindowChrome({
       aria-label={ariaLabel}
       onContextMenu={onContextMenu}
     >
-      <ResizableDemoWindow aspectRatio={aspectRatio} className="solution-window-aspect-root flex w-full min-h-0 flex-col overflow-hidden">
+      <ResizableDemoWindow className="solution-window-aspect-root flex w-full min-h-0 min-w-0 flex-col overflow-hidden">
         {children}
       </ResizableDemoWindow>
       {menu ? (
@@ -662,7 +658,6 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
 
           <div className="solution-demo-col">
             <DemoWindowChrome
-              aspectRatio={solution.demo.aspectRatio ?? DEFAULT_DEMO_ASPECT_RATIO}
               anchor={solution.anchor}
               ariaLabel={`${solution.heading} interactive preview`}
               onCopyLink={copyLink}
