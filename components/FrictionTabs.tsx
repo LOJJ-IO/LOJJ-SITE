@@ -4,14 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 
-const FRICTION = [
+type FrictionId = "handoffs" | "managers" | "new-staff";
+
+const FRICTION: ReadonlyArray<{
+  id: FrictionId;
+  label: string;
+  kicker: string;
+  heading: string;
+  copy?: string;
+  bullets?: readonly string[];
+}> = [
   {
     id: "handoffs",
     label: "Lost handoffs",
     kicker: "Friction 1",
     heading: "Lost handoffs",
-    copy:
-      "Guest requests pile up, notes get missed between shifts, and it’s unclear what’s already been handled.",
+    bullets: [
+      "Guest requests pile up.",
+      "Notes get missed between shifts.",
+      "It’s unclear what’s already been handled.",
+    ],
   },
   {
     id: "managers",
@@ -27,9 +39,8 @@ const FRICTION = [
     heading: "New staff",
     copy: "High turnover leaves your team without answers. Guests wait while junior staff scramble.",
   },
-] as const;
+];
 
-type FrictionId = (typeof FRICTION)[number]["id"];
 type PanePhase = "idle" | "exit" | "pre-enter" | "enter";
 
 export function FrictionTabs() {
@@ -76,7 +87,15 @@ export function FrictionTabs() {
                 <TabsContent key={item.id} value={item.id} className="pane-content">
                   <div className="feature-kicker">{item.kicker}</div>
                   <h3 className="landing-h3">{item.heading}</h3>
-                  <p className="landing-p mt-3">{item.copy}</p>
+                  {item.bullets ? (
+                    <ul className="feature-list mt-3">
+                      {item.bullets.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="landing-p mt-3">{item.copy}</p>
+                  )}
                 </TabsContent>
               ))}
             </div>

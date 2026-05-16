@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import type { DemoChatMessage, DemoSuggestion } from "@/components/solutions/DemoSimulationContext";
 
@@ -39,6 +39,14 @@ type MagePhoneChatProps = {
   suggestions: DemoSuggestion[];
   onPickSuggestion: (id: string) => void;
   composerPlaceholder?: string;
+  /** Primary line when the thread is empty (before any messages). */
+  idleLead?: string;
+  /** Extra demo copy shown only on the phone when the thread is empty (e.g. storyline + tips). */
+  idleInstructions?: string;
+  /** Shown in the profile sheet (guest-style mock). */
+  profileGuestName?: string;
+  profileRoomLabel?: string;
+  profileStayLabel?: string;
 };
 
 export default function MagePhoneChat({
@@ -49,14 +57,40 @@ export default function MagePhoneChat({
   suggestions,
   onPickSuggestion,
   composerPlaceholder = "Message…",
+  idleLead = "Tap a suggested reply below to begin.",
+  idleInstructions,
+  profileGuestName = "Alex Rivera",
+  profileRoomLabel = "Room 312 · Riverside",
+  profileStayLabel = "Stay · through Sun",
 }: MagePhoneChatProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileTitleId = useId();
+  const profileSheetId = useId();
+
+  const profileInitials = (() => {
+    const parts = profileGuestName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+    }
+    const w = parts[0] ?? "?";
+    return w.slice(0, 2).toUpperCase();
+  })();
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
   }, [messages]);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setProfileOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [profileOpen]);
 
   return (
     <div className={`mage-phone-chat mage-phone-chat--${variant}`}>
@@ -71,7 +105,14 @@ export default function MagePhoneChat({
           </div>
         </div>
         <div className="mage-phone-header-end">
-          <button type="button" className="mage-phone-icon-btn" aria-label="Profile">
+          <button
+            type="button"
+            className={`mage-phone-icon-btn${profileOpen ? " mage-phone-icon-btn--active" : ""}`}
+            aria-label="Guest profile"
+            aria-expanded={profileOpen}
+            aria-controls={profileSheetId}
+            onClick={() => setProfileOpen((o) => !o)}
+          >
             <ProfileGlyph />
           </button>
         </div>
@@ -82,7 +123,12 @@ export default function MagePhoneChat({
         ref={scrollRef}
       >
         {messages.length === 0 ? (
-          <p className="mage-phone-empty">Tap a suggested reply below to begin.</p>
+          <div className="mage-phone-empty-stack">
+            <p className="mage-phone-empty">{idleLead}</p>
+            {idleInstructions ? (
+              <p className="mage-phone-empty mage-phone-empty--secondary">{idleInstructions}</p>
+            ) : null}
+          </div>
         ) : (
           messages.map((m) => (
             <div key={m.id} className={`mage-phone-row mage-phone-row--${m.role}`}>
@@ -119,6 +165,41 @@ export default function MagePhoneChat({
           </svg>
         </span>
       </div>
+
+      {profileOpen ? (
+        <>
+          <button
+            type="button"
+            className="mage-phone-profile-scrim"
+            aria-label="Close profile"
+            onClick={() => setProfileOpen(false)}
+          />
+          <aside
+            id={profileSheetId}
+            className="mage-phone-profile-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={profileTitleId}
+          >
+            <div className="mage-phone-profile-sheet-handle" aria-hidden />
+            <h2 id={profileTitleId} className="mage-phone-profile-title">
+              Guest
+            </h2>
+            <div className="mage-phone-profile-avatar" aria-hidden>
+              {profileInitials}
+            </div>
+            <p className="mage-phone-profile-name">{profileGuestName}</p>
+            <ul className="mage-phone-profile-meta">
+              <li>{profileRoomLabel}</li>
+              <li>{profileStayLabel}</li>
+              <li>Signed in via hotel chat</li>
+            </ul>
+            <button type="button" className="mage-phone-profile-done" onClick={() => setProfileOpen(false)}>
+              Done
+            </button>
+          </aside>
+        </>
+      ) : null}
     </div>
   );
 }

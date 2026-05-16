@@ -66,9 +66,9 @@ export const SOLUTIONS: SolutionDefinition[] = [
     demo: {
       title: "Guest chat",
       subtitle:
-        "Use the Mage phone or this pane — the same storyline runs in both places. Late checkout adds a live row in Ops Lead below.",
+        "The desktop Guest chat window mirrors this conversation. Late checkout adds a live row in Ops Lead below.",
       subtitleTooltip:
-        "The desktop pane mirrors the phone. Late checkout surfaces as a live task under Ops Lead.",
+        "Send guest messages only from this phone. On the desktop, use Jump in next to Mage replies to send a staff message.",
       actions: [
         {
           id: "wifi",
@@ -172,7 +172,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     panelNote: "A steady source of answers during rush hours and staffing gaps.",
     demo: {
       title: "Shift guidance",
-      subtitle: "Pick a common new-staff question.",
+      subtitle: "Front desk calendar on the left; AI Manager answers on the right — pick a typical new-staff question.",
       topics: [
         {
           id: "t1",

@@ -9,10 +9,21 @@ export default function SolutionsShowcase() {
         <div className="section-heading-stack">
           <h2 className="landing-h2">Solutions</h2>
         </div>
-        <p className="landing-sub">
-          Click through each interactive window to see how Guest Expert, Ops Lead, Review
-          Specialist, and AI Manager work together.
-        </p>
+        <p className="landing-sub">Click through each interactive window to explore:</p>
+        <ul className="feature-list">
+          <li>
+            <strong>Guest Expert</strong> — scripted guest chat and phone preview
+          </li>
+          <li>
+            <strong>Ops Lead</strong> — task queue and follow-ups
+          </li>
+          <li>
+            <strong>Review Specialist</strong> — outreach board and guest phone
+          </li>
+          <li>
+            <strong>AI Manager</strong> — calendar workspace and side assistant
+          </li>
+        </ul>
 
         <DemoSimulationProvider>
           <div className="solutions-wrap">

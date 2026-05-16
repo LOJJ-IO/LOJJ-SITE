@@ -3,10 +3,16 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import ResizableDemoWindow from "@/components/solutions/ResizableDemoWindow";
 import PhoneMockup from "@/components/PhoneMockup";
-import { DEMO_OPS_BASE_QUEUE, useDemoSimulation, type ReviewSentDemoEntry } from "@/components/solutions/DemoSimulationContext";
+import {
+  DEMO_OPS_BASE_QUEUE,
+  useDemoSimulation,
+  type DemoChatMessage,
+  type ReviewSentDemoEntry,
+} from "@/components/solutions/DemoSimulationContext";
 import MagePhoneChat from "@/components/solutions/MagePhoneChat";
 import ReviewGuestPhone from "@/components/solutions/ReviewGuestPhone";
-import type { DemoQueueItem, DemoTopic, SolutionDefinition } from "@/lib/solutions";
+import ManagerSplitDemo from "@/components/solutions/ManagerSplitDemo";
+import type { DemoQueueItem, SolutionDefinition } from "@/lib/solutions";
 
 type SolutionWindowProps = {
   solution: SolutionDefinition;
@@ -26,12 +32,14 @@ function DemoWindowChrome({
   children,
   onCopyLink,
   onResetScenario,
+  shellClassName,
 }: {
   anchor: string;
   ariaLabel: string;
   children: React.ReactNode;
   onCopyLink: () => void;
   onResetScenario: () => void;
+  shellClassName?: string;
 }) {
   const [menu, setMenu] = useState<CtxMenuState>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -64,7 +72,7 @@ function DemoWindowChrome({
   return (
     <div
       ref={shellRef}
-      className="solution-window solution-window--ctx"
+      className={`solution-window solution-window--ctx${shellClassName ? ` ${shellClassName}` : ""}`}
       role="region"
       aria-label={ariaLabel}
       onContextMenu={onContextMenu}
@@ -201,15 +209,18 @@ const GUEST_BROWSER_TABS: BrowserTabDef[] = [
   { id: "related", label: "Related", favicon: "★" },
 ];
 
-function GuestDesktopPanel({ subtitleTooltip }: { subtitleTooltip?: string }) {
-  const {
-    guestMessages,
-    guestSuggestions,
-    guestPickSuggestion,
-    guestJumpShowOps,
-    guestJumpShowReviews,
-    guestJumpShowManager,
-  } = useDemoSimulation();
+function GuestDesktopPanel() {
+  const { guestMessages, guestAppend, guestJumpShowOps, guestJumpShowReviews, guestJumpShowManager } =
+    useDemoSimulation();
+
+  const [staffComposeForId, setStaffComposeForId] = useState<string | null>(null);
+  const [staffDraft, setStaffDraft] = useState("");
+
+  const guestRoleLabel = (role: DemoChatMessage["role"]) => {
+    if (role === "user") return "Guest";
+    if (role === "staff") return "Staff";
+    return "Mage";
+  };
 
   const [demoTab, setDemoTab] = useState<"chat" | "related">("chat");
 
@@ -233,43 +244,88 @@ function GuestDesktopPanel({ subtitleTooltip }: { subtitleTooltip?: string }) {
         activeTab={demoTab}
         onChangeTab={(id) => setDemoTab(id as "chat" | "related")}
         url={`yourhotel.lojj.io/guest${demoUrlPath}`}
-        infoTooltip={subtitleTooltip}
         ariaLabel="Guest chat views"
       />
 
       {demoTab === "chat" ? (
         <div className="demo-guest-desktop">
-          <p className="demo-guest-desktop-lead">
-            This pane mirrors the phone transcript. Use either surface — both follow the same storyline.
-          </p>
           <div className="demo-guest-desktop-thread" aria-live="polite">
             {guestMessages.length === 0 ? (
               <p className="demo-guest-desktop-empty">Waiting for the first message from the phone…</p>
             ) : (
-              guestMessages.map((m) => (
-                <div key={m.id} className={`demo-guest-line demo-guest-line--${m.role}`}>
-                  <span className="demo-guest-role">{m.role === "user" ? "Guest" : "Mage"}</span>
-                  <p>{m.body}</p>
-                  <span className="demo-guest-time">{m.time}</span>
-                </div>
-              ))
+              guestMessages.map((m) =>
+                m.role === "assistant" ? (
+                  <div key={m.id} className="demo-guest-assistant-wrap">
+                    <div className="demo-guest-assistant-row">
+                      <div className="demo-guest-line demo-guest-line--assistant">
+                        <span className="demo-guest-role">Mage</span>
+                        <p>{m.body}</p>
+                        <span className="demo-guest-time">{m.time}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="demo-guest-jump-in-btn"
+                        onClick={() => {
+                          setStaffComposeForId((open) => (open === m.id ? null : m.id));
+                          setStaffDraft("");
+                        }}
+                      >
+                        Jump in
+                      </button>
+                    </div>
+                    {staffComposeForId === m.id ? (
+                      <div className="demo-guest-staff-compose">
+                        <label className="demo-guest-staff-label" htmlFor={`staff-reply-${m.id}`}>
+                          Reply as staff
+                        </label>
+                        <textarea
+                          id={`staff-reply-${m.id}`}
+                          className="demo-guest-staff-input"
+                          rows={3}
+                          value={staffDraft}
+                          onChange={(e) => setStaffDraft(e.target.value)}
+                          placeholder="Your message to the guest…"
+                        />
+                        <div className="demo-guest-staff-actions">
+                          <button
+                            type="button"
+                            className="demo-chip"
+                            onClick={() => {
+                              const t = staffDraft.trim();
+                              if (t) guestAppend("staff", t);
+                              setStaffComposeForId(null);
+                              setStaffDraft("");
+                            }}
+                          >
+                            Send
+                          </button>
+                          <button
+                            type="button"
+                            className="demo-guest-staff-cancel"
+                            onClick={() => {
+                              setStaffComposeForId(null);
+                              setStaffDraft("");
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div key={m.id} className={`demo-guest-line demo-guest-line--${m.role}`}>
+                    <span className="demo-guest-role">{guestRoleLabel(m.role)}</span>
+                    <p>{m.body}</p>
+                    <span className="demo-guest-time">{m.time}</span>
+                  </div>
+                ),
+              )
             )}
           </div>
-          {guestSuggestions.length > 0 ? (
-            <div className="demo-action-list" role="group" aria-label="Guest prompts (desktop)">
-              {guestSuggestions.map((s) => (
-                <button key={s.id} type="button" className="demo-chip" onClick={() => guestPickSuggestion(s.id)}>
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
         </div>
       ) : (
         <div className="demo-guest-desktop">
-          <p className="demo-guest-desktop-lead">
-            Cross-links to related walkthroughs appear here as the conversation unlocks them.
-          </p>
           {visibleJumps.length > 0 ? (
             <div className="demo-guest-jump" role="navigation" aria-label="Related solutions">
               <span className="demo-guest-jump-label">Related on this page</span>
@@ -282,9 +338,7 @@ function GuestDesktopPanel({ subtitleTooltip }: { subtitleTooltip?: string }) {
               </div>
             </div>
           ) : (
-            <p className="demo-guest-desktop-empty">
-              Nothing here yet — try the late checkout, review, or escalation flows on the phone to surface links.
-            </p>
+            <p className="demo-guest-desktop-empty">Nothing unlocked yet.</p>
           )}
         </div>
       )}
@@ -558,31 +612,10 @@ function ReviewsDemoSynced({ subtitleTooltip }: { subtitleTooltip?: string }) {
   );
 }
 
-function ManagerDemo({ topics = [] }: { topics?: DemoTopic[] }) {
-  const [activeId, setActiveId] = useState(topics[0]?.id ?? "");
-  const active = useMemo(() => topics.find((item) => item.id === activeId) ?? topics[0], [topics, activeId]);
-
-  return (
-    <>
-      <div className="demo-action-list" role="group" aria-label="AI manager topics">
-        {topics.map((topic) => (
-          <button key={topic.id} type="button" className="demo-chip" onClick={() => setActiveId(topic.id)}>
-            {topic.title}
-          </button>
-        ))}
-      </div>
-      {active ? (
-        <div className="demo-response-box" aria-live="polite">
-          {active.answer}
-        </div>
-      ) : null}
-    </>
-  );
-}
-
 export default function SolutionWindow({ solution }: SolutionWindowProps) {
   const demoSubtitleHintId = useId();
   const demo = useDemoSimulation();
+  const [managerDemoKey, setManagerDemoKey] = useState(0);
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#${solution.anchor}`;
@@ -594,7 +627,7 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
     else if (solution.id === "ops") demo.resetOpsExtras();
     else if (solution.id === "reviews") demo.resetReviewDemo();
     else if (solution.id === "manager") {
-      /* local state lives inside ManagerDemo — soft reset via reload section not ideal; no-op */
+      setManagerDemoKey((k) => k + 1);
     }
   };
 
@@ -604,33 +637,94 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
     (solution.id === "manager" && Boolean(solution.phoneImage));
   const usesBrowserShell = solution.id === "guest" || solution.id === "reviews";
 
+  const explanatory = (
+    <div
+      className={`solution-panel-explanatory${hasPhone ? "" : " solution-panel-explanatory--side"}`}
+    >
+      <h3 className="landing-h3">{solution.heading}</h3>
+      <p className="landing-p">{solution.lede}</p>
+      <ul className="solution-bullets">
+        {solution.bullets.map((bullet) => (
+          <li key={bullet}>{bullet}</li>
+        ))}
+      </ul>
+      {solution.id === "reviews" && solution.demo.subtitle ? (
+        <p className="solution-demo-lead">{solution.demo.subtitle}</p>
+      ) : null}
+      <p className="solution-note">{solution.panelNote}</p>
+    </div>
+  );
+
+  const demoCol = (
+    <div className="solution-demo-col">
+      <DemoWindowChrome
+        anchor={solution.anchor}
+        ariaLabel={`${solution.heading} interactive preview`}
+        onCopyLink={copyLink}
+        onResetScenario={resetScenario}
+        shellClassName={
+          solution.id === "guest"
+            ? "solution-window--guest-tall"
+            : solution.id === "manager"
+              ? "solution-window--manager-split"
+              : undefined
+        }
+      >
+        <div className="solution-window-bar">
+          <span className="window-dots" aria-hidden>
+            <span className="window-dot" />
+            <span className="window-dot" />
+            <span className="window-dot" />
+          </span>
+          <span className="window-title">{solution.demo.title}</span>
+        </div>
+        <div className={`solution-window-body${usesBrowserShell ? " solution-window-body--browser-first" : ""}`}>
+          {!usesBrowserShell && (solution.demo.subtitle || solution.demo.subtitleTooltip) ? (
+            <div
+              className={`demo-subtitle-row${solution.demo.subtitle ? "" : " demo-subtitle-row--hint-only"}`}
+            >
+              {solution.demo.subtitle ? <p className="demo-subtitle">{solution.demo.subtitle}</p> : null}
+              {solution.demo.subtitleTooltip ? (
+                <span className="demo-subtitle-hint">
+                  <button
+                    type="button"
+                    className="demo-subtitle-hint-btn"
+                    aria-label="How this works"
+                    aria-describedby={demoSubtitleHintId}
+                  >
+                    <span aria-hidden>ⓘ</span>
+                  </button>
+                  <span id={demoSubtitleHintId} role="tooltip" className="demo-subtitle-hint-pop">
+                    {solution.demo.subtitleTooltip}
+                  </span>
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+          {solution.id === "guest" ? <GuestDesktopPanel /> : null}
+          {solution.id === "ops" ? <OpsDemoSynced /> : null}
+          {solution.id === "reviews" ? (
+            <ReviewsDemoSynced subtitleTooltip={solution.demo.subtitleTooltip} />
+          ) : null}
+          {solution.id === "manager" && solution.demo.topics ? (
+            <ManagerSplitDemo key={managerDemoKey} topics={solution.demo.topics} />
+          ) : null}
+        </div>
+      </DemoWindowChrome>
+    </div>
+  );
+
   return (
     <article
       id={solution.anchor}
       className="solution-panel glass-panel-clear"
     >
       <div className="solution-panel-stack">
-        <div className="solution-panel-explanatory">
-          <h3 className="landing-h3">{solution.heading}</h3>
-          <p className="landing-p">{solution.lede}</p>
-          <ul className="solution-bullets">
-            {solution.bullets.map((bullet) => (
-              <li key={bullet}>{bullet}</li>
-            ))}
-          </ul>
-          {(solution.id === "guest" || solution.id === "reviews") && solution.demo.subtitle ? (
-            <p className="solution-demo-lead">{solution.demo.subtitle}</p>
-          ) : null}
-          <p className="solution-note">{solution.panelNote}</p>
-        </div>
-
-        <div className="solution-panel-rule" aria-hidden />
-
-        <div
-          className={`solution-demo-row${hasPhone ? " solution-demo-row--split" : " solution-demo-row--full"}`}
-        >
-          {hasPhone ? (
-            <>
+        {hasPhone ? (
+          <>
+            {explanatory}
+            <div className="solution-panel-rule" aria-hidden />
+            <div className="solution-demo-row solution-demo-row--split">
               <div className="solution-phone-col">
                 {solution.id === "guest" ? (
                   <PhoneMockup alt="Mage guest chat">
@@ -640,6 +734,10 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
                       messages={demo.guestMessages}
                       suggestions={demo.guestSuggestions}
                       onPickSuggestion={demo.guestPickSuggestion}
+                      idleInstructions={
+                        [solution.demo.subtitle, solution.demo.subtitleTooltip].filter(Boolean).join("\n\n") ||
+                        undefined
+                      }
                     />
                   </PhoneMockup>
                 ) : null}
@@ -653,59 +751,16 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
                 ) : null}
               </div>
               <div className="solution-demo-gutter" aria-hidden />
-            </>
-          ) : null}
-
-          <div className="solution-demo-col">
-            <DemoWindowChrome
-              anchor={solution.anchor}
-              ariaLabel={`${solution.heading} interactive preview`}
-              onCopyLink={copyLink}
-              onResetScenario={resetScenario}
-            >
-              <div className="solution-window-bar">
-                <span className="window-dots" aria-hidden>
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                  <span className="window-dot" />
-                </span>
-                <span className="window-title">{solution.demo.title}</span>
-              </div>
-              <div className={`solution-window-body${usesBrowserShell ? " solution-window-body--browser-first" : ""}`}>
-                {!usesBrowserShell && (solution.demo.subtitle || solution.demo.subtitleTooltip) ? (
-                  <div
-                    className={`demo-subtitle-row${solution.demo.subtitle ? "" : " demo-subtitle-row--hint-only"}`}
-                  >
-                    {solution.demo.subtitle ? <p className="demo-subtitle">{solution.demo.subtitle}</p> : null}
-                    {solution.demo.subtitleTooltip ? (
-                      <span className="demo-subtitle-hint">
-                        <button
-                          type="button"
-                          className="demo-subtitle-hint-btn"
-                          aria-label="How this works"
-                          aria-describedby={demoSubtitleHintId}
-                        >
-                          <span aria-hidden>ⓘ</span>
-                        </button>
-                        <span id={demoSubtitleHintId} role="tooltip" className="demo-subtitle-hint-pop">
-                          {solution.demo.subtitleTooltip}
-                        </span>
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
-                {solution.id === "guest" ? (
-                  <GuestDesktopPanel subtitleTooltip={solution.demo.subtitleTooltip} />
-                ) : null}
-                {solution.id === "ops" ? <OpsDemoSynced /> : null}
-                {solution.id === "reviews" ? (
-                  <ReviewsDemoSynced subtitleTooltip={solution.demo.subtitleTooltip} />
-                ) : null}
-                {solution.id === "manager" ? <ManagerDemo topics={solution.demo.topics} /> : null}
-              </div>
-            </DemoWindowChrome>
+              {demoCol}
+            </div>
+          </>
+        ) : (
+          <div className="solution-demo-row solution-demo-row--sidecopy">
+            {explanatory}
+            <div className="solution-demo-gutter" aria-hidden />
+            {demoCol}
           </div>
-        </div>
+        )}
       </div>
     </article>
   );

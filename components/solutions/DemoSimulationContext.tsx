@@ -12,7 +12,7 @@ import {
 import type { DemoQueueItem, DemoReviewGuest } from "@/lib/solutions";
 import { SOLUTIONS } from "@/lib/solutions";
 
-export type DemoChatRole = "user" | "assistant";
+export type DemoChatRole = "user" | "assistant" | "staff";
 
 export type DemoChatMessage = {
   id: string;

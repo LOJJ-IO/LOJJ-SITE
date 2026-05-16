@@ -39,10 +39,17 @@ const faqs: FaqItem[] = [
     q: "What exactly does LOJJ do for hotels like ours?",
     a: (
       <>
-        Two things. First, it helps staff answer questions using your hotel training, policies, and
-        procedures. Think guest FAQ automation that your team can use in real time. Second, it turns
-        guest requests into hotel task tracking, so you can see what is assigned, what is in progress,
-        and what is done across shifts.
+        <p className="mb-2 text-white/90">Two things:</p>
+        <ul className="faq-answer-list">
+          <li>
+            It helps staff answer questions using your hotel training, policies, and procedures—guest FAQ
+            automation your team can use in real time.
+          </li>
+          <li>
+            It turns guest requests into hotel task tracking, so you can see what is assigned, in
+            progress, and done across shifts.
+          </li>
+        </ul>
       </>
     ),
   },
@@ -74,7 +81,7 @@ const faqs: FaqItem[] = [
     value: "discovery-questions",
     q: "What do you need to know from us?",
     a: (
-      <ul className="list-disc pl-5 space-y-2">
+      <ul className="faq-answer-list">
         <li>How do you currently train new front desk or hotel staff?</li>
         <li>What are the most common mistakes new staff make?</li>
         <li>
@@ -136,11 +143,18 @@ const faqs: FaqItem[] = [
     q: "We’re not sure this is something we need right now. Why would hotels use LOJJ instead of their current process?",
     a: (
       <>
-        Hotels usually look for something like LOJJ when the current process is wearing people down.
-        Too many repetitive guest questions, constant front desk calls, and requests that get lost
-        between shifts. LOJJ reduces front desk calls with guest FAQ automation and makes requests
-        trackable, so service stays steady even when the front desk is understaffed or turnover is
-        high.
+        <p className="mb-2 text-white/90">
+          Hotels usually look for something like LOJJ when the current process is wearing people down:
+        </p>
+        <ul className="faq-answer-list">
+          <li>Too many repetitive guest questions</li>
+          <li>Constant front desk calls to managers</li>
+          <li>Requests that get lost between shifts</li>
+        </ul>
+        <p className="mt-3 text-white/80">
+          LOJJ reduces front desk calls with guest FAQ automation and makes requests trackable, so service
+          stays steady even when the front desk is understaffed or turnover is high.
+        </p>
       </>
     ),
   },

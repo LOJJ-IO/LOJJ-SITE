@@ -21,11 +21,21 @@ export default function LandingMarkup({ doorsOpen, onLoadProgress }: LandingMark
             <div className="section-heading-stack">
               <h2 className="landing-h2">How it Works</h2>
             </div>
-            <p className="landing-sub">
-              LOJJ runs as connected specialist tools. Guest Expert handles routine questions, Ops Lead
-              keeps tasks visible, Review Specialist asks for feedback at the right time, and AI Manager
-              supports new staff without new-hire FAQs.
-            </p>
+            <p className="landing-sub">LOJJ runs as connected specialist tools:</p>
+            <ul className="feature-list">
+              <li>
+                <strong>Guest Expert</strong> handles routine questions.
+              </li>
+              <li>
+                <strong>Ops Lead</strong> keeps tasks visible.
+              </li>
+              <li>
+                <strong>Review Specialist</strong> asks for feedback at the right time.
+              </li>
+              <li>
+                <strong>AI Manager</strong> supports new staff without new-hire FAQs.
+              </li>
+            </ul>
           </div>
         </section>
 
