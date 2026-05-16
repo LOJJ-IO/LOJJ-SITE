@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "lojj.io" }],
+      "destination": "https://www.lojj.io/:path*",
+      "permanent": true
+    }
+  ]
+}

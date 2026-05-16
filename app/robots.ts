@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
+import { getSiteUrl } from "@/lib/site";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lojj.io";
+export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
+  const siteOrigin = getSiteUrl();
+
   return {
     rules: [
       {
@@ -11,8 +14,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/"],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    sitemap: `${siteOrigin}/sitemap.xml`,
+    host: siteOrigin,
   };
 }
-

@@ -1,22 +1,23 @@
 import type { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lojj.io";
+export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const lastModified = new Date();
+
   return [
     {
-      url: SITE_URL,
-      lastModified: now,
+      url: siteUrl("/"),
+      lastModified,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${SITE_URL}/faq`,
-      lastModified: now,
+      url: siteUrl("/faq"),
+      lastModified,
       changeFrequency: "monthly",
       priority: 0.5,
     },
   ];
 }
-

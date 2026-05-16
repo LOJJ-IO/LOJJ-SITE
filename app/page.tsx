@@ -1,44 +1,45 @@
 import LandingPage from "@/components/LandingPage";
+import { getSiteUrl, siteUrl } from "@/lib/site";
 
 export default function Home() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.lojj.io";
+  const siteOrigin = getSiteUrl();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        "@id": `${siteUrl}#org`,
+        "@id": `${siteOrigin}#org`,
         name: "LOJJ",
-        url: siteUrl,
+        url: siteUrl("/"),
         logo: {
           "@type": "ImageObject",
-          url: `${siteUrl}/favicon.png`,
+          url: siteUrl("/favicon.png"),
         },
         sameAs: ["https://www.linkedin.com/company/lojj"],
       },
       {
         "@type": "WebSite",
-        "@id": `${siteUrl}#website`,
-        url: siteUrl,
+        "@id": `${siteOrigin}#website`,
+        url: siteUrl("/"),
         name: "LOJJ",
         inLanguage: "en",
-        publisher: { "@id": `${siteUrl}#org` },
+        publisher: { "@id": `${siteOrigin}#org` },
       },
       {
         "@type": "SoftwareApplication",
-        "@id": `${siteUrl}#app`,
+        "@id": `${siteOrigin}#app`,
         name: "LOJJ",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
-        url: siteUrl,
+        url: siteUrl("/"),
         description:
           "Digital concierge and hotel task management system to reduce front desk phone calls, automate guest FAQs, and track staff requests across shifts.",
-        publisher: { "@id": `${siteUrl}#org` },
+        publisher: { "@id": `${siteOrigin}#org` },
       },
       {
         "@type": "FAQPage",
-        "@id": `${siteUrl}#faq`,
+        "@id": `${siteOrigin}#faq`,
         mainEntity: [
           {
             "@type": "Question",

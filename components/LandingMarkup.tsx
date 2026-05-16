@@ -99,6 +99,7 @@ export default function LandingMarkup({ doorsOpen, onLoadProgress }: LandingMark
             <div className="footer-links">
               <div className="link-column">
                 <div className="link-column-heading">About</div>
+                <a href="https://www.lojj.io/">Website</a>
                 <a href="#about">Overview</a>
                 <a href="#waitlist">Early access</a>
                 <a href="/faq">FAQ</a>
