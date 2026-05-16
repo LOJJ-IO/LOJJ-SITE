@@ -54,14 +54,17 @@ export default function ReviewGuestPhone() {
   if (reviewGuestScreen === "idle") {
     return (
       <div className="mage-phone-chat mage-phone-chat--reviews mage-phone-chat--guest-review">
-        <header className="mage-phone-header">
-          <div className="mage-phone-header-left">
+        <header className="mage-phone-header mage-phone-header--kit">
+          <div className="mage-phone-header-start">
             <MageGlyph />
+          </div>
+          <div className="mage-phone-header-center">
             <div className="mage-phone-title-stack">
               <span className="mage-phone-title">Mage</span>
               <span className="mage-phone-badge">Guest view</span>
             </div>
           </div>
+          <span className="mage-phone-header-spacer" aria-hidden />
         </header>
         <div className="mage-phone-thread">
           <p className="mage-phone-empty">
@@ -190,14 +193,17 @@ export default function ReviewGuestPhone() {
   /* inbox (Guest Expert decline path) */
   return (
     <div className="mage-phone-chat mage-phone-chat--reviews mage-phone-chat--guest-review">
-      <header className="mage-phone-header">
-        <div className="mage-phone-header-left">
+      <header className="mage-phone-header mage-phone-header--kit">
+        <div className="mage-phone-header-start">
           <MageGlyph />
+        </div>
+        <div className="mage-phone-header-center">
           <div className="mage-phone-title-stack">
             <span className="mage-phone-title">Mage</span>
             <span className="mage-phone-badge">Guest view</span>
           </div>
         </div>
+        <span className="mage-phone-header-spacer" aria-hidden />
       </header>
       <div className="mage-phone-thread" ref={scrollRef}>
         {reviewGuestMessages.map((m: DemoChatMessage) => (

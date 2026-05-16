@@ -16,15 +16,15 @@ export default function LandingMarkup({ doorsOpen, onLoadProgress }: LandingMark
       <main className="landing-main w-full">
         <HeroSection ready={doorsOpen} onLoadProgress={onLoadProgress} />
 
-        <section id="about" className="landing-section w-full flex justify-center">
+        <section id="about" className="landing-section landing-section--after-hero w-full flex justify-center">
           <div className="w-[95%] max-w-7xl">
             <div className="section-heading-stack">
-              <h2 className="landing-h2">How it works</h2>
+              <h2 className="landing-h2">How it Works</h2>
             </div>
             <p className="landing-sub">
-              LOJJ runs as connected specialist windows. Guest Expert handles routine questions, Ops
-              Lead keeps tasks visible, Review Specialist asks for feedback at the right time, and AI
-              Manager supports new staff without extra radio traffic.
+              LOJJ runs as connected specialist tools. Guest Expert handles routine questions, Ops Lead
+              keeps tasks visible, Review Specialist asks for feedback at the right time, and AI Manager
+              supports new staff without new-hire FAQs.
             </p>
           </div>
         </section>

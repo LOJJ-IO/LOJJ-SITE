@@ -60,20 +60,27 @@ export default function MagePhoneChat({
 
   return (
     <div className={`mage-phone-chat mage-phone-chat--${variant}`}>
-      <header className="mage-phone-header">
-        <div className="mage-phone-header-left">
+      <header className="mage-phone-header mage-phone-header--kit">
+        <div className="mage-phone-header-start">
           <MageGlyph />
+        </div>
+        <div className="mage-phone-header-center">
           <div className="mage-phone-title-stack">
             <span className="mage-phone-title">{title}</span>
             {badge ? <span className="mage-phone-badge">{badge}</span> : null}
           </div>
         </div>
-        <button type="button" className="mage-phone-icon-btn" aria-label="Profile">
-          <ProfileGlyph />
-        </button>
+        <div className="mage-phone-header-end">
+          <button type="button" className="mage-phone-icon-btn" aria-label="Profile">
+            <ProfileGlyph />
+          </button>
+        </div>
       </header>
 
-      <div className="mage-phone-thread" ref={scrollRef}>
+      <div
+        className={`mage-phone-thread${messages.length === 0 ? " mage-phone-thread--idle" : ""}`}
+        ref={scrollRef}
+      >
         {messages.length === 0 ? (
           <p className="mage-phone-empty">Tap a suggested reply below to begin.</p>
         ) : (
@@ -89,7 +96,7 @@ export default function MagePhoneChat({
       </div>
 
       {suggestions.length > 0 ? (
-        <div className="mage-phone-chips" role="group" aria-label="Suggested replies">
+        <div className="mage-phone-chips mage-phone-chips--kit" role="group" aria-label="Suggested replies">
           {suggestions.map((s) => (
             <button key={s.id} type="button" className="mage-phone-chip" onClick={() => onPickSuggestion(s.id)}>
               {s.label}

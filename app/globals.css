@@ -470,6 +470,11 @@
             color: rgba(255, 255, 255, 0.82);
         }
 
+        .landing-section--after-hero {
+            margin-top: clamp(3.5rem, 10vw, 6.5rem);
+            padding-top: clamp(0.75rem, 2vw, 1.5rem);
+        }
+
         .landing-section {
             padding-bottom: 0;
         }
@@ -571,7 +576,8 @@
         .phone-frame {
             position: relative;
             width: min(300px, 78vw);
-            aspect-ratio: 9 / 16;
+            /* ~iPhone portrait (19.5:9 class screens): W:H = 9:19.5 */
+            aspect-ratio: 9 / 19.5;
             background: #000;
             border: 12px solid #1c1c1c;
             border-radius: 48px;
@@ -627,11 +633,41 @@
             flex-shrink: 0;
         }
 
-        .mage-phone-header-left {
+        /* Mage kit: grid app bar — glyph | centered title | profile (matches iOS-style balance) */
+        .mage-phone-header--kit {
+            display: grid;
+            grid-template-columns: 44px 1fr 44px;
+            align-items: center;
+            gap: 0;
+            padding: 14px 8px 11px;
+            justify-content: stretch;
+        }
+
+        .mage-phone-header-start {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .mage-phone-header-center {
+            display: flex;
+            justify-content: center;
             min-width: 0;
+        }
+
+        .mage-phone-header--kit .mage-phone-title-stack {
+            align-items: center;
+            text-align: center;
+        }
+
+        .mage-phone-header-end {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .mage-phone-header-end .mage-phone-icon-btn {
+            padding: 2px;
         }
 
         .mage-phone-logo {
@@ -679,8 +715,12 @@
             background: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
         }
 
+        .mage-phone-thread--idle {
+            justify-content: center;
+        }
+
         .mage-phone-empty {
-            margin: auto 8px;
+            margin: 0 10px;
             text-align: center;
             font-size: 0.78rem;
             color: #737373;
@@ -743,8 +783,9 @@
         .mage-phone-chips {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            padding: 8px 10px 6px;
+            gap: 8px;
+            justify-content: center;
+            padding: 10px 10px 8px;
             background: #f4f4f5;
             border-top: 1px solid #e7e7e7;
             flex-shrink: 0;
@@ -756,10 +797,10 @@
             color: #111;
             font-size: 0.68rem;
             font-weight: 650;
-            padding: 7px 10px;
+            padding: 7px 12px;
             border-radius: 9999px;
             cursor: pointer;
-            text-align: left;
+            text-align: center;
             line-height: 1.25;
         }
 
@@ -770,8 +811,8 @@
         .mage-phone-composer {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 10px 10px;
+            gap: 10px;
+            padding: 10px 12px 12px;
             background: #fff;
             border-top: 1px solid #e5e5e5;
             flex-shrink: 0;
@@ -782,17 +823,32 @@
             border-radius: 9999px;
             background: #f4f4f5;
             border: 1px solid #e5e5e5;
-            padding: 9px 14px;
-            font-size: 0.78rem;
+            padding: 8px 14px;
+            font-size: 0.76rem;
             color: #a3a3a3;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
         }
 
         .mage-phone-composer-icon {
-            color: #525252;
+            color: #444;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+        }
+
+        .mage-phone-composer-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        .mage-phone-header--kit .mage-phone-logo svg {
+            width: 20px;
+            height: 20px;
         }
 
         .mage-phone-header--sub {
@@ -818,7 +874,9 @@
         }
 
         .mage-phone-header-spacer {
-            width: 36px;
+            width: 44px;
+            height: 1px;
+            flex-shrink: 0;
         }
 
         .mage-phone-title-stack--center {
@@ -2674,8 +2732,8 @@
 
         /* Portrait handset; width capped — height follows 9:16 (does not stretch with demo shell) */
         .solution-phone-col .phone-frame {
-            width: min(258px, 72vw);
-            aspect-ratio: 9 / 16;
+            width: min(250px, 70vw);
+            aspect-ratio: 9 / 19.5;
             height: auto;
             flex-shrink: 0;
         }
@@ -3129,6 +3187,25 @@
             width: 100%;
             height: 100vh;
             overflow: hidden;
+        }
+
+        /* Fade scroll video into the same solid green as body / content (see reference layout) */
+        .hero-pin-layer::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: clamp(160px, 36vh, 400px);
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                rgba(108, 135, 100, 0) 0%,
+                rgba(108, 135, 100, 0.22) 30%,
+                rgba(108, 135, 100, 0.65) 68%,
+                #6c8764 100%
+            );
         }
 
         /* Own layer below copy: filter/transform live here so they don’t composite above the tagline. */
