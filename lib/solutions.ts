@@ -64,8 +64,11 @@ export const SOLUTIONS: SolutionDefinition[] = [
     panelNote: "When a stay goes well, Guest Expert flags that moment for Review Specialist.",
     phoneImage: "/teammates/ai-manager.png",
     demo: {
-      title: "Guest chat demo",
-      subtitle: "Use the Mage phone or this pane — same script. Late checkout adds a live row in Ops Lead below.",
+      title: "Guest chat",
+      subtitle:
+        "Use the Mage phone or this pane — the same storyline runs in both places. Late checkout adds a live row in Ops Lead below.",
+      subtitleTooltip:
+        "The desktop pane mirrors the phone. Late checkout surfaces as a live task under Ops Lead.",
       actions: [
         {
           id: "wifi",
@@ -104,8 +107,8 @@ export const SOLUTIONS: SolutionDefinition[] = [
     ],
     panelNote: "Every assignment and status update stays visible across shifts.",
     demo: {
-      title: "Task board demo",
-      subtitle: "Ops preview: scripted Guest Expert follow-ups surface here at the top of the queue.",
+      title: "Task board",
+      subtitle: "Guest Expert follow-ups from the scripted chat surface here at the top of the queue.",
       queue: [
         {
           id: "q1",
@@ -142,13 +145,15 @@ export const SOLUTIONS: SolutionDefinition[] = [
       "Sends review requests with direct links when sentiment is high.",
       "Keeps outreach tasteful, timely, and measurable.",
     ],
-    panelNote: "Mirrors here when Guest Expert sends a review prompt after the guest declines more help (demo).",
+    panelNote:
+      "Guest Expert sends a review prompt after the guest declines more help — the guest inbox and this board stay in sync.",
     phoneImage: "/teammates/review-specialist.png",
     demo: {
-      title: "Review outreach demo",
-      subtitle: "",
+      title: "Review outreach",
+      subtitle:
+        "Request reviews from the outreach board while Guest Expert runs in parallel on the phone.",
       subtitleTooltip:
-        "Guest phone: inbox + Post review (5★ draft). Board mirrors when Guest Expert sends the prompt after \"No, thanks\".",
+        "Guest phone: inbox and Post review (5★ draft). The board mirrors when Guest Expert sends the prompt after \"No, thanks\".",
       guests: [
         { id: "g1", name: "Maya R.", signal: "Resolved checkout request", score: 92 },
         { id: "g2", name: "Daniel K.", signal: "Praised concierge speed", score: 88 },
@@ -169,7 +174,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     ],
     panelNote: "A steady source of answers during rush hours and staffing gaps.",
     demo: {
-      title: "Shift guidance demo",
+      title: "Shift guidance",
       subtitle: "Pick a common new-staff question.",
       topics: [
         {

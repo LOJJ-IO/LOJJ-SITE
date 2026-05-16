@@ -35,6 +35,8 @@ export type ReviewSentDemoEntry = {
   time: string;
   preview: string;
   kind: "staff_request" | "guest_submitted";
+  /** Full submitted review text when kind is guest_submitted */
+  reviewBody?: string;
 };
 
 const nowTime = () =>
@@ -68,10 +70,16 @@ const GUEST_YES_ACK =
   "Happy to help! What else can I look up for you?";
 
 const GUEST_AFTER_NO_THANKS =
-  "You're so welcome. If you have a moment, we'd love a quick review — it really helps the team. I've queued a message on your review phone (guest view) and mirrored the request here for Review Specialist (demo).";
+  "You're so welcome. If you have a moment, we'd love a quick review — it really helps the team. I've sent a note to your guest line and mirrored the request on Review Specialist.";
 
 const REVIEW_GUEST_INBOUND =
-  "Thanks again for staying with us! Tap Post review below to open a pre-filled 5-star draft you can submit (demo only).";
+  "Thanks again for staying with us! Tap Post review below to open a pre-filled 5-star draft when you're ready.";
+
+export function guestReviewDraftBody(guestId: string) {
+  const g = REVIEW_GUESTS_BASE.find((x) => x.id === guestId);
+  const first = g?.name.split(/\s+/)[0] ?? "Guest";
+  return `Wonderful stay — hi from ${first}! The team was friendly, the room was spotless, and check-in was smooth. Five stars all around!`;
+}
 
 const LATE_CHECKOUT_TASK: DemoQueueItem = {
   id: "demo-late-checkout",
@@ -329,7 +337,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
     const guest = REVIEW_GUESTS_BASE.find((g) => g.id === guestId);
     if (!guest) return;
     const fn = firstName(guest.name);
-    const body = `Hi ${fn}, thanks for staying with Riverside. Your visit made a real difference for our team — when you have a moment, we'd love a short public review. Tap Post review below when you're ready (demo only).`;
+    const body = `Hi ${fn}, thanks for staying with Riverside. Your visit made a real difference for our team — when you have a moment, we'd love a short public review. Tap Post review when you're ready.`;
     setReviewStaffRequestGuestId(guestId);
     setReviewGuestMessages([
       {
@@ -391,18 +399,20 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
     setReviewGuests((prev) =>
       prev.map((g) =>
         g.id === gid
-          ? { ...g, signal: "5★ review posted · guest submitted (demo)" }
+          ? { ...g, signal: "5★ review posted · guest submitted" }
           : g,
       ),
     );
+    const submittedText = guestReviewDraftBody(gid);
     setReviewSentDemos((prev) => [
       {
         id: uid(),
         guestId: gid,
         guestName: label,
         time: nowTime(),
-        preview: `${label} submitted a 5★ review draft (demo).`,
+        preview: submittedText.slice(0, 120),
         kind: "guest_submitted",
+        reviewBody: submittedText,
       },
       ...prev,
     ]);

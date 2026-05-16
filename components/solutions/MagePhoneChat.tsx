@@ -68,14 +68,14 @@ export default function MagePhoneChat({
             {badge ? <span className="mage-phone-badge">{badge}</span> : null}
           </div>
         </div>
-        <button type="button" className="mage-phone-icon-btn" aria-label="Profile (demo)">
+        <button type="button" className="mage-phone-icon-btn" aria-label="Profile">
           <ProfileGlyph />
         </button>
       </header>
 
       <div className="mage-phone-thread" ref={scrollRef}>
         {messages.length === 0 ? (
-          <p className="mage-phone-empty">Tap a suggested reply below to start the scripted demo.</p>
+          <p className="mage-phone-empty">Tap a suggested reply below to begin.</p>
         ) : (
           messages.map((m) => (
             <div key={m.id} className={`mage-phone-row mage-phone-row--${m.role}`}>
@@ -99,13 +99,13 @@ export default function MagePhoneChat({
       ) : null}
 
       <div className="mage-phone-composer" aria-hidden>
-        <span className="mage-phone-composer-icon" title="Attach (demo)">
+        <span className="mage-phone-composer-icon" title="Attach">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19A4 4 0 1 1 18 12l-8.69 8.69a2 2 0 0 1-2.83-2.83l8.49-8.49" />
           </svg>
         </span>
         <div className="mage-phone-input-faux">{composerPlaceholder}</div>
-        <span className="mage-phone-composer-icon" title="Voice (demo)">
+        <span className="mage-phone-composer-icon" title="Voice input">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z" />
             <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" />

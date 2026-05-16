@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { DemoChatMessage } from "@/components/solutions/DemoSimulationContext";
-import { useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
+import { guestReviewDraftBody, useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
 import { SOLUTIONS } from "@/lib/solutions";
+
+const reviewDemoGuests = SOLUTIONS.find((s) => s.id === "reviews")?.demo.guests ?? [];
 
 function MageGlyph() {
   return (
@@ -16,14 +18,6 @@ function MageGlyph() {
       <rect x="13" y="13" width="4" height="4" rx="0.5" fill="#fff" />
     </svg>
   );
-}
-
-const guests = SOLUTIONS.find((s) => s.id === "reviews")?.demo.guests ?? [];
-
-function prefillForGuestId(guestId: string) {
-  const g = guests.find((x) => x.id === guestId);
-  const name = g?.name.split(/\s+/)[0] ?? "Guest";
-  return `Wonderful stay — hi from ${name}! The team was friendly, the room was spotless, and check-in was smooth. Five stars all around!`;
 }
 
 export default function ReviewGuestPhone() {
@@ -39,7 +33,7 @@ export default function ReviewGuestPhone() {
   } = useDemoSimulation();
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const draft = useMemo(() => prefillForGuestId(reviewComposeGuestId), [reviewComposeGuestId]);
+  const draft = useMemo(() => guestReviewDraftBody(reviewComposeGuestId), [reviewComposeGuestId]);
   const [taKey, setTaKey] = useState(0);
 
   useEffect(() => {
@@ -53,7 +47,7 @@ export default function ReviewGuestPhone() {
   }, [reviewGuestMessages, reviewGuestScreen]);
 
   const composeGuestLabel = useMemo(() => {
-    const g = guests.find((x) => x.id === reviewComposeGuestId);
+    const g = reviewDemoGuests.find((x) => x.id === reviewComposeGuestId);
     return g?.name ?? "Guest";
   }, [reviewComposeGuestId]);
 
@@ -71,8 +65,8 @@ export default function ReviewGuestPhone() {
         </header>
         <div className="mage-phone-thread">
           <p className="mage-phone-empty">
-            Staff can request a review for any guest from the board (always on). Or run Guest Expert and tap
-            &quot;No&quot; after a topic — the prompt lands here too (demo).
+            Staff can request a review for any guest from the board. Or run Guest Expert and tap &quot;No&quot; after
+            a topic — the prompt lands here too.
           </p>
         </div>
         <div className="mage-phone-composer" aria-hidden>
@@ -112,7 +106,7 @@ export default function ReviewGuestPhone() {
           <span className="mage-phone-header-spacer" aria-hidden />
         </header>
         <div className="review-compose-body">
-          <p className="review-compose-kicker">Google Reviews (simulated)</p>
+          <p className="review-compose-kicker">Google Reviews</p>
           <div className="review-compose-stars" aria-label="5 out of 5 stars">
             {"★★★★★".split("").map((s, i) => (
               <span key={i} className="review-star-on">
@@ -132,7 +126,7 @@ export default function ReviewGuestPhone() {
             readOnly={reviewGuestReviewSubmitted}
           />
           {reviewGuestReviewSubmitted ? (
-            <p className="review-compose-done">Thanks — your review was submitted (demo).</p>
+            <p className="review-compose-done">Thanks — your review was submitted.</p>
           ) : (
             <button type="button" className="review-compose-submit" onClick={reviewGuestSubmitReview}>
               Submit review
@@ -168,7 +162,7 @@ export default function ReviewGuestPhone() {
         </div>
         <div className="mage-phone-chips mage-phone-chips--single">
           {reviewGuestReviewSubmitted ? (
-            <p className="mage-phone-posted-banner">Review submitted (demo)</p>
+            <p className="mage-phone-posted-banner">Review submitted</p>
           ) : (
             <button type="button" className="mage-phone-chip mage-phone-chip-primary" onClick={reviewGuestOpenCompose}>
               Post review
@@ -217,7 +211,7 @@ export default function ReviewGuestPhone() {
       </div>
       <div className="mage-phone-chips mage-phone-chips--single">
         {reviewGuestReviewSubmitted ? (
-          <p className="mage-phone-posted-banner">Review submitted (demo)</p>
+          <p className="mage-phone-posted-banner">Review submitted</p>
         ) : (
           <button type="button" className="mage-phone-chip mage-phone-chip-primary" onClick={reviewGuestOpenCompose}>
             Post review
