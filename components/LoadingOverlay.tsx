@@ -62,8 +62,11 @@ export default function LoadingOverlay({ progress, onComplete }: LoadingOverlayP
         <span className="loading-logo font-romantica">lojj.io</span>
       </div>
 
-      {/* Progress line at center split */}
-      <div className="loading-progress-track" aria-hidden="true">
+      {/* Progress line at center split — hidden as soon as doors open (else it lingers over the hero) */}
+      <div
+        className={`loading-progress-track${doorsOpen ? " loading-progress-track--hidden" : ""}`}
+        aria-hidden="true"
+      >
         <div
           className="loading-progress-bar"
           style={{ transform: `scaleX(${displayProgress / 100})` }}

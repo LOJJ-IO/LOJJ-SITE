@@ -4214,6 +4214,15 @@
             z-index: 1;
             overflow: hidden;
             background: rgba(34, 61, 20, 0.12);
+            transition:
+                opacity 0.25s ease,
+                visibility 0.25s ease;
+        }
+
+        .loading-progress-track--hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
         .loading-progress-bar {
