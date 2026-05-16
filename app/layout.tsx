@@ -47,10 +47,10 @@ export const metadata: Metadata = {
       "Reduce front desk calls with guest FAQ automation and clear task tracking for hotel teams. One platform for requests, housekeeping, and work orders.",
     images: [
       {
-        url: "/concierge-cart.png",
+        url: "/og-hero.jpg",
         width: 1200,
         height: 630,
-        alt: "LOJJ — hotel digital concierge and task management",
+        alt: "LOJJ — Your best, every time.",
       },
     ],
   },
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "LOJJ — AI operations platform for hotels",
     description:
       "Reduce front desk calls with guest FAQ automation and task tracking for hotel teams.",
-    images: ["/concierge-cart.png"],
+    images: ["/og-hero.jpg"],
   },
   robots: {
     index: true,
