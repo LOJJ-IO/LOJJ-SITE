@@ -9,6 +9,13 @@ const PLATFORM_IMAGES: Record<Exclude<PlatformId, "google">, string> = {
   booking: "/review-platforms/booking.png",
 };
 
+const PLATFORM_ALT: Record<Exclude<PlatformId, "google">, string> = {
+  tripadvisor: "TripAdvisor",
+  hotels: "Hotels.com",
+  expedia: "Expedia",
+  booking: "Booking.com",
+};
+
 export function ReviewPlatformIcon({
   platform,
   size = 28,
@@ -42,7 +49,7 @@ export function ReviewPlatformIcon({
   return (
     <Image
       src={PLATFORM_IMAGES[platform]}
-      alt=""
+      alt={PLATFORM_ALT[platform]}
       width={size}
       height={size}
       className="review-platform-img"

@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-const TOTAL_FRAMES = 214;
+import { HERO_TOTAL_FRAMES } from "@/lib/hero-scroll";
+
+const TOTAL_FRAMES = HERO_TOTAL_FRAMES;
 const MAX_DPR = 2;
 
 function frameSrc(index: number): string {
@@ -31,7 +33,7 @@ function drawCover(
 interface ScrollCanvasProps {
   progressRef: React.RefObject<number>;
   ready: boolean;
-  onLoadProgress: (pct: number) => void;
+  onLoadProgress?: (pct: number) => void;
 }
 
 export default function ScrollCanvas({
@@ -116,12 +118,12 @@ export default function ScrollCanvas({
       img.onload = () => {
         frames[mid] = img;
         allLoadedRef.current = true;
-        onLoadProgressRef.current(100);
+        onLoadProgressRef.current?.(100);
         drawFrame(mid);
       };
       img.onerror = () => {
         allLoadedRef.current = true;
-        onLoadProgressRef.current(100);
+        onLoadProgressRef.current?.(100);
       };
       img.src = frameSrc(mid);
       return;
@@ -138,7 +140,7 @@ export default function ScrollCanvas({
         frames[index] = img;
         loadedCountRef.current += 1;
         const pct = Math.round((loadedCountRef.current / TOTAL_FRAMES) * 100);
-        onLoadProgressRef.current(pct);
+        onLoadProgressRef.current?.(pct);
         if (loadedCountRef.current === TOTAL_FRAMES) {
           allLoadedRef.current = true;
         }
@@ -148,7 +150,7 @@ export default function ScrollCanvas({
         // Count failures too so progress still reaches 100
         loadedCountRef.current += 1;
         const pct = Math.round((loadedCountRef.current / TOTAL_FRAMES) * 100);
-        onLoadProgressRef.current(pct);
+        onLoadProgressRef.current?.(pct);
         if (loadedCountRef.current === TOTAL_FRAMES) {
           allLoadedRef.current = true;
         }

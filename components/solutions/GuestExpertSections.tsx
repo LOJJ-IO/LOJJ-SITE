@@ -2,7 +2,7 @@
 
 import DemoWindowChrome from "@/components/solutions/DemoWindowChrome";
 import { useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
-import GuestFolkPhone from "@/components/solutions/GuestFolkPhone";
+import GuestPhone from "@/components/solutions/GuestPhone";
 import GuestInboxDesktopDemo from "@/components/solutions/GuestInboxDesktopDemo";
 import { Highlighter } from "@/components/ui/highlighter";
 import type { SolutionDefinition } from "@/lib/solutions";
@@ -25,20 +25,20 @@ export default function GuestExpertSections({ solution }: GuestExpertSectionsPro
       <article id={solution.anchor} className="solution-panel guest-expert-section">
         <div className="guest-say-hi-grid">
           <div className="guest-say-hi-phone">
-            <GuestFolkPhone
+            <GuestPhone
               messages={phoneMessages}
               suggestions={demo.guestSuggestions}
               onPickSuggestion={demo.guestPickSuggestion}
             />
           </div>
           <div className="guest-say-hi-copy">
-            <h2 className="guest-say-hi-title">
+            <h1 className="guest-say-hi-title">
               Say{" "}
               <Highlighter action="underline" color="rgb(34, 61, 20)" strokeWidth={2} isView>
                 hello
               </Highlighter>{" "}
               to LOJJ
-            </h2>
+            </h1>
             {solution.lead ? (
               <p className="landing-p solution-summary guest-say-hi-lead">{solution.lead}</p>
             ) : null}

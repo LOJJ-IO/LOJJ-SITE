@@ -2323,7 +2323,7 @@
         }
 
         /* Opacity-only entrance: transform here would create a containing block for
-           position:fixed (ScrollTrigger pin) inside the hallway and cause scroll jitter. */
+           position:fixed (ScrollTrigger pin) and cause scroll jitter. */
         .visualization-section {
             opacity: 0;
             animation: viz-section-enter 1s cubic-bezier(0.4, 0, 0.2, 1) 1.4s forwards;
@@ -4304,6 +4304,25 @@
             width: 100%;
             height: 100vh;
             overflow: hidden;
+            --hero-wash: 1;
+        }
+
+        /* Top wash: lifts navbar contrast; fades with --hero-wash on scroll */
+        .hero-pin-layer::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: clamp(100px, 20vh, 180px);
+            z-index: 1;
+            pointer-events: none;
+            background: linear-gradient(
+                to bottom,
+                rgba(235, 238, 227, calc(0.52 * var(--hero-wash))) 0%,
+                rgba(235, 238, 227, calc(0.18 * var(--hero-wash))) 55%,
+                transparent 100%
+            );
         }
 
         /* Fade scroll video into the same cream as body / content */
@@ -4325,25 +4344,59 @@
             );
         }
 
-        /* Own layer below copy: filter/transform live here so they don’t composite above the tagline. */
-        .hero-canvas-shell {
+        .hero-media-stack {
             position: absolute;
             inset: 0;
             z-index: 0;
+        }
+
+        /* Blurred base layer; sharp duplicate lives inside the lens. */
+        .hero-canvas-shell {
+            position: absolute;
+            inset: 0;
             overflow: hidden;
-            filter: blur(4px);
             transform: scale(1.01);
             transform-origin: center center;
+        }
+
+        .hero-canvas-shell--blurred {
+            z-index: 0;
+            filter: blur(4px);
+        }
+
+        .hero-canvas-shell--sharp {
+            z-index: 0;
+            filter: none;
+        }
+
+        .hero-lens-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hero-lens.hero-lens {
+            border-radius: 0;
+            pointer-events: auto;
+        }
+
+        /* Only the magnified lens circle stays sharp; hide the duplicate base layer. */
+        .hero-lens > .hero-canvas-shell--sharp {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .hero-tagline-stack {
             position: absolute;
             inset: 0;
             z-index: 2;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: minmax(0, 1fr) auto;
+            grid-template-columns: minmax(0, 1fr);
             align-items: center;
-            justify-content: center;
+            justify-items: center;
             gap: clamp(1.25rem, 4vw, 2.25rem);
             margin: 0;
             padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 2.5rem)
@@ -4351,6 +4404,33 @@
             box-sizing: border-box;
             pointer-events: none;
             text-align: center;
+        }
+
+        .hero-tagline-block {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .hero-tagline-block--visibility {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hero-tagline-cta {
+            grid-column: 1;
+            grid-row: 2;
+            pointer-events: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-tagline-every {
+            font-style: italic;
         }
 
         .hero-tagline-text {
@@ -4367,12 +4447,6 @@
                 0 0.06em 0.12em rgba(0, 0, 0, 0.55),
                 0 0.12em 0.45em rgba(0, 0, 0, 0.42),
                 0 0 1.25em rgba(0, 0, 0, 0.35);
-        }
-
-        .hero-tagline-cta {
-            pointer-events: auto;
-            display: flex;
-            justify-content: center;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -5491,8 +5565,8 @@
             background: rgba(0, 0, 0, 0.06);
         }
 
-        /* Folk-style guest phone — getfolk.app dimensions (360×490/1000, inner 430×935 @ 0.750802) */
-        .folk-phone-stage {
+        /* Guest phone mock — 360×490/1000 shell, inner 430×935 @ 0.750802 */
+        .guest-phone-stage {
             position: relative;
             width: 360px;
             max-width: min(360px, 94vw);
@@ -5503,14 +5577,14 @@
             isolation: isolate;
         }
 
-        .folk-phone-device {
+        .guest-phone-device {
             position: relative;
             width: 100%;
             aspect-ratio: 490 / 1000;
             isolation: isolate;
         }
 
-        .folk-phone-screen-clip {
+        .guest-phone-screen-clip {
             position: absolute;
             inset: 2.2% 5.102%;
             z-index: 1;
@@ -5742,7 +5816,7 @@
             );
         }
 
-        .folk-phone-screen-inner {
+        .guest-phone-screen-inner {
             position: absolute;
             left: 0;
             top: 0;
@@ -5750,7 +5824,7 @@
             z-index: 1;
         }
 
-        .folk-phone-ui {
+        .guest-phone-ui {
             position: relative;
             display: flex;
             flex-direction: column;
@@ -5760,7 +5834,7 @@
             user-select: none;
         }
 
-        .folk-phone-bezel {
+        .guest-phone-bezel {
             position: absolute;
             inset: 0;
             z-index: 50;
@@ -5873,12 +5947,12 @@
             outline-offset: 2px;
         }
 
-        .folk-phone-ui .mage-phone-profile-scrim,
-        .folk-phone-ui .mage-phone-profile-sheet {
+        .guest-phone-ui .mage-phone-profile-scrim,
+        .guest-phone-ui .mage-phone-profile-sheet {
             z-index: 120;
         }
 
-        .folk-phone-halo {
+        .guest-phone-halo {
             position: absolute;
             top: -14%;
             right: -28%;
@@ -5896,7 +5970,7 @@
             );
         }
 
-        .folk-thread {
+        .guest-phone-thread {
             flex: 1;
             min-height: 0;
             overflow-y: auto;
@@ -5915,12 +5989,12 @@
             scrollbar-width: none;
         }
 
-        .folk-thread--empty {
+        .guest-phone-thread--empty {
             justify-content: flex-end;
             padding-bottom: 20px;
         }
 
-        .folk-thread-empty {
+        .guest-phone-thread-empty {
             margin: 0;
             max-width: 22ch;
             font-size: 15px;
@@ -5931,24 +6005,24 @@
             align-self: center;
         }
 
-        .folk-thread::-webkit-scrollbar {
+        .guest-phone-thread::-webkit-scrollbar {
             display: none;
         }
 
-        .folk-row {
+        .guest-phone-row {
             display: flex;
             width: 100%;
         }
 
-        .folk-row--in {
+        .guest-phone-row--in {
             justify-content: flex-start;
         }
 
-        .folk-row--out {
+        .guest-phone-row--out {
             justify-content: flex-end;
         }
 
-        .folk-bubble {
+        .guest-phone-bubble {
             position: relative;
             max-width: 72%;
             min-height: 37px;
@@ -5961,38 +6035,38 @@
             border-radius: 20px;
         }
 
-        .folk-bubble--in {
+        .guest-phone-bubble--in {
             background: rgba(120, 120, 128, 0.16);
             color: #0f0f0f;
         }
 
-        .folk-bubble--out {
+        .guest-phone-bubble--out {
             background: #1a1a1a;
             color: #fff;
         }
 
-        .folk-bubble--staff {
+        .guest-phone-bubble--staff {
             background: #ecfdf5;
             color: #065f46;
             border: 1px solid rgba(16, 185, 129, 0.32);
             box-shadow: 0 1px 2px rgba(16, 185, 129, 0.12);
         }
 
-        .folk-row--staff .folk-bubble-tail {
+        .guest-phone-row--staff .guest-phone-bubble-tail {
             display: none;
         }
 
-        .folk-bubble-tail {
+        .guest-phone-bubble-tail {
             position: absolute;
             bottom: -7px;
             left: 6px;
         }
 
-        .folk-bubble--out .folk-bubble-tail {
+        .guest-phone-bubble--out .guest-phone-bubble-tail {
             display: none;
         }
 
-        .folk-chips {
+        .guest-phone-chips {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
@@ -6002,7 +6076,7 @@
             z-index: 20;
         }
 
-        .folk-chip {
+        .guest-phone-chip {
             border: 1px solid rgba(0, 0, 0, 0.1);
             background: #fff;
             color: #0f0f0f;
@@ -6015,12 +6089,12 @@
             transition: background 140ms ease, transform 140ms ease;
         }
 
-        .folk-chip:hover {
+        .guest-phone-chip:hover {
             background: #f7f7f7;
             transform: translateY(-1px);
         }
 
-        .folk-composer {
+        .guest-phone-composer {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -6031,7 +6105,7 @@
             margin-top: auto;
         }
 
-        .folk-composer-plus {
+        .guest-phone-composer-plus {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -6042,11 +6116,11 @@
             flex-shrink: 0;
         }
 
-        .folk-composer-plus svg {
+        .guest-phone-composer-plus svg {
             display: block;
         }
 
-        .folk-composer-field {
+        .guest-phone-composer-field {
             flex: 1;
             height: 40px;
             border-radius: 999px;
@@ -6057,18 +6131,18 @@
             padding: 0 16px;
         }
 
-        .folk-composer-mic {
+        .guest-phone-composer-mic {
             flex-shrink: 0;
             display: flex;
             align-items: center;
         }
 
-        .folk-chips,
-        .folk-chip {
+        .guest-phone-chips,
+        .guest-phone-chip {
             pointer-events: auto;
         }
 
-        .folk-phone-ui {
+        .guest-phone-ui {
             pointer-events: auto;
         }
 

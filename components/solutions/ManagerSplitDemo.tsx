@@ -83,7 +83,7 @@ export default function ManagerSplitDemo({ topics }: ManagerSplitDemoProps) {
           <header className="demo-helpdesk-topbar">
             <div className="demo-helpdesk-brand">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/lojj-review-hub.png" alt="" className="demo-helpdesk-brand-mark" />
+              <img src="/lojj-review-hub.png" alt="LOJJ" className="demo-helpdesk-brand-mark" />
               <span className="demo-helpdesk-brand-name">LOJJ</span>
             </div>
             <span className="demo-helpdesk-property-pill">Riverside Hotel · Staff docs</span>

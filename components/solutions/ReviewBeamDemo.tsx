@@ -215,7 +215,7 @@ export default function ReviewBeamDemo() {
               <span className="review-beam-lojj-glow">
                 <span className="review-beam-lojj-icon">
                   {/* eslint-disable-next-line @next/next/no-img-element -- hub brand mark fills circle */}
-                  <img src="/lojj-review-hub.png" alt="" className="review-beam-lojj-img" />
+                  <img src="/lojj-review-hub.png" alt="LOJJ" className="review-beam-lojj-img" />
                 </span>
               </span>
             </BeamTooltip>

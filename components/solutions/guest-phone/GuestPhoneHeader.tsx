@@ -1,6 +1,6 @@
 "use client";
 
-type FolkIMessageHeaderProps = {
+type GuestPhoneHeaderProps = {
   onOpenProfile: () => void;
 };
 
@@ -45,7 +45,7 @@ function ProfileGlyph() {
 }
 
 /** LOJJ guest-app top bar — back + brand + profile */
-export default function FolkIMessageHeader({ onOpenProfile }: FolkIMessageHeaderProps) {
+export default function GuestPhoneHeader({ onOpenProfile }: GuestPhoneHeaderProps) {
   return (
     <header className="lojj-phone-topbar">
       <button type="button" className="lojj-phone-topbar-back" aria-label="Back">
@@ -55,7 +55,7 @@ export default function FolkIMessageHeader({ onOpenProfile }: FolkIMessageHeader
       <div className="lojj-phone-topbar-brand" aria-hidden>
         <span className="lojj-phone-topbar-logo-wrap">
           {/* eslint-disable-next-line @next/next/no-img-element -- brand mark in mock UI */}
-          <img src="/lojj-review-hub.png" alt="" className="lojj-phone-topbar-logo" width={44} height={44} />
+          <img src="/lojj-review-hub.png" alt="LOJJ" className="lojj-phone-topbar-logo" width={44} height={44} />
         </span>
         <span className="lojj-phone-topbar-pill">
           <span className="lojj-phone-topbar-pill-text">LOJJ</span>

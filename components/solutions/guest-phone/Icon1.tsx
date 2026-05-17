@@ -1,13 +1,13 @@
 import type { SVGProps } from "react";
 
-/** Folk dynamic-island status strip (getfolk.app) */
+/** Dynamic-island status strip for guest phone mock */
 export function Icon1(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 422 139"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="folk-icon1"
+      className="guest-phone-icon1"
       aria-hidden
       {...props}
     >
@@ -16,11 +16,11 @@ export function Icon1(props: SVGProps<SVGSVGElement>) {
         fill="#fff"
       />
       <g opacity="0.67">
-        <mask id="folk_mask_island" maskUnits="userSpaceOnUse" x="-50" y="-50" width="219" height="196">
+        <mask id="guest_phone_mask_island" maskUnits="userSpaceOnUse" x="-50" y="-50" width="219" height="196">
           <rect width="219" height="196" transform="translate(-50 -50)" fill="#fff" />
           <rect x="26" y="26" width="67" height="44" rx="22" fill="#000" />
         </mask>
-        <g mask="url(#folk_mask_island)" />
+        <g mask="url(#guest_phone_mask_island)" />
       </g>
     </svg>
   );
