@@ -37,3 +37,5 @@ yarn-error.log*
 
 # cursor
 .cursor/debug.log
+
+.vercel

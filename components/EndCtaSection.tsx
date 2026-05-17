@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, type Variants } from "motion/react";
 import { useRef } from "react";
 
 import { WaitlistDialogTrigger } from "@/components/WaitlistDialog";
@@ -10,7 +10,7 @@ function LojjFaceMark() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-12%" });
 
-  const eye = {
+  const eye: Variants = {
     hidden: { opacity: 0, y: 28, scale: 0.92 },
     visible: {
       opacity: 1,
@@ -20,7 +20,7 @@ function LojjFaceMark() {
     },
   };
 
-  const mouth = {
+  const mouth: Variants = {
     hidden: { opacity: 0, scale: 0.6 },
     visible: {
       opacity: 1,
