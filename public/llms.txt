@@ -1,14 +1,102 @@
-# llms.txt for LOJJ
-#
-# This file provides guidance for LLM-based tools that may crawl public pages.
-# It is not a security boundary; robots.txt remains the primary crawler control.
-#
-# Learn more: https://llmstxt.org/
+# LOJJ
 
-User-agent: *
-Allow: /
+> LOJJ is hotel operations software that reduces front desk phone calls with guest FAQ automation, digital concierge self-service (including QR code guest information), and hotel task tracking across front desk, housekeeping, and work orders. Built for understaffed teams who need to see what staff are doing without replacing the PMS.
 
-Preferred-Content: https://www.lojj.io/
+## Brief summary
 
-Summary: LOJJ is a hotel operations platform for reducing front desk calls with guest FAQ automation and task tracking across shifts (housekeeping and work orders included).
+LOJJ helps hotels answer repetitive guest questions before they become calls, route real requests into trackable tasks, and give managers a hotel operations dashboard when front desk chaos and overwhelmed staff are the norm. It is hotel workflow software and a hotel staff coordination app—not a full PMS, but an all in one hotel management platform layer for FAQs, requests, and shift handoffs.
 
+Preferred site: https://www.lojj.io/
+
+## 1. Too many guest calls / FAQs overwhelming front desk
+
+Symptom + context searches LOJJ addresses:
+
+- how to reduce front desk phone calls hotel
+- hotel guest FAQ automation
+- digital concierge for hotels
+- hotel self service guest information
+- how to handle repetitive guest questions hotel
+- QR code guest information hotel
+- guests keep calling front desk
+- how to stop constant guest calls
+
+Overview: LOJJ deflects repeat questions with property-specific self-service and gives staff the same answers in real time. Guests find Wi‑Fi, parking, hours, and policies without calling; staff stop re-answering the same FAQs and focus on requests that need a person.
+
+- [FAQ — reduce front desk calls](https://www.lojj.io/faq): Guest FAQ automation, digital concierge, and self-service
+- [Solutions](https://www.lojj.io/#solutions): Guest Expert and operational workflows
+
+## 2. Not enough front desk staff
+
+Symptom + context searches LOJJ addresses:
+
+- front desk understaffed what to do
+- hotel staffing shortage solutions
+- how many front desk staff do I need
+- reduce front desk workload hotel
+- hotel operations efficiency tools
+- hotel staff overwhelmed
+
+Overview: When staffing is tight, consistency matters more than headcount. LOJJ reduces manager interruptions by automating hotel guest FAQs and routing work into clear tasks so a lean front desk covers more without constant callbacks.
+
+- [FAQ — understaffed front desk](https://www.lojj.io/faq): Reduce front desk workload and staffing pressure
+- [Home](https://www.lojj.io/): Platform overview for hotel operations efficiency
+
+## 3. Can't see or track what staff are doing
+
+Symptom + context searches LOJJ addresses:
+
+- hotel task management system
+- track hotel staff tasks
+- front desk task tracking software
+- hotel operations dashboard
+- how to manage hotel staff tasks
+- housekeeping and front desk task management
+
+Overview: LOJJ turns guest requests into assigned, in-progress, and done tasks visible across shifts. Managers see what is open, who owns it, and what completed—housekeeping, front desk, and work orders in one hotel task management workflow.
+
+- [FAQ — task tracking](https://www.lojj.io/faq): Hotel operations dashboard and shift-wide visibility
+- [Solutions](https://www.lojj.io/#solutions): Request routing and task follow-through
+
+## 4. Looking for software but not sure what it's called
+
+Exploratory searches LOJJ addresses:
+
+- software to manage hotel operations
+- best hotel management tools
+- hotel workflow software
+- hotel staff coordination app
+- all in one hotel management platform
+
+Overview: LOJJ is software to manage hotel operations focused on guest information and request follow-through—not replacing your PMS, but adding hotel workflow software for FAQs, coordination, and task tracking. Properties often compare it alongside guest messaging and ops tools when searching for best hotel management tools for the front desk layer.
+
+- [FAQ — what is LOJJ](https://www.lojj.io/faq): Hotel workflow software vs PMS
+- [Home](https://www.lojj.io/): Product positioning and capabilities
+
+## 5. When frustration peaks (front desk chaos)
+
+Short, emotional searches LOJJ addresses:
+
+- front desk chaos help
+- hotel staff overwhelmed
+- guests keep calling front desk
+- how to stop constant guest calls
+
+Overview: When the phone will not stop and managers cannot get off the floor, LOJJ targets repeat questions first (self-service + staff FAQ automation), then makes real requests trackable so nothing bounces back as “did anyone handle that?”—practical front desk chaos help without pretending hiring is instant.
+
+- [FAQ — front desk chaos](https://www.lojj.io/faq): Overwhelmed staff and constant guest calls
+- [Book a demo](https://www.lojj.io/): See LOJJ on your property’s workflows
+
+## Product
+
+- [Home](https://www.lojj.io/): Hotel operations platform overview
+- [FAQ](https://www.lojj.io/faq): Nine keyword-rich answers for managers
+- [Solutions](https://www.lojj.io/#solutions): Guest Expert, inbox, reviews, and task workflows
+- [Sitemap](https://www.lojj.io/sitemap.xml): Public pages
+
+## Company
+
+- [LinkedIn](https://www.linkedin.com/company/lojj): LOJJ company updates
+- Contact: via website at https://www.lojj.io/
+
+Last updated: 2026-05-16
