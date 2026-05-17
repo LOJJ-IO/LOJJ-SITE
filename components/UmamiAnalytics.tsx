@@ -11,10 +11,9 @@ export default function UmamiAnalytics() {
 
   return (
     <Script
-      defer
       src={UMAMI_SCRIPT_URL}
       data-website-id={UMAMI_WEBSITE_ID}
-      strategy="defer"
+      strategy="afterInteractive"
     />
   );
 }

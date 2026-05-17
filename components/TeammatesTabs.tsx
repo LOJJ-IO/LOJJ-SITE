@@ -30,9 +30,21 @@ const TEAMMATES = [
     image: "/teammates/ops-lead.png",
   },
   {
+    id: "manager",
+    label: "Help Desk",
+    kicker: "Teammate 3",
+    heading: "Help Desk",
+    bullets: [
+      "Build hotel documentation your team can read",
+      "Same articles train LOJJ’s AI for staff and guests",
+      "Ask the side-panel assistant instead of chasing a manager",
+    ],
+    image: "/teammates/ai-manager.png",
+  },
+  {
     id: "reviews",
     label: "Review Specialist",
-    kicker: "Teammate 3",
+    kicker: "Teammate 4",
     heading: "Review Specialist",
     bullets: [
       "Flags happy guests as feedback comes in",
@@ -40,18 +52,6 @@ const TEAMMATES = [
       "More reviews that help your rankings and revenue grow",
     ],
     image: "/teammates/review-specialist.png",
-  },
-  {
-    id: "manager",
-    label: "AI Manager",
-    kicker: "Teammate 4",
-    heading: "AI Manager",
-    bullets: [
-      "Quick answers for new-staff questions",
-      "A helpful assistant for front deskers during busy moments",
-      "Same answers every shift, without chasing a manager",
-    ],
-    image: "/teammates/ai-manager.png",
   },
 ] as const;
 

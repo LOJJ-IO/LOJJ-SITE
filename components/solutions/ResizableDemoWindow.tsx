@@ -19,15 +19,18 @@ type DragSession = {
 type ResizableDemoWindowProps = {
   className?: string;
   children: React.ReactNode;
+  /** Keep width synced to the parent shell (e.g. guest inbox grid column). */
+  fillWidth?: boolean;
 };
 
 /**
- * Desktop preview shell: drag edges to resize. Width is capped to the demo column.
- * Height follows content by default; south / south-east drags set an explicit height.
+ * Desktop preview shell: drag edges to resize. Default size comes from the parent
+ * shell’s fixed CSS height; only pointer drags change dimensions.
  */
 export default function ResizableDemoWindow({
   className,
   children,
+  fillWidth = false,
 }: ResizableDemoWindowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const sessionRef = useRef<DragSession | null>(null);
@@ -35,9 +38,13 @@ export default function ResizableDemoWindow({
   const [heightPx, setHeightPx] = useState<number | null>(null);
   const [dragging, setDragging] = useState<Edge | null>(null);
 
-  const maxWidth = useCallback(() => {
+  const shellWidth = useCallback(() => {
     const el = rootRef.current;
     if (!el) return 2000;
+    const shell = el.parentElement;
+    if (shell instanceof HTMLElement) {
+      return shell.getBoundingClientRect().width;
+    }
     const col = el.closest(".solution-demo-col");
     if (col instanceof HTMLElement) {
       return col.getBoundingClientRect().width;
@@ -45,11 +52,29 @@ export default function ResizableDemoWindow({
     return el.parentElement?.getBoundingClientRect().width ?? 2000;
   }, []);
 
+  useEffect(() => {
+    if (!fillWidth) return;
+    const shell = rootRef.current?.parentElement;
+    if (!shell) return;
+
+    const clampToShell = () => {
+      setWidthPx((w) => {
+        if (w == null) return null;
+        const maxW = shell.getBoundingClientRect().width;
+        return Math.min(w, maxW);
+      });
+    };
+
+    const ro = new ResizeObserver(clampToShell);
+    ro.observe(shell);
+    return () => ro.disconnect();
+  }, [fillWidth]);
+
   const applyResize = useCallback(
     (e: PointerEvent) => {
       const s = sessionRef.current;
       if (!s) return;
-      const maxW = maxWidth();
+      const maxW = shellWidth();
       const dx = e.clientX - s.startX;
       const dy = e.clientY - s.startY;
 
@@ -72,7 +97,7 @@ export default function ResizableDemoWindow({
         setHeightPx(h);
       }
     },
-    [maxWidth],
+    [shellWidth],
   );
 
   useEffect(() => {
@@ -94,6 +119,7 @@ export default function ResizableDemoWindow({
 
   const onPointerDown = useCallback(
     (edge: Edge) => (e: React.PointerEvent) => {
+      if (fillWidth && (edge === "e" || edge === "se")) return;
       e.preventDefault();
       e.stopPropagation();
       const el = rootRef.current;
@@ -109,7 +135,7 @@ export default function ResizableDemoWindow({
       setDragging(edge);
       (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
     },
-    [],
+    [fillWidth],
   );
 
   const onDoubleClick = useCallback((e: React.MouseEvent) => {
@@ -118,44 +144,60 @@ export default function ResizableDemoWindow({
     setHeightPx(null);
   }, []);
 
+  const useExplicitWidth = !fillWidth && widthPx != null;
+  const useExplicitHeight = heightPx != null;
+
   return (
     <div
       ref={rootRef}
       className={className}
       style={{
-        width: widthPx != null ? `${Math.round(widthPx)}px` : "100%",
+        width: useExplicitWidth ? `${Math.round(widthPx)}px` : "100%",
         maxWidth: "100%",
         minWidth: 0,
-        height: heightPx != null ? `${Math.round(heightPx)}px` : "auto",
+        ...(useExplicitHeight
+          ? {
+              height: `${Math.round(heightPx)}px`,
+              maxHeight: `${Math.round(heightPx)}px`,
+            }
+          : {}),
         minHeight: 0,
-        overflow: heightPx != null ? "auto" : undefined,
-        marginInline: widthPx != null ? "auto" : undefined,
+        overflow: "hidden",
+        marginInline: useExplicitWidth ? "auto" : undefined,
         position: "relative",
         touchAction: dragging ? "none" : undefined,
         boxSizing: "border-box",
       }}
       onDoubleClick={onDoubleClick}
-      title="Drag edges to resize. Double-click to reset size."
+      title={
+        fillWidth
+          ? "Drag the bottom edge to resize height. Double-click to reset."
+          : "Drag edges to resize. Double-click to reset size."
+      }
     >
       {children}
-      <div
-        className="demo-resize-handle demo-resize-handle--e"
-        role="presentation"
-        aria-hidden
-        onPointerDown={onPointerDown("e")}
-      />
+      {!fillWidth ? (
+        <div
+          className="demo-resize-handle demo-resize-handle--e"
+          role="presentation"
+          aria-hidden
+          onPointerDown={onPointerDown("e")}
+        />
+      ) : null}
       <div
         className="demo-resize-handle demo-resize-handle--s"
         role="presentation"
         aria-hidden
         onPointerDown={onPointerDown("s")}
       />
-      <div
-        className="demo-resize-handle demo-resize-handle--se"
-        role="presentation"
-        aria-hidden
-        onPointerDown={onPointerDown("se")}
-      />
+      {!fillWidth ? (
+        <div
+          className="demo-resize-handle demo-resize-handle--se"
+          role="presentation"
+          aria-hidden
+          onPointerDown={onPointerDown("se")}
+        />
+      ) : null}
     </div>
   );
 }

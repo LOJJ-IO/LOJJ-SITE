@@ -1,6 +1,7 @@
 import HeroSection from "@/components/HeroSection";
 import Navbar from "@/components/Navbar";
-import ShaderBackground from "@/components/ShaderBackground";
+import EndCtaSection from "@/components/EndCtaSection";
+import { FooterWaitlistCta } from "@/components/WaitlistDialog";
 import SolutionsShowcase from "@/components/solutions/SolutionsShowcase";
 
 interface LandingMarkupProps {
@@ -16,106 +17,15 @@ export default function LandingMarkup({ doorsOpen, onLoadProgress }: LandingMark
       <main className="landing-main w-full">
         <HeroSection ready={doorsOpen} onLoadProgress={onLoadProgress} />
 
-        <section id="about" className="landing-section landing-section--after-hero w-full flex justify-center">
-          <div className="w-[95%] max-w-7xl">
-            <div className="section-heading-stack">
-              <h2 className="landing-h2">How it Works</h2>
-            </div>
-            <p className="landing-sub">LOJJ runs as connected specialist tools:</p>
-            <ul className="feature-list">
-              <li>
-                <strong>Guest Expert</strong> handles routine questions.
-              </li>
-              <li>
-                <strong>Ops Lead</strong> keeps tasks visible.
-              </li>
-              <li>
-                <strong>Review Specialist</strong> asks for feedback at the right time.
-              </li>
-              <li>
-                <strong>AI Manager</strong> supports new staff without new-hire FAQs.
-              </li>
-            </ul>
-          </div>
-        </section>
-
         <SolutionsShowcase />
 
-        <section className="landing-section w-full flex justify-center mt-20 md:mt-28">
-          <div className="w-[95%] max-w-7xl">
-            <div className="landing-card win-card mt-8">
-              <div className="feature-kicker">The outcome</div>
-              <h2 className="landing-h2">The win</h2>
-              <h3 className="landing-h3 win-subhead">Uninterrupted breaks</h3>
-              <p className="landing-p win-copy">
-                LOJJ gives staff guidance. Managers step in only when they are needed. Operations run
-                smoother, guests get steadier service, and that shows up in better reviews and more
-                revenue.
-              </p>
-            </div>
-          </div>
-        </section>
-
+        <EndCtaSection />
       </main>
 
-      <footer id="waitlist" className="site-footer">
-        <ShaderBackground />
+      <footer id="waitlist" className="site-footer site-footer--sage">
         <div className="footer-inner">
           <div className="footer-top">
-            <div className="footer-cta">
-              <h2>Get Early<br />Access</h2>
-
-              <form
-                id="footer-signup"
-                className="flex flex-col gap-0 relative"
-                method="post"
-                action="/api/waitlist"
-                noValidate
-              >
-                <div className="newsletter-form">
-                  <input type="text" name="fullName" className="newsletter-input" placeholder="Full Name" required />
-                  <button className="newsletter-btn" type="submit">OK</button>
-                  <div className="form-tooltip">Please enter your full name</div>
-                </div>
-                <div className="newsletter-form">
-                  <input type="email" name="email" className="newsletter-input" placeholder="Email" required />
-                  <div className="form-tooltip">Please enter a valid email</div>
-                </div>
-                <div className="newsletter-form">
-                  <input type="text" name="hotel" className="newsletter-input" placeholder="Hotel Name" required />
-                  <div className="form-tooltip">Please enter your hotel name</div>
-                </div>
-                <div className="newsletter-form">
-                  <input type="text" name="role" className="newsletter-input" placeholder="Role" required />
-                  <div className="form-tooltip">Please enter your role</div>
-                </div>
-                <div className="newsletter-form">
-                  <input type="text" name="location" className="newsletter-input" placeholder="Location" required />
-                  <div className="form-tooltip">Please enter your location</div>
-                </div>
-              </form>
-            </div>
-
-            <div className="footer-links">
-              <div className="link-column">
-                <div className="link-column-heading">About</div>
-                <a href="https://www.lojj.io/">Website</a>
-                <a href="#about">Overview</a>
-                <a href="#waitlist">Early access</a>
-                <a href="/faq">FAQ</a>
-              </div>
-              <div className="link-column">
-                <div className="link-column-heading">Features</div>
-                <a href="#features">Teammates</a>
-                <a href="#waitlist">Waitlist</a>
-              </div>
-              <div className="link-column">
-                <div className="link-column-heading">Social</div>
-                <a href="https://www.linkedin.com/company/lojj" target="_blank" rel="noreferrer">
-                  LinkedIn
-                </a>
-              </div>
-            </div>
+            <FooterWaitlistCta />
           </div>
 
           <div className="footer-bottom">

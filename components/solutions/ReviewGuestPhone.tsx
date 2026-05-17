@@ -68,8 +68,7 @@ export default function ReviewGuestPhone() {
         </header>
         <div className="mage-phone-thread">
           <p className="mage-phone-empty">
-            Staff can request a review for any guest from the board. Or run Guest Expert and tap &quot;No&quot; after
-            a topic — the prompt lands here too.
+            {SOLUTIONS.find((s) => s.id === "reviews")?.summary}
           </p>
         </div>
         <div className="mage-phone-composer" aria-hidden>

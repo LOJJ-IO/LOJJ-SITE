@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import HeroWaitlistDialog from "./HeroWaitlistDialog";
+import { WaitlistDialogTrigger } from "./WaitlistDialog";
 import ScrollCanvas from "./ScrollCanvas";
 
 type PinPhase = "before" | "pinned" | "after";
@@ -96,9 +96,15 @@ export default function HeroSection({ ready, onLoadProgress }: HeroSectionProps)
           />
         </div>
         <div className="hero-tagline-stack">
-          <p className="hero-tagline-text">Your best, every time.</p>
+          <p className="hero-tagline-text">
+            Your best, <em>every</em> time.
+          </p>
           <div className="hero-tagline-cta">
-            <HeroWaitlistDialog />
+            <WaitlistDialogTrigger className="hero-waitlist-trigger rotating-border-btn inline-flex items-center justify-center gap-3 px-11 sm:px-14 h-[58px] sm:h-[66px] rounded-full transition-all duration-300 group button-strong-shadow pointer-events-auto cursor-pointer">
+              <span className="text-white font-bold text-base sm:text-lg tracking-tight transition-colors">
+                Join the waitlist
+              </span>
+            </WaitlistDialogTrigger>
           </div>
         </div>
       </div>

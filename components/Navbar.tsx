@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
+import { WaitlistDialogTrigger } from "@/components/WaitlistDialog";
 
 const SCROLL_THRESHOLD = 50;
 
@@ -52,7 +53,7 @@ export default function Navbar() {
               lojj.io
             </Link>
             <div className="lojj-left-pill hidden md:inline-flex">
-              <a href="#about" className="lojj-left-link">
+              <a href="#features" className="lojj-left-link">
                 About
               </a>
               <a href="#features" className="lojj-left-link">
@@ -62,13 +63,11 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-4 md:flex">
-            <a href="#waitlist">
-              <button className="inline-flex cursor-pointer items-center justify-center rounded-full py-2 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 border bg-transparent hover:text-white h-10 px-6 text-base border-snow/50 text-snow hover:border-white hover:bg-white/10">
-                Join waitlist
-              </button>
-            </a>
+            <WaitlistDialogTrigger className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-[rgb(34,61,20)]/35 bg-transparent px-6 py-2 text-base font-medium text-[rgb(34,61,20)] transition-colors hover:bg-[rgb(34,61,20)]/8 disabled:pointer-events-none disabled:opacity-50">
+              Join waitlist
+            </WaitlistDialogTrigger>
             <a href="mailto:info@lojj.io">
-              <button className="inline-flex cursor-pointer items-center justify-center rounded-full py-2 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 bg-snow text-white hover:bg-white h-10 px-6 text-base">
+              <button className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full bg-[rgb(34,61,20)] px-6 py-2 text-base font-medium text-[#ebeee3] transition-colors hover:bg-[rgb(34,61,20)]/90 disabled:pointer-events-none disabled:opacity-50">
                 Contact
               </button>
             </a>
@@ -80,9 +79,9 @@ export default function Navbar() {
             aria-label="Open menu"
             type="button"
           >
-            <span className="bg-snow h-0.5 w-6 transition-all" />
-            <span className="bg-snow h-0.5 w-6 transition-all" />
-            <span className="bg-snow h-0.5 w-6 transition-all" />
+            <span className="h-0.5 w-6 bg-[rgb(34,61,20)] transition-all" />
+            <span className="h-0.5 w-6 bg-[rgb(34,61,20)] transition-all" />
+            <span className="h-0.5 w-6 bg-[rgb(34,61,20)] transition-all" />
           </button>
         </div>
       </nav>
@@ -105,15 +104,17 @@ export default function Navbar() {
           </svg>
         </button>
         <div className="flex flex-col items-center gap-10 text-3xl font-medium tracking-tight text-[rgb(34,61,20)]">
-          <a href="#about" onClick={closeMenu} className="hover:opacity-60 transition-opacity">About</a>
+          <a href="#features" onClick={closeMenu} className="hover:opacity-60 transition-opacity">About</a>
           <a href="#features" onClick={closeMenu} className="hover:opacity-60 transition-opacity">Features</a>
-          <a
-            href="#waitlist"
-            onClick={closeMenu}
-            className="rotating-border-btn flex items-center justify-center gap-3 px-10 h-[64px] rounded-full transition-all duration-300 button-strong-shadow"
-          >
-            <span className="text-white font-bold text-base transition-colors">Join waitlist</span>
-          </a>
+          <WaitlistDialogTrigger asChild>
+            <button
+              type="button"
+              onClick={closeMenu}
+              className="rotating-border-btn flex items-center justify-center gap-3 px-10 h-[64px] rounded-full transition-all duration-300 button-strong-shadow"
+            >
+              <span className="text-white font-bold text-base transition-colors">Join waitlist</span>
+            </button>
+          </WaitlistDialogTrigger>
           <div className="mt-4">
             <span className="font-romantica text-4xl opacity-20">LOJJ.IO</span>
           </div>

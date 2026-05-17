@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import ResizableDemoWindow from "@/components/solutions/ResizableDemoWindow";
+import { useEffect, useId, useMemo, useState } from "react";
+import DemoWindowChrome from "@/components/solutions/DemoWindowChrome";
 import PhoneMockup from "@/components/PhoneMockup";
 import {
-  DEMO_OPS_BASE_QUEUE,
   useDemoSimulation,
   type DemoChatMessage,
   type ReviewSentDemoEntry,
@@ -12,111 +11,11 @@ import {
 import MagePhoneChat from "@/components/solutions/MagePhoneChat";
 import ReviewGuestPhone from "@/components/solutions/ReviewGuestPhone";
 import ManagerSplitDemo from "@/components/solutions/ManagerSplitDemo";
-import type { DemoQueueItem, SolutionDefinition } from "@/lib/solutions";
+import type { SolutionDefinition } from "@/lib/solutions";
 
 type SolutionWindowProps = {
   solution: SolutionDefinition;
 };
-
-const priorityClass: Record<DemoQueueItem["priority"], string> = {
-  high: "demo-priority-high",
-  medium: "demo-priority-medium",
-  low: "demo-priority-low",
-};
-
-type CtxMenuState = { x: number; y: number } | null;
-
-function DemoWindowChrome({
-  anchor,
-  ariaLabel,
-  children,
-  onCopyLink,
-  onResetScenario,
-  shellClassName,
-}: {
-  anchor: string;
-  ariaLabel: string;
-  children: React.ReactNode;
-  onCopyLink: () => void;
-  onResetScenario: () => void;
-  shellClassName?: string;
-}) {
-  const [menu, setMenu] = useState<CtxMenuState>(null);
-  const shellRef = useRef<HTMLDivElement>(null);
-
-  const closeMenu = useCallback(() => setMenu(null), []);
-
-  useEffect(() => {
-    if (!menu) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeMenu();
-    };
-    const onPointer = (e: MouseEvent | PointerEvent) => {
-      const t = e.target as Node | null;
-      if (shellRef.current?.contains(t)) return;
-      closeMenu();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
-    };
-  }, [menu, closeMenu]);
-
-  const onContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setMenu({ x: e.clientX, y: e.clientY });
-  };
-
-  return (
-    <div
-      ref={shellRef}
-      className={`solution-window solution-window--ctx${shellClassName ? ` ${shellClassName}` : ""}`}
-      role="region"
-      aria-label={ariaLabel}
-      onContextMenu={onContextMenu}
-    >
-      <ResizableDemoWindow className="solution-window-aspect-root flex w-full min-h-0 min-w-0 flex-col overflow-hidden">
-        {children}
-      </ResizableDemoWindow>
-      {menu ? (
-        <div
-          className="demo-ctx-menu"
-          style={{ left: menu.x, top: menu.y }}
-          role="menu"
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <button
-            type="button"
-            className="demo-ctx-item"
-            role="menuitem"
-            onClick={() => {
-              onCopyLink();
-              closeMenu();
-            }}
-          >
-            Copy link to this section
-          </button>
-          <button
-            type="button"
-            className="demo-ctx-item"
-            role="menuitem"
-            onClick={() => {
-              onResetScenario();
-              closeMenu();
-            }}
-          >
-            Reset scenario
-          </button>
-          <a className="demo-ctx-item demo-ctx-link" href={`#${anchor}`} role="menuitem" onClick={closeMenu}>
-            Jump to heading
-          </a>
-        </div>
-      ) : null}
-    </div>
-  );
-}
 
 type BrowserTabDef = { id: string; label: string; favicon: string };
 
@@ -201,7 +100,7 @@ function DemoBrowserShell({
 const GUEST_DEMO_JUMP_LINKS = [
   { href: "#ops-lead", label: "View task board (Ops Lead)" },
   { href: "#review-specialist", label: "View Review Specialist" },
-  { href: "#ai-manager", label: "View AI Manager" },
+  { href: "#help-desk", label: "View Help Desk" },
 ] as const;
 
 const GUEST_BROWSER_TABS: BrowserTabDef[] = [
@@ -229,7 +128,7 @@ function GuestDesktopPanel() {
       GUEST_DEMO_JUMP_LINKS.filter((item) => {
         if (item.href === "#ops-lead") return guestJumpShowOps;
         if (item.href === "#review-specialist") return guestJumpShowReviews;
-        if (item.href === "#ai-manager") return guestJumpShowManager;
+        if (item.href === "#help-desk") return guestJumpShowManager;
         return false;
       }),
     [guestJumpShowManager, guestJumpShowOps, guestJumpShowReviews],
@@ -346,70 +245,12 @@ function GuestDesktopPanel() {
   );
 }
 
-function OpsDemoSynced() {
-  const { opsExtraQueue } = useDemoSimulation();
-  const merged = useMemo(
-    () => [...opsExtraQueue, ...DEMO_OPS_BASE_QUEUE],
-    [opsExtraQueue],
-  );
-  const [activeId, setActiveId] = useState(merged[0]?.id ?? "");
-  const active = useMemo(
-    () => merged.find((item) => item.id === activeId) ?? merged[0],
-    [merged, activeId],
-  );
-
-  useEffect(() => {
-    if (merged.length && !merged.some((r) => r.id === activeId)) {
-      setActiveId(merged[0].id);
-    }
-  }, [merged, activeId]);
-
-  return (
-    <>
-      <p className="demo-ops-preview-note">
-        <strong>Ops preview:</strong> when Guest Expert creates a follow-up in the scripted chat, it lands here in real
-        time — the same payload your team would see in Ops Lead.
-      </p>
-      <div className="demo-queue" role="listbox" aria-label="Ops task queue">
-        {merged.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={`demo-row ${item.id === active?.id ? "demo-row-active" : ""} ${
-              item.id === "demo-late-checkout" ? "demo-row-synced" : ""
-            }`}
-            onClick={() => setActiveId(item.id)}
-            role="option"
-            aria-selected={item.id === active?.id}
-          >
-            <div className="demo-row-top">
-              <span>{item.title}</span>
-              <span className={`demo-priority ${priorityClass[item.priority]}`}>{item.priority}</span>
-            </div>
-            <div className="demo-row-bottom">
-              <span>{item.location}</span>
-              <span>ETA {item.eta}</span>
-            </div>
-          </button>
-        ))}
-      </div>
-      {active ? (
-        <div className="demo-selection" aria-live="polite">
-          <strong>Selected:</strong> {active.title}
-          <br />
-          Routing to {active.location} with {active.priority} priority. Team ETA is {active.eta}.
-        </div>
-      ) : null}
-    </>
-  );
-}
-
 const REVIEWS_BROWSER_TABS: BrowserTabDef[] = [
   { id: "board", label: "Outreach board", favicon: "◆" },
   { id: "posted", label: "Posted reviews", favicon: "★" },
 ];
 
-function ReviewsDemoSynced({ subtitleTooltip }: { subtitleTooltip?: string }) {
+function ReviewsDemoSynced() {
   const {
     reviewGuests,
     reviewActiveGuestId,
@@ -453,16 +294,11 @@ function ReviewsDemoSynced({ subtitleTooltip }: { subtitleTooltip?: string }) {
         activeTab={demoTab}
         onChangeTab={(id) => setDemoTab(id as "board" | "posted")}
         url={`yourhotel.lojj.io/reviews${demoUrlPath}`}
-        infoTooltip={subtitleTooltip}
         ariaLabel="Review Specialist views"
       />
 
       {demoTab === "board" ? (
         <>
-          <p className="demo-reviews-sync-note">
-            <strong>Review Specialist preview:</strong> request a review for any guest below — it opens a personalized
-            message on the guest phone. Guest Expert&apos;s &quot;No, thanks&quot; flow still mirrors here for Maya.
-          </p>
           <div className="demo-queue" role="listbox" aria-label="Review candidates">
             {reviewGuests.map((guest) => (
               <div
@@ -613,7 +449,6 @@ function ReviewsDemoSynced({ subtitleTooltip }: { subtitleTooltip?: string }) {
 }
 
 export default function SolutionWindow({ solution }: SolutionWindowProps) {
-  const demoSubtitleHintId = useId();
   const demo = useDemoSimulation();
   const [managerDemoKey, setManagerDemoKey] = useState(0);
 
@@ -642,16 +477,7 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
       className={`solution-panel-explanatory${hasPhone ? "" : " solution-panel-explanatory--side"}`}
     >
       <h3 className="landing-h3">{solution.heading}</h3>
-      <p className="landing-p">{solution.lede}</p>
-      <ul className="solution-bullets">
-        {solution.bullets.map((bullet) => (
-          <li key={bullet}>{bullet}</li>
-        ))}
-      </ul>
-      {solution.id === "reviews" && solution.demo.subtitle ? (
-        <p className="solution-demo-lead">{solution.demo.subtitle}</p>
-      ) : null}
-      <p className="solution-note">{solution.panelNote}</p>
+      <p className="landing-p solution-summary">{solution.summary}</p>
     </div>
   );
 
@@ -679,32 +505,9 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
           <span className="window-title">{solution.demo.title}</span>
         </div>
         <div className={`solution-window-body${usesBrowserShell ? " solution-window-body--browser-first" : ""}`}>
-          {!usesBrowserShell && (solution.demo.subtitle || solution.demo.subtitleTooltip) ? (
-            <div
-              className={`demo-subtitle-row${solution.demo.subtitle ? "" : " demo-subtitle-row--hint-only"}`}
-            >
-              {solution.demo.subtitle ? <p className="demo-subtitle">{solution.demo.subtitle}</p> : null}
-              {solution.demo.subtitleTooltip ? (
-                <span className="demo-subtitle-hint">
-                  <button
-                    type="button"
-                    className="demo-subtitle-hint-btn"
-                    aria-label="How this works"
-                    aria-describedby={demoSubtitleHintId}
-                  >
-                    <span aria-hidden>ⓘ</span>
-                  </button>
-                  <span id={demoSubtitleHintId} role="tooltip" className="demo-subtitle-hint-pop">
-                    {solution.demo.subtitleTooltip}
-                  </span>
-                </span>
-              ) : null}
-            </div>
-          ) : null}
           {solution.id === "guest" ? <GuestDesktopPanel /> : null}
-          {solution.id === "ops" ? <OpsDemoSynced /> : null}
           {solution.id === "reviews" ? (
-            <ReviewsDemoSynced subtitleTooltip={solution.demo.subtitleTooltip} />
+            <ReviewsDemoSynced />
           ) : null}
           {solution.id === "manager" && solution.demo.topics ? (
             <ManagerSplitDemo key={managerDemoKey} topics={solution.demo.topics} />
@@ -717,7 +520,7 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
   return (
     <article
       id={solution.anchor}
-      className="solution-panel glass-panel-clear"
+      className={`solution-panel${solution.id === "manager" ? " solution-panel--viewport" : ""}`}
     >
       <div className="solution-panel-stack">
         {hasPhone ? (
@@ -734,10 +537,7 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
                       messages={demo.guestMessages}
                       suggestions={demo.guestSuggestions}
                       onPickSuggestion={demo.guestPickSuggestion}
-                      idleInstructions={
-                        [solution.demo.subtitle, solution.demo.subtitleTooltip].filter(Boolean).join("\n\n") ||
-                        undefined
-                      }
+                      idleInstructions={solution.summary}
                     />
                   </PhoneMockup>
                 ) : null}

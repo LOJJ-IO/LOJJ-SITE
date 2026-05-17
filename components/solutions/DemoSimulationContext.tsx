@@ -55,7 +55,7 @@ function firstName(displayName: string) {
 }
 
 const GUEST_INTRO =
-  "Hello! I'm Mage, your hotel assistant. I can help with room service, amenities, local recommendations, or any questions about your stay. What can I do for you? Do you require any further assistance? (Yes / No)";
+  "Hello! I'm LOJJ, your hotel assistant. I can help with room service, amenities, local recommendations, or any questions about your stay. What can I do for you? Do you require any further assistance? (Yes / No)";
 
 const GUEST_WIFI_REPLY =
   "The WiFi network is 'HotelGuest' and the password is on the card in your room. Let me know if you have any trouble connecting! Do you require any further assistance? (Yes / No)";
@@ -87,6 +87,8 @@ const LATE_CHECKOUT_TASK: DemoQueueItem = {
   location: "Front Desk",
   priority: "medium",
   eta: "Pending",
+  status: "todo",
+  note: "Guest Expert flagged a 1:00 PM checkout request.",
 };
 
 type GuestPhase = "idle" | "after_hi" | "after_topic" | "after_followup_no";
@@ -132,7 +134,7 @@ type DemoSimulationValue = {
 
 const DemoSimulationContext = createContext<DemoSimulationValue | null>(null);
 
-const initialGuestSuggestions: DemoSuggestion[] = [{ id: "hi", label: "Hi" }];
+const initialGuestSuggestions: DemoSuggestion[] = [{ id: "hello", label: "Hello" }];
 
 function clearReviewGuestPhoneState(setters: {
   setReviewGuestScreen: (v: ReviewGuestScreen) => void;
@@ -244,8 +246,8 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
 
   const guestPickSuggestion = useCallback(
     (id: string) => {
-      if (id === "hi") {
-        guestAppend("user", "Hi");
+      if (id === "hello") {
+        guestAppend("user", "Hello");
         window.setTimeout(() => {
           guestAppend("assistant", GUEST_INTRO);
           setGuestPhase("after_hi");

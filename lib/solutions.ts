@@ -7,12 +7,16 @@ export type DemoAction = {
   meta?: string;
 };
 
+export type OpsTaskStatus = "todo" | "assigned" | "doing" | "done";
+
 export type DemoQueueItem = {
   id: string;
   title: string;
   location: string;
   priority: "low" | "medium" | "high";
   eta: string;
+  status: OpsTaskStatus;
+  note?: string;
 };
 
 export type DemoReviewGuest = {
@@ -32,17 +36,12 @@ export type SolutionDefinition = {
   id: SolutionKind;
   anchor: string;
   heading: string;
-  lede: string;
-  bullets: string[];
-  panelNote: string;
+  summary: string;
   phoneImage?: string;
   demo: {
     title: string;
-    subtitle: string;
     /** Unused; shell height follows content. Kept for optional future use. */
     aspectRatio?: number;
-    /** Shown in an info-tooltip next to the subtitle row (optional). */
-    subtitleTooltip?: string;
     actions?: DemoAction[];
     queue?: DemoQueueItem[];
     guests?: DemoReviewGuest[];
@@ -55,20 +54,11 @@ export const SOLUTIONS: SolutionDefinition[] = [
     id: "guest",
     anchor: "guest-expert",
     heading: "Guest Expert",
-    lede: "Answer routine guest questions instantly so your front desk can stay present.",
-    bullets: [
-      "AI chat on your website and QR pages, always on.",
-      "Answers in multiple languages with hotel-specific details.",
-      "Escalates only when a real task is needed.",
-    ],
-    panelNote: "When a stay goes well, Guest Expert flags that moment for Review Specialist.",
+    summary:
+      "Talk to every guest, track every task, and answer every question—perfectly, every time.",
     phoneImage: "/teammates/ai-manager.png",
     demo: {
       title: "Guest chat",
-      subtitle:
-        "The desktop Guest chat window mirrors this conversation. Late checkout adds a live row in Ops Lead below.",
-      subtitleTooltip:
-        "Send guest messages only from this phone. On the desktop, use Jump in next to Mage replies to send a staff message.",
       actions: [
         {
           id: "wifi",
@@ -98,16 +88,10 @@ export const SOLUTIONS: SolutionDefinition[] = [
     id: "ops",
     anchor: "ops-lead",
     heading: "Ops Lead",
-    lede: "Turn every guest request into a clear, assigned task with live status.",
-    bullets: [
-      "Routes tasks to housekeeping, maintenance, or front desk automatically.",
-      "Keeps shift handoffs visible so work is not lost.",
-      "Highlights bottlenecks before they become service issues.",
-    ],
-    panelNote: "Every assignment and status update stays visible across shifts.",
+    summary:
+      "Turn every guest request into a routed, assigned task with live status across shifts, surface Guest Expert follow-ups at the top of the queue in real time, and spot bottlenecks before they become service issues.",
     demo: {
       title: "Task board",
-      subtitle: "Guest Expert follow-ups from the scripted chat surface here at the top of the queue.",
       queue: [
         {
           id: "q1",
@@ -115,6 +99,8 @@ export const SOLUTIONS: SolutionDefinition[] = [
           location: "Housekeeping",
           priority: "medium",
           eta: "12 min",
+          status: "todo",
+          note: "Deliver four bath towels before turndown.",
         },
         {
           id: "q2",
@@ -122,6 +108,8 @@ export const SOLUTIONS: SolutionDefinition[] = [
           location: "Maintenance",
           priority: "high",
           eta: "8 min",
+          status: "doing",
+          note: "Thermostat stuck at 74°F; filter check in progress.",
         },
         {
           id: "q3",
@@ -129,50 +117,29 @@ export const SOLUTIONS: SolutionDefinition[] = [
           location: "Front Desk",
           priority: "low",
           eta: "18 min",
+          status: "assigned",
+          note: "Guest returns at 4 PM — tags at bell desk.",
+        },
+        {
+          id: "q4",
+          title: "Room 512 - minibar restock",
+          location: "Housekeeping",
+          priority: "low",
+          eta: "Done",
+          status: "done",
+          note: "Completed before 10 AM shift handoff.",
         },
       ],
     },
   },
   {
-    id: "reviews",
-    anchor: "review-specialist",
-    heading: "Review Specialist",
-    lede: "Invite happy guests to review at the right moment without bothering everyone.",
-    bullets: [
-      "Detects positive stay signals from guest conversations.",
-      "Sends review requests with direct links when sentiment is high.",
-      "Keeps outreach tasteful, timely, and measurable.",
-    ],
-    panelNote:
-      "Guest Expert sends a review prompt after the guest declines more help — the guest inbox and this board stay in sync.",
-    phoneImage: "/teammates/review-specialist.png",
-    demo: {
-      title: "Review outreach",
-      subtitle:
-        "Request reviews from the outreach board while Guest Expert runs in parallel on the phone.",
-      subtitleTooltip:
-        "Guest phone: inbox and Post review (5★ draft). The board mirrors when Guest Expert sends the prompt after \"No, thanks\".",
-      guests: [
-        { id: "g1", name: "Maya R.", signal: "Resolved checkout request", score: 92 },
-        { id: "g2", name: "Daniel K.", signal: "Praised concierge speed", score: 88 },
-        { id: "g3", name: "Amina T.", signal: "Shared positive feedback", score: 95 },
-      ],
-    },
-  },
-  {
     id: "manager",
-    anchor: "ai-manager",
-    heading: "AI Manager",
-    lede: "Give new staff instant guidance so managers are interrupted less often.",
-    bullets: [
-      "Answers policy and process questions in seconds.",
-      "Keeps responses consistent across every shift.",
-      "Lets managers focus on exceptions, not repeat explanations.",
-    ],
-    panelNote: "A steady source of answers during rush hours and staffing gaps.",
+    anchor: "help-desk",
+    heading: "Help Desk",
+    summary:
+      "Set up your property’s documentation once — LOJJ uses it to train the AI, publish a staff help page, and answer shift questions in the side panel so everyone works from the same source of truth.",
     demo: {
-      title: "Shift guidance",
-      subtitle: "Front desk calendar on the left; AI Manager answers on the right — pick a typical new-staff question.",
+      title: "Help desk",
       topics: [
         {
           id: "t1",
@@ -192,6 +159,21 @@ export const SOLUTIONS: SolutionDefinition[] = [
           answer:
             "Collect the correction details, open a billing follow-up task, and share expected callback time before ending the interaction.",
         },
+      ],
+    },
+  },
+  {
+    id: "reviews",
+    anchor: "review-specialist",
+    heading: "Review Specialist",
+    summary:
+      "Score every guest touchpoint for review likelihood across Google, TripAdvisor, Hotels.com, Expedia, and Booking.com — then route high-intent stays through LOJJ so five-star drafts land on the right platform at the right moment.",
+    demo: {
+      title: "Review routing",
+      guests: [
+        { id: "g1", name: "Maya R.", signal: "Resolved checkout request", score: 92 },
+        { id: "g2", name: "Daniel K.", signal: "Praised concierge speed", score: 88 },
+        { id: "g3", name: "Amina T.", signal: "Shared positive feedback", score: 95 },
       ],
     },
   },
