@@ -25,7 +25,7 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn("border-b border-white/10", className)}
+      className={cn("border-b border-[rgba(34,61,20,0.14)]", className)}
       {...props}
     />
   );
@@ -41,17 +41,17 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
           className={cn(
-            "group flex flex-1 items-center justify-between gap-4 py-4 text-left text-base font-normal tracking-tight text-white/95",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
-          className,
-        )}
+            "group flex flex-1 items-center justify-between gap-4 py-4 text-left text-base font-normal tracking-tight text-[var(--brand-green)]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(34,61,20,0.35)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+            className,
+          )}
         {...props}
       >
         <span className="pr-2">{children}</span>
         <span
           aria-hidden
           className={cn(
-            "inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/5",
+            "inline-flex h-7 w-7 items-center justify-center rounded-full border border-[rgba(34,61,20,0.2)] bg-[rgba(34,61,20,0.06)] text-[var(--brand-green)]",
             "transition-transform duration-200",
             "group-data-[state=open]:rotate-45",
           )}
@@ -71,7 +71,7 @@ function AccordionContent({
     <AccordionPrimitive.Content
       data-slot="accordion-content"
       className={cn(
-        "overflow-hidden text-white/80 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+        "overflow-hidden text-[var(--brand-green)] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
         className,
       )}
       {...props}

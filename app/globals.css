@@ -587,6 +587,26 @@
             margin-top: 0.15em;
         }
 
+        /* FAQ page: all copy in brand green */
+        .faq-page {
+            color: var(--brand-green);
+        }
+
+        .faq-page .landing-h2,
+        .faq-page .landing-sub,
+        .faq-page p,
+        .faq-page li,
+        .faq-page strong,
+        .faq-page [data-slot="accordion-trigger"],
+        .faq-page [data-slot="accordion-content"],
+        .faq-page [data-slot="accordion-content"] > div {
+            color: var(--brand-green);
+        }
+
+        .faq-page .landing-sub {
+            color: var(--brand-green);
+        }
+
         /* FAQ / prose: explicit discs (Tailwind preflight strips default bullets) */
         .faq-answer-list {
             margin: 0.5em 0 0;
@@ -596,6 +616,11 @@
             color: var(--text-muted);
             line-height: 1.65;
             font-size: 0.95rem;
+        }
+
+        .faq-page .faq-answer-list,
+        .faq-page .faq-answer-list li {
+            color: var(--brand-green);
         }
 
         .faq-answer-list li {

@@ -39,7 +39,7 @@ const faqs: FaqItem[] = [
     q: "What exactly does LOJJ do for hotels like ours?",
     a: (
       <>
-        <p className="mb-2 text-white/90">Two things:</p>
+        <p className="mb-2">Two things:</p>
         <ul className="faq-answer-list">
           <li>
             It helps staff answer questions using your hotel training, policies, and procedures—guest FAQ
@@ -143,7 +143,7 @@ const faqs: FaqItem[] = [
     q: "We’re not sure this is something we need right now. Why would hotels use LOJJ instead of their current process?",
     a: (
       <>
-        <p className="mb-2 text-white/90">
+        <p className="mb-2">
           Hotels usually look for something like LOJJ when the current process is wearing people down:
         </p>
         <ul className="faq-answer-list">
@@ -151,7 +151,7 @@ const faqs: FaqItem[] = [
           <li>Constant front desk calls to managers</li>
           <li>Requests that get lost between shifts</li>
         </ul>
-        <p className="mt-3 text-white/80">
+        <p className="mt-3">
           LOJJ reduces front desk calls with guest FAQ automation and makes requests trackable, so service
           stays steady even when the front desk is understaffed or turnover is high.
         </p>
@@ -186,7 +186,7 @@ const faqs: FaqItem[] = [
 
 export default function FaqPage() {
   return (
-    <main className="min-h-screen w-full flex justify-center pt-28 pb-24">
+    <main className="faq-page min-h-screen w-full flex justify-center pt-28 pb-24">
       <div className="w-[95%] max-w-4xl">
         <div className="section-heading-stack">
           <h1 className="landing-h2">Frequently Asked Questions</h1>
