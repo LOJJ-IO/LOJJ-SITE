@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import EndCtaSection from "@/components/EndCtaSection";
 import { FooterWaitlistCta } from "@/components/WaitlistDialog";
 import SolutionsShowcase from "@/components/solutions/SolutionsShowcase";
+import { DemoSimulationProvider } from "@/components/solutions/DemoSimulationContext";
 
 interface LandingMarkupProps {
   doorsOpen: boolean;
@@ -15,9 +16,11 @@ export default function LandingMarkup({ doorsOpen, onLoadProgress }: LandingMark
       <Navbar />
 
       <main className="landing-main w-full">
-        <HeroSection ready={doorsOpen} onLoadProgress={onLoadProgress} />
+        <DemoSimulationProvider>
+          <HeroSection ready={doorsOpen} onLoadProgress={onLoadProgress} />
 
-        <SolutionsShowcase />
+          <SolutionsShowcase />
+        </DemoSimulationProvider>
 
         <EndCtaSection />
       </main>

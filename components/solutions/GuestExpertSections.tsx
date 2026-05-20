@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import DemoWindowChrome from "@/components/solutions/DemoWindowChrome";
 import { useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
 import GuestPhone from "@/components/solutions/GuestPhone";
@@ -15,6 +17,14 @@ type GuestExpertSectionsProps = {
 export default function GuestExpertSections({ solution }: GuestExpertSectionsProps) {
   const demo = useDemoSimulation();
   const phoneMessages = demo.guestMessages;
+  const heroIntent = demo.heroIntent;
+
+  useEffect(() => {
+    if (!heroIntent) return;
+    const { scenarioId } = heroIntent;
+    demo.playHeroScenario(scenarioId);
+    demo.setHeroIntent(null);
+  }, [heroIntent, demo.playHeroScenario, demo.setHeroIntent]);
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#${solution.anchor}`;

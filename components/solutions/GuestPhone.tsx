@@ -64,7 +64,11 @@ function GuestPhoneMessageList({ messages }: { messages: DemoChatMessage[] }) {
             >
               <div className={`guest-phone-bubble guest-phone-bubble--${isUser ? "out" : isStaff ? "staff" : "in"}`}>
                 <span>{m.body}</span>
-                {isLastAssistant ? <Icon2 className="guest-phone-bubble-tail" width={18} height={19} /> : null}
+                {isUser ? (
+                  <Icon2 className="guest-phone-bubble-tail guest-phone-bubble-tail--out" width={18} height={19} />
+                ) : isLastAssistant ? (
+                  <Icon2 className="guest-phone-bubble-tail" width={18} height={19} />
+                ) : null}
               </div>
             </div>
           );

@@ -4406,6 +4406,669 @@
             }
         }
 
+        /* ── Static hotel hero (split + overlap, mockup-aligned) ───────────────── */
+        .hero-static {
+            --hero-nav-offset: var(--site-nav-offset, 84px);
+            position: relative;
+            width: 100%;
+            min-height: 100svh;
+            padding-top: var(--hero-nav-offset);
+            padding-bottom: clamp(28px, 4vh, 56px);
+            overflow-x: clip;
+            background-color: #ebeee3;
+            box-sizing: border-box;
+        }
+
+        .hero-static-inner {
+            position: relative;
+            z-index: 3;
+            margin: 0 auto;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .hero-static-stage {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+
+        .hero-static-copy {
+            z-index: 3;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .hero-static-media {
+            pointer-events: none;
+        }
+
+        .hero-static-media .hotel-hero {
+            pointer-events: auto;
+        }
+
+        .hero-static-cta-inline {
+            margin-top: clamp(1.1rem, 3.2vw, 1.85rem);
+            pointer-events: auto;
+        }
+
+        .hero-static .hero-static-tagline-stack {
+            position: relative;
+            inset: unset;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.75rem, 2vw, 1.25rem);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: none;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .hero-static .hero-static-tagline-primary,
+        .hero-static .hero-static-tagline-secondary {
+            grid-row: unset;
+            display: flex;
+            width: 100%;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        .hero-static .hero-static-tagline-secondary .hero-tagline-text--visibility {
+            font-size: clamp(1.2rem, 2.85vw, 1.85rem);
+            line-height: 1.38;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: rgb(34, 61, 20);
+            text-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.85),
+                0 14px 40px rgba(34, 61, 20, 0.08);
+        }
+
+        .hero-static .hero-tagline-text--primary {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Desktop hero (split: copy left, hotel flush right) ── */
+        @media (min-width: 900px) {
+            .hero-static-inner {
+                width: min(1240px, 94vw);
+                height: 100%;
+            }
+
+            .hero-static-stage {
+                align-items: flex-start;
+                justify-content: center;
+                min-height: calc(100svh - var(--hero-nav-offset) - clamp(28px, 4vh, 56px));
+                height: calc(100svh - var(--hero-nav-offset) - clamp(28px, 4vh, 56px));
+            }
+
+            .hero-static-copy {
+                max-width: min(100%, 540px);
+                width: min(100%, 54%);
+                padding-right: clamp(0.5rem, 2vw, 1rem);
+                margin-right: clamp(-10px, -2.5vw, -32px);
+                align-items: flex-start;
+                align-self: flex-start;
+            }
+
+            .hero-static-cta-inline {
+                align-self: flex-start;
+            }
+
+            .hero-static .hero-static-tagline-stack {
+                align-items: flex-start;
+                justify-content: flex-start;
+                text-align: left;
+            }
+
+            .hero-static .hero-static-tagline-primary,
+            .hero-static .hero-static-tagline-secondary {
+                justify-content: flex-start;
+            }
+
+            .hero-static .hero-static-tagline-secondary .hero-tagline-text {
+                text-align: left;
+            }
+
+            .hero-static .hero-static-tagline-secondary .hero-tagline-text--visibility {
+                max-width: 22rem;
+            }
+
+            .hero-static .hero-tagline-text--primary {
+                margin-left: 0;
+                margin-right: 0;
+                text-align: left;
+            }
+
+            .hero-static .hero-tagline-text {
+                text-align: left;
+            }
+
+            .hero-static .hero-tagline-block {
+                justify-content: flex-start;
+            }
+
+            .hero-static-media {
+                position: absolute;
+                top: var(--hero-nav-offset);
+                right: 0;
+                left: auto;
+                bottom: clamp(20px, 3vh, 44px);
+                z-index: 1;
+                width: min(58vw, 780px);
+                max-width: min(58vw, 780px);
+                height: auto;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+                overflow: visible;
+            }
+
+            .hotel-hero {
+                --hotel-hero-scale: 1.22;
+                --hotel-hero-shift-x: 15%;
+                position: relative;
+                width: 100%;
+                height: calc(100% / var(--hotel-hero-scale));
+                max-height: calc(100% / var(--hotel-hero-scale));
+                max-width: 100%;
+                margin: 0;
+                overflow: visible;
+                align-self: flex-end;
+                justify-self: end;
+                transform: translateX(var(--hotel-hero-shift-x)) scale(var(--hotel-hero-scale));
+                transform-origin: 100% 100%;
+            }
+
+            .hotel-hero-img {
+                object-position: right bottom;
+                clip-path: inset(0 15% 0 15%);
+            }
+
+            .hotel-hero-pool-msg--question {
+                left: 26%;
+                top: 20%;
+            }
+
+            .hotel-hero-pool-msg--reply {
+                left: 10%;
+                top: 28%;
+            }
+        }
+
+        /* Shared hotel graphic grid (desktop + mobile) */
+        .hotel-hero {
+            position: relative;
+            display: grid;
+            grid-template: 1fr / 1fr;
+            overflow: visible;
+        }
+
+        .hotel-hero-visual {
+            grid-row: 1;
+            grid-column: 1;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .hotel-hero-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center bottom;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .hotel-hero-overlays {
+            grid-row: 1;
+            grid-column: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 0;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .hotel-hero-hotspot {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border: 0;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 4;
+        }
+
+        .hotel-hero-hotspot--beacon {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .hotel-hero-hotspot--beacon:focus-visible {
+            outline: 2px solid rgba(34, 61, 20, 0.45);
+            outline-offset: 3px;
+            border-radius: 999px;
+        }
+
+        .hotel-hero-hotspot-tooltip {
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 12px);
+            transform: translateX(-50%) translateY(8px);
+            width: max-content;
+            max-width: min(260px, 54vw);
+            padding: 9px 13px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            text-align: center;
+            white-space: normal;
+            color: var(--brand-green);
+            background: rgba(255, 255, 252, 0.97);
+            border: 1px solid rgba(34, 61, 20, 0.12);
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.9) inset,
+                0 14px 36px rgba(34, 61, 20, 0.14);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition:
+                opacity 0.22s ease,
+                transform 0.22s ease,
+                visibility 0.22s ease;
+        }
+
+        .hotel-hero-hotspot-tooltip::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(255, 255, 252, 0.97);
+            filter: drop-shadow(0 1px 0 rgba(34, 61, 20, 0.06));
+        }
+
+        .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-tooltip,
+        .hotel-hero-hotspot--beacon:focus-visible .hotel-hero-hotspot-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .hotel-hero-hotspot-beacon {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        .hotel-hero-hotspot-beacon-core {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            place-items: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            color: var(--brand-green);
+            background: rgba(255, 255, 252, 0.94);
+            border: 1px solid rgba(34, 61, 20, 0.2);
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.95) inset,
+                0 6px 18px rgba(34, 61, 20, 0.16);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition:
+                transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .hotel-hero-hotspot-icon {
+            display: block;
+            opacity: 0.88;
+        }
+
+        .hotel-hero-hotspot-beacon-pulse {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(108, 135, 100, 0.45);
+            background: rgba(255, 255, 252, 0.08);
+            animation: hotel-hero-beacon-pulse 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        }
+
+        .hotel-hero-hotspot-beacon-pulse--delayed {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes hotel-hero-beacon-pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            65% {
+                transform: scale(2.15);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(2.15);
+                opacity: 0;
+            }
+        }
+
+        .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-beacon-core,
+        .hotel-hero-hotspot--beacon:focus-visible .hotel-hero-hotspot-beacon-core {
+            transform: scale(1.08);
+            border-color: rgba(34, 61, 20, 0.32);
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, 0.95) inset,
+                0 10px 28px rgba(34, 61, 20, 0.22);
+        }
+
+        .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-icon,
+        .hotel-hero-hotspot--beacon:focus-visible .hotel-hero-hotspot-icon {
+            opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hotel-hero-hotspot-tooltip {
+                transition: none;
+            }
+
+            .hotel-hero-hotspot-beacon-pulse {
+                animation: none;
+                opacity: 0.35;
+                transform: scale(1.35);
+            }
+
+            .hotel-hero-hotspot-beacon-core {
+                transition: none;
+            }
+        }
+
+        .hotel-hero-bubble {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            min-width: 160px;
+            max-width: 220px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(34, 61, 20, 0.14);
+            box-shadow:
+                0 4px 0 rgba(34, 61, 20, 0.06),
+                0 22px 56px rgba(34, 61, 20, 0.16);
+            pointer-events: none;
+        }
+
+        .hotel-hero-bubble-title {
+            display: block;
+            font-size: 14px;
+            font-weight: 800;
+            color: rgb(34, 61, 20);
+        }
+
+        .hotel-hero-bubble-sub {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            color: rgba(34, 61, 20, 0.7);
+        }
+
+        .hotel-hero-bubble-sub--emphasis {
+            font-weight: 800;
+            color: rgb(34, 61, 20);
+        }
+
+        .hotel-hero-bubble--resolved {
+            opacity: 1;
+            filter: none;
+        }
+
+        /* Pool teaser: two layers — question nearer façade, reply offset left. */
+        .hotel-hero-pool-msg {
+            --guest-phone-ui-scale: 0.7518;
+            position: absolute;
+            z-index: 2;
+            width: max-content;
+            max-width: min(240px, 46vw);
+            pointer-events: none;
+            transform: scale(var(--guest-phone-ui-scale));
+            transform-origin: bottom right;
+        }
+
+        .hotel-hero-pool-msg--question {
+            left: 28%;
+            top: 18%;
+        }
+
+        .hotel-hero-pool-msg--reply {
+            left: 8%;
+            top: 26%;
+        }
+
+        .hotel-hero-pool-msg .guest-phone-row {
+            width: auto;
+            justify-content: flex-end;
+        }
+
+        .hotel-hero-pool-msg .guest-phone-bubble {
+            font-size: 15px;
+            line-height: 1.3;
+            min-height: 34px;
+            padding: 7px 12px;
+            max-width: min(220px, 46vw);
+        }
+
+        .hotel-hero-pool-msg .guest-phone-bubble--out {
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.14),
+                0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotel-hero-pool-msg .guest-phone-bubble--in {
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.07),
+                0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        @keyframes hotel-pool-bubble-in {
+            from {
+                opacity: 0;
+                transform: translateX(-14px) translateY(10px) scale(0.94);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) translateY(0) scale(1);
+            }
+        }
+
+        .hotel-hero-pool-bubble--in .guest-phone-bubble {
+            animation: hotel-pool-bubble-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .hotel-hero-pool-bubble--reply.hotel-hero-pool-bubble--in .guest-phone-bubble {
+            animation-delay: 0.12s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hotel-hero-pool-bubble--in .guest-phone-bubble {
+                animation: none;
+            }
+        }
+
+        /* ── Mobile hero: centered copy over full-width hotel ── */
+        @media (max-width: 899px) {
+            .hero-static {
+                --hero-waitlist-btn-h: 100px;
+                --hero-mobile-hotel-drop: calc(var(--hero-waitlist-btn-h) * 2);
+                min-height: calc(100svh - var(--hero-nav-offset));
+                padding-bottom: clamp(24px, 5vh, 40px);
+                overflow-x: hidden;
+            }
+
+            .hero-static-inner {
+                width: 100%;
+                max-width: 100%;
+                padding-left: clamp(1rem, 5vw, 1.5rem);
+                padding-right: clamp(1rem, 5vw, 1.5rem);
+            }
+
+            .hero-static-stage {
+                align-items: center;
+                justify-content: flex-start;
+                min-height: auto;
+                height: auto;
+                padding-top: clamp(0.5rem, 2vh, 1rem);
+                padding-bottom: min(66vh, 620px);
+            }
+
+            .hero-static-copy {
+                align-items: center;
+                margin-right: 0;
+                padding-right: 0;
+            }
+
+            .hero-static-cta-inline {
+                align-self: center;
+            }
+
+            .hero-static .hero-static-tagline-stack {
+                align-items: center;
+                justify-content: flex-start;
+                text-align: center;
+            }
+
+            .hero-static .hero-static-tagline-primary,
+            .hero-static .hero-static-tagline-secondary {
+                justify-content: center;
+            }
+
+            .hero-static .hero-static-tagline-secondary .hero-tagline-text,
+            .hero-static .hero-static-tagline-secondary .hero-tagline-text--visibility {
+                text-align: center;
+                max-width: none;
+            }
+
+            .hero-static .hero-tagline-text--primary {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-static-media {
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 1;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: visible;
+            }
+
+            .hotel-hero {
+                width: 100vw;
+                max-width: 100vw;
+                height: min(68vh, 620px);
+                max-height: min(68vh, 620px);
+                margin-left: calc(50% - 50vw);
+                margin-right: calc(50% - 50vw);
+                transform: translateY(var(--hero-mobile-hotel-drop));
+                justify-items: stretch;
+                align-content: center;
+                align-self: center;
+            }
+
+            .hotel-hero-img {
+                object-position: center bottom;
+                clip-path: none;
+            }
+
+            .hotel-hero-overlays {
+                width: 100%;
+                height: 100%;
+            }
+
+            .hotel-hero-pool-msg {
+                --guest-phone-ui-scale: 0.72;
+            }
+
+            .hotel-hero-pool-msg--question {
+                left: 32%;
+                top: 20%;
+            }
+
+            .hotel-hero-pool-msg--reply {
+                left: 12%;
+                top: 28%;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .hero-static-stage {
+                padding-bottom: min(56vh, 500px);
+            }
+
+            .hotel-hero {
+                height: min(64vh, 520px);
+                max-height: min(64vh, 520px);
+            }
+
+            .hotel-hero-hotspot--beacon {
+                min-width: 40px;
+                min-height: 40px;
+            }
+
+            .hotel-hero-hotspot-beacon-core {
+                width: 20px;
+                height: 20px;
+            }
+
+            .hotel-hero-hotspot-beacon-pulse {
+                width: 20px;
+                height: 20px;
+            }
+
+            .hotel-hero-pool-msg {
+                --guest-phone-ui-scale: 0.66;
+            }
+
+            .hotel-hero-pool-msg--question {
+                left: 34%;
+                top: 22%;
+            }
+
+            .hotel-hero-pool-msg--reply {
+                left: 14%;
+                top: 30%;
+            }
+        }
+
         /* ── Hero scroll canvas ──────────────────────────────────────────────── */
         .hero-scroll-runway {
             position: relative;
@@ -6292,12 +6955,12 @@
         }
 
         .guest-phone-bubble--in {
-            background: rgba(120, 120, 128, 0.16);
-            color: #0f0f0f;
+            background: #e9e9eb;
+            color: #000;
         }
 
         .guest-phone-bubble--out {
-            background: #1a1a1a;
+            background: #000;
             color: #fff;
             background-image: none;
         }
@@ -6317,10 +6980,17 @@
             position: absolute;
             bottom: -7px;
             left: 6px;
+            flex-shrink: 0;
         }
 
-        .guest-phone-bubble--out .guest-phone-bubble-tail {
-            display: none;
+        .guest-phone-bubble-tail--out {
+            left: auto;
+            right: 6px;
+            transform: scaleX(-1);
+        }
+
+        .guest-phone-bubble-tail--out path {
+            fill: #000;
         }
 
         .guest-phone-chips {

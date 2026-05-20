@@ -95,12 +95,39 @@ type GuestPhase = "idle" | "after_hi" | "after_topic" | "after_followup_no";
 
 type ReviewComposeReturn = "inbox" | "staff_request";
 
+export type HeroGuestScenarioId = "breakfast" | "towels" | "crib";
+
+/** Guest message injected into the demo phone for each hero scenario. */
+export function getHeroGuestUserMessage(scenarioId: HeroGuestScenarioId): string {
+  if (scenarioId === "breakfast") return "What time is breakfast, and where is it served?";
+  if (scenarioId === "towels") return "Can I get fresh towels sent to my room?";
+  return "Can we get a crib or rollaway brought up tonight?";
+}
+
+function getHeroGuestAssistantMessage(scenarioId: HeroGuestScenarioId): string {
+  if (scenarioId === "breakfast") {
+    return "Breakfast is served daily from 6:30–10:30 AM in the lobby restaurant. If you’d like, I can share the menu and reserve a table. Do you require any further assistance? (Yes / No)";
+  }
+  if (scenarioId === "towels") {
+    return "Absolutely — I’ve requested fresh towels to be delivered to your room shortly. Do you require any further assistance? (Yes / No)";
+  }
+  return "Of course — I’ve sent a request for a crib/rollaway to be delivered based on availability, and the team will confirm shortly. Do you require any further assistance? (Yes / No)";
+}
+
+export type HeroIntent = {
+  scenarioId: HeroGuestScenarioId;
+  sourceRoomId?: string;
+};
+
 type DemoSimulationValue = {
   guestMessages: DemoChatMessage[];
   guestSuggestions: DemoSuggestion[];
   guestPhase: GuestPhase;
   guestAppend: (role: DemoChatMessage["role"], body: string) => void;
   guestPickSuggestion: (id: string) => void;
+  heroIntent: HeroIntent | null;
+  setHeroIntent: (intent: HeroIntent | null) => void;
+  playHeroScenario: (scenarioId: HeroGuestScenarioId) => void;
   resetGuestDemo: () => void;
 
   guestJumpShowOps: boolean;
@@ -156,6 +183,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
   const [guestTopicPendingFollowup, setGuestTopicPendingFollowup] = useState(false);
   const [guestManagerJumpUnlocked, setGuestManagerJumpUnlocked] = useState(false);
   const [guestTriggeredReviewFlow, setGuestTriggeredReviewFlow] = useState(false);
+  const [heroIntent, setHeroIntent] = useState<HeroIntent | null>(null);
 
   const [opsExtraQueue, setOpsExtraQueue] = useState<DemoQueueItem[]>([]);
 
@@ -175,12 +203,25 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
     setGuestMessages((prev) => [...prev, { id: uid(), role, body, time: nowTime() }]);
   }, []);
 
+  const playHeroScenario = useCallback(
+    (scenarioId: HeroGuestScenarioId) => {
+      guestAppend("user", getHeroGuestUserMessage(scenarioId));
+      window.setTimeout(() => {
+        guestAppend("assistant", getHeroGuestAssistantMessage(scenarioId));
+        setGuestPhase("after_topic");
+        setGuestTopicPendingFollowup(true);
+      }, 320);
+    },
+    [guestAppend],
+  );
+
   const resetGuestDemo = useCallback(() => {
     setGuestMessages([]);
     setGuestPhase("idle");
     setGuestTopicPendingFollowup(false);
     setGuestManagerJumpUnlocked(false);
     setGuestTriggeredReviewFlow(false);
+    setHeroIntent(null);
     setOpsExtraQueue((extras) => extras.filter((t) => t.id !== LATE_CHECKOUT_TASK.id));
     clearReviewGuestPhoneState({
       setReviewGuestScreen,
@@ -431,6 +472,9 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       guestPhase,
       guestAppend,
       guestPickSuggestion: guestPickSuggestionWrapped,
+      heroIntent,
+      setHeroIntent,
+      playHeroScenario,
       resetGuestDemo,
       guestJumpShowOps: opsExtraQueue.length > 0,
       guestJumpShowReviews: guestTriggeredReviewFlow,
@@ -464,7 +508,9 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       guestPickSuggestionWrapped,
       guestSuggestions,
       guestTriggeredReviewFlow,
+      heroIntent,
       opsExtraQueue,
+      playHeroScenario,
       requestStaffReviewForGuest,
       resetAllDemos,
       resetGuestDemo,
@@ -485,6 +531,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       reviewSetActiveGuest,
       reviewStaffClosePhone,
       reviewStaffRequestGuestId,
+      setHeroIntent,
     ],
   );
 
