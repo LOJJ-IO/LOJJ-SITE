@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import HotelHeroGraphic from "@/components/HotelHeroGraphic";
 import HeroIntroTagline from "@/components/HeroIntroTagline";
 import { WAITLIST_BTN_LABEL_CLASS, WaitlistDialogTrigger } from "@/components/WaitlistDialog";
+import { useMatchMedia } from "@/lib/use-match-media";
 
 interface HeroSectionProps {
   ready: boolean;
@@ -15,6 +16,7 @@ interface HeroSectionProps {
 export default function HeroSection({ ready, onLoadProgress }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const showHeroArt = !useMatchMedia("(width < 768px)");
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -62,9 +64,11 @@ export default function HeroSection({ ready, onLoadProgress }: HeroSectionProps)
         </div>
       </div>
 
-      <div className="hero-static-media" aria-hidden>
-        <HotelHeroGraphic />
-      </div>
+      {showHeroArt ? (
+        <div className="hero-static-media" aria-hidden>
+          <HotelHeroGraphic />
+        </div>
+      ) : null}
     </section>
   );
 }
