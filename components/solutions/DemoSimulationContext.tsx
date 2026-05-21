@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -181,6 +182,10 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
   const [guestMessages, setGuestMessages] = useState<DemoChatMessage[]>([]);
   const [guestPhase, setGuestPhase] = useState<GuestPhase>("idle");
   const [guestTopicPendingFollowup, setGuestTopicPendingFollowup] = useState(false);
+  const guestPhaseRef = useRef<GuestPhase>("idle");
+  const guestTopicPendingFollowupRef = useRef(false);
+  guestPhaseRef.current = guestPhase;
+  guestTopicPendingFollowupRef.current = guestTopicPendingFollowup;
   const [guestManagerJumpUnlocked, setGuestManagerJumpUnlocked] = useState(false);
   const [guestTriggeredReviewFlow, setGuestTriggeredReviewFlow] = useState(false);
   const [heroIntent, setHeroIntent] = useState<HeroIntent | null>(null);
@@ -287,6 +292,9 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
 
   const guestPickSuggestion = useCallback(
     (id: string) => {
+      const phase = guestPhaseRef.current;
+      const pendingFollowup = guestTopicPendingFollowupRef.current;
+
       if (id === "hello") {
         guestAppend("user", "Hello");
         window.setTimeout(() => {
@@ -297,7 +305,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (guestPhase === "after_hi" && (id === "wifi" || id === "late" || id === "park")) {
+      if (phase === "after_hi" && (id === "wifi" || id === "late" || id === "park")) {
         setGuestManagerJumpUnlocked(true);
         const userText =
           id === "wifi"
@@ -320,7 +328,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (guestTopicPendingFollowup && id === "yes") {
+      if (pendingFollowup && id === "yes") {
         guestAppend("user", "Yes");
         window.setTimeout(() => {
           guestAppend("assistant", GUEST_YES_ACK);
@@ -330,7 +338,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (guestTopicPendingFollowup && id === "no") {
+      if (pendingFollowup && id === "no") {
         guestAppend("user", "No, thanks for your help!");
         window.setTimeout(() => {
           guestAppend("assistant", GUEST_AFTER_NO_THANKS);
@@ -341,7 +349,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
         return;
       }
     },
-    [guestAppend, guestPhase, guestTopicPendingFollowup, syncReviewFromGuestDecline],
+    [guestAppend, syncReviewFromGuestDecline],
   );
 
   const guestSuggestions = useMemo(() => {

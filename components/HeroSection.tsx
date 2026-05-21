@@ -41,7 +41,7 @@ export default function HeroSection({ ready, onLoadProgress }: HeroSectionProps)
 
               <div className="hero-tagline-block hero-tagline-block--visibility hero-static-tagline-secondary">
                 <p className="hero-tagline-text hero-tagline-text--visibility">
-                  Full visibility, <em>every</em> stay.
+                  Full visibility, <span className="hero-tagline-every">every</span> stay.
                 </p>
               </div>
             </div>

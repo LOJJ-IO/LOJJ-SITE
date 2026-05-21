@@ -192,7 +192,6 @@ export default function GuestInboxDesktopDemo() {
   const [selectedId, setSelectedId] = useState<string>("live");
   const [previewCount, setPreviewCount] = useState(0);
   const [listWidthPx, setListWidthPx] = useState<number | null>(null);
-  const [staffComposeOpen, setStaffComposeOpen] = useState(false);
   const [staffDraft, setStaffDraft] = useState("");
 
   const liveMessages = guestMessages;
@@ -242,19 +241,17 @@ export default function GuestInboxDesktopDemo() {
     selectedId === "live" ? displayLive : (selectedStatic?.staticMessages ?? []);
 
   const lastMessage = chatMessages[chatMessages.length - 1];
-  const canJumpIn =
+  const canStaffReply =
     selectedId === "live" && Boolean(lastMessage && lastMessage.role !== "staff");
 
   useEffect(() => {
-    setStaffComposeOpen(false);
     setStaffDraft("");
   }, [selectedId]);
 
   const sendStaffReply = () => {
     const text = staffDraft.trim();
-    if (!text) return;
+    if (!text || !canStaffReply) return;
     guestAppend("staff", text);
-    setStaffComposeOpen(false);
     setStaffDraft("");
   };
 
@@ -406,7 +403,7 @@ export default function GuestInboxDesktopDemo() {
           ) : null}
         </header>
 
-        <div className={`inbox-v2-chat-body${canJumpIn ? " inbox-v2-chat-body--with-jumpin" : ""}`}>
+        <div className="inbox-v2-chat-body">
           {chatMessages.length === 0 ? (
             <p className="inbox-v2-empty">Conversation will appear here…</p>
           ) : (
@@ -414,56 +411,40 @@ export default function GuestInboxDesktopDemo() {
           )}
         </div>
 
-        {canJumpIn && !staffComposeOpen ? (
-          <footer className="inbox-v2-jumpin">
-            <button type="button" className="inbox-v2-jumpin-btn" onClick={() => setStaffComposeOpen(true)}>
-              Jump in
-            </button>
-          </footer>
-        ) : null}
-
-        {canJumpIn && staffComposeOpen ? (
-          <footer className="inbox-v2-jumpin inbox-v2-jumpin--compose">
-            <div className="inbox-v2-staff-compose">
-              <textarea
-                className="inbox-v2-staff-input"
-                rows={2}
-                value={staffDraft}
-                onChange={(e) => setStaffDraft(e.target.value)}
-                placeholder={`Write to ${LIVE_GUEST.name.split(" ")[0]}…`}
-              />
-              <div className="inbox-v2-staff-actions">
-                <button type="button" className="inbox-v2-staff-send" onClick={sendStaffReply}>
-                  Send
-                </button>
-                <button
-                  type="button"
-                  className="inbox-v2-staff-cancel"
-                  onClick={() => {
-                    setStaffComposeOpen(false);
-                    setStaffDraft("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </footer>
-        ) : null}
-
-        {!canJumpIn && !staffComposeOpen ? (
-          <footer className="inbox-v2-compose-bar" aria-hidden>
-            <span className="inbox-v2-compose-attach">
-              <IconPaperclip size={16} />
-            </span>
-            <span className="inbox-v2-compose-field">
+        <footer className="inbox-v2-compose-bar" aria-label="Message guest">
+          <span className="inbox-v2-compose-attach" aria-hidden={canStaffReply}>
+            <IconPaperclip size={16} />
+          </span>
+          {canStaffReply ? (
+            <input
+              type="text"
+              className="inbox-v2-compose-input"
+              value={staffDraft}
+              onChange={(e) => setStaffDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  sendStaffReply();
+                }
+              }}
+              placeholder={`Write to ${LIVE_GUEST.name.split(" ")[0]}…`}
+              aria-label={`Message ${LIVE_GUEST.name}`}
+            />
+          ) : (
+            <span className="inbox-v2-compose-field" aria-hidden>
               Write to {(selectedGuest ?? LIVE_GUEST).name.split(" ")[0]}…
             </span>
-            <span className="inbox-v2-compose-send">
-              <IconArrowUp size={16} />
-            </span>
-          </footer>
-        ) : null}
+          )}
+          <button
+            type="button"
+            className="inbox-v2-compose-send"
+            aria-label="Send message"
+            disabled={!canStaffReply || !staffDraft.trim()}
+            onClick={sendStaffReply}
+          >
+            <IconArrowUp size={16} />
+          </button>
+        </footer>
       </section>
     </div>
   );

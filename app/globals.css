@@ -427,6 +427,23 @@
             }
         }
 
+        /* Mobile nav: logo left, hamburger right only */
+        @media (width < 768px) {
+            .lojj-nav-bar {
+                padding-left: clamp(1rem, 4vw, 1.25rem);
+                padding-right: clamp(1rem, 4vw, 1.25rem);
+            }
+
+            .lojj-nav-desktop-links,
+            .lojj-nav-desktop-cta {
+                display: none !important;
+            }
+
+            .lojj-nav-menu-btn {
+                display: flex !important;
+            }
+        }
+
         @media (min-width: 768px) {
             .lojj-nav-actions {
                 display: flex;
@@ -434,6 +451,10 @@
 
             .lojj-menu-btn {
                 display: none;
+            }
+
+            .lojj-nav-menu-btn {
+                display: none !important;
             }
         }
 
@@ -1392,11 +1413,84 @@
             box-shadow: 0 0 0 1px rgba(120, 220, 160, 0.25);
         }
 
+        .demo-guest-desktop {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+        }
+
         .demo-guest-desktop-lead {
             margin: 0;
             font-size: 0.82rem;
             line-height: 1.45;
             color: rgba(255, 255, 255, 0.76);
+        }
+
+        .demo-guest-compose-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-guest-compose-attach {
+            color: rgba(255, 255, 255, 0.45);
+            flex-shrink: 0;
+        }
+
+        .demo-guest-compose-field {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 0.75rem;
+        }
+
+        .demo-guest-compose-input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font: inherit;
+            font-size: 0.75rem;
+        }
+
+        .demo-guest-compose-input::placeholder {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .demo-guest-compose-input:focus {
+            outline: 2px solid rgba(120, 170, 255, 0.45);
+            outline-offset: 1px;
+        }
+
+        .demo-guest-compose-send {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: #2563eb;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        .demo-guest-compose-send:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .demo-guest-compose-send:not(:disabled) {
+            cursor: pointer;
         }
 
         .demo-guest-desktop-thread {
@@ -1444,8 +1538,10 @@
         }
 
         .demo-guest-line--staff {
-            background: rgba(120, 170, 255, 0.14);
-            border: 1px solid rgba(140, 190, 255, 0.35);
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.32);
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.12);
             margin-right: 12%;
         }
 
@@ -3318,7 +3414,11 @@
                 width: 100%;
             }
             .site-footer {
-                margin-top: 80px;
+                margin-top: 0;
+            }
+            .landing-end-cta {
+                margin-bottom: 0;
+                padding-bottom: clamp(56px, 10vh, 88px);
             }
             .footer-inner {
                 padding: 40px 20px 20px 20px;
@@ -4409,12 +4509,15 @@
         /* ── Static hotel hero (split + overlap, mockup-aligned) ───────────────── */
         .hero-static {
             --hero-nav-offset: var(--site-nav-offset, 84px);
+            /* Riverside hero art ≈ width / height (used to size contain layout) */
+            --hotel-hero-art-aspect: 1.38;
             position: relative;
             width: 100%;
             min-height: 100svh;
             padding-top: var(--hero-nav-offset);
             padding-bottom: clamp(28px, 4vh, 56px);
             overflow-x: clip;
+            overflow-y: visible;
             background-color: #ebeee3;
             box-sizing: border-box;
         }
@@ -4490,13 +4593,23 @@
                 0 14px 40px rgba(34, 61, 20, 0.08);
         }
 
+        .hero-static .hero-tagline-text--primary,
+        .hero-static .hero-static-tagline-primary .hero-tagline-text {
+            color: #000;
+            text-shadow:
+                0 -1px 0 rgba(255, 255, 255, 1),
+                0 1px 0 #fff,
+                0 2px 10px rgba(255, 255, 255, 0.65),
+                0 14px 40px rgba(0, 0, 0, 0.06);
+        }
+
         .hero-static .hero-tagline-text--primary {
             margin-left: auto;
             margin-right: auto;
         }
 
-        /* ── Desktop hero (split: copy left, hotel flush right) ── */
-        @media (min-width: 900px) {
+        /* ── Desktop hero (split: copy left, hotel flush right) — from 768px (fixes ~899px tablet) ── */
+        @media (min-width: 768px) {
             .hero-static-inner {
                 width: min(1240px, 94vw);
                 height: 100%;
@@ -4562,8 +4675,8 @@
                 left: auto;
                 bottom: clamp(20px, 3vh, 44px);
                 z-index: 1;
-                width: min(58vw, 780px);
-                max-width: min(58vw, 780px);
+                width: min(62vw, 860px);
+                max-width: min(62vw, 860px);
                 height: auto;
                 display: flex;
                 justify-content: flex-end;
@@ -4572,40 +4685,70 @@
             }
 
             .hotel-hero {
-                --hotel-hero-scale: 1.22;
-                --hotel-hero-shift-x: 15%;
+                --hotel-hero-scale: 1.14;
+                --hotel-hero-shift-x: 12%;
                 position: relative;
                 width: 100%;
-                height: calc(100% / var(--hotel-hero-scale));
-                max-height: calc(100% / var(--hotel-hero-scale));
+                height: 100%;
+                max-height: 100%;
                 max-width: 100%;
                 margin: 0;
                 overflow: visible;
                 align-self: flex-end;
                 justify-self: end;
+                justify-content: flex-end;
                 transform: translateX(var(--hotel-hero-shift-x)) scale(var(--hotel-hero-scale));
                 transform-origin: 100% 100%;
             }
 
             .hotel-hero-img {
+                object-fit: contain;
                 object-position: right bottom;
-                clip-path: inset(0 15% 0 15%);
+                clip-path: inset(0 12% 0 12%);
             }
 
             .hotel-hero-pool-msg--question {
-                left: 26%;
+                left: 20%;
                 top: 20%;
             }
 
             .hotel-hero-pool-msg--reply {
-                left: 10%;
+                left: 22%;
                 top: 28%;
+            }
+
+            .hotel-hero-hotspot[data-hotspot="towels"] {
+                left: 44%;
+                top: 53%;
+            }
+
+            .hotel-hero-hotspot[data-hotspot="crib"] {
+                left: 58%;
+                top: 40%;
             }
         }
 
-        /* Shared hotel graphic grid (desktop + mobile) */
+
+        /* Shared hotel graphic: art frame matches image aspect so overlays track the building */
         .hotel-hero {
             position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            container-type: size;
+            container-name: hotel-hero;
+        }
+
+        .hotel-hero-art-frame {
+            position: relative;
+            aspect-ratio: var(--hotel-hero-art-aspect);
+            width: min(100cqw, calc(100cqh * var(--hotel-hero-art-aspect)));
+            height: min(100cqh, calc(100cqw / var(--hotel-hero-art-aspect)));
+            max-width: 100%;
+            max-height: 100%;
             display: grid;
             grid-template: 1fr / 1fr;
             overflow: visible;
@@ -4625,7 +4768,7 @@
             width: 100%;
             height: 100%;
             display: block;
-            object-fit: cover;
+            object-fit: contain;
             object-position: center bottom;
             user-select: none;
             -webkit-user-drag: none;
@@ -4654,13 +4797,23 @@
             z-index: 4;
         }
 
+        .hotel-hero-hotspot[data-hotspot="towels"] {
+            left: 47%;
+            top: 54%;
+        }
+
+        .hotel-hero-hotspot[data-hotspot="crib"] {
+            left: 61%;
+            top: 41%;
+        }
+
         .hotel-hero-hotspot--beacon {
             min-width: 44px;
             min-height: 44px;
         }
 
         .hotel-hero-hotspot--beacon:focus-visible {
-            outline: 2px solid rgba(34, 61, 20, 0.45);
+            outline: 2px solid rgba(0, 0, 0, 0.55);
             outline-offset: 3px;
             border-radius: 999px;
         }
@@ -4680,12 +4833,12 @@
             line-height: 1.4;
             text-align: center;
             white-space: normal;
-            color: var(--brand-green);
-            background: rgba(255, 255, 252, 0.97);
-            border: 1px solid rgba(34, 61, 20, 0.12);
+            color: #000;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.18);
             box-shadow:
                 0 1px 0 rgba(255, 255, 255, 0.9) inset,
-                0 14px 36px rgba(34, 61, 20, 0.14);
+                0 8px 24px rgba(0, 0, 0, 0.22);
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -4702,8 +4855,8 @@
             top: 100%;
             transform: translateX(-50%);
             border: 6px solid transparent;
-            border-top-color: rgba(255, 255, 252, 0.97);
-            filter: drop-shadow(0 1px 0 rgba(34, 61, 20, 0.06));
+            border-top-color: #fff;
+            filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.08));
         }
 
         .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-tooltip,
@@ -4728,14 +4881,12 @@
             width: 22px;
             height: 22px;
             border-radius: 999px;
-            color: var(--brand-green);
-            background: rgba(255, 255, 252, 0.94);
-            border: 1px solid rgba(34, 61, 20, 0.2);
+            color: #000;
+            background: #fff;
+            border: 1.5px solid rgba(0, 0, 0, 0.55);
             box-shadow:
-                0 1px 0 rgba(255, 255, 255, 0.95) inset,
-                0 6px 18px rgba(34, 61, 20, 0.16);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+                0 0 0 2px rgba(255, 255, 255, 0.92),
+                0 4px 14px rgba(0, 0, 0, 0.28);
             transition:
                 transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 0.25s ease,
@@ -4744,7 +4895,7 @@
 
         .hotel-hero-hotspot-icon {
             display: block;
-            opacity: 0.88;
+            opacity: 1;
         }
 
         .hotel-hero-hotspot-beacon-pulse {
@@ -4752,8 +4903,8 @@
             width: 22px;
             height: 22px;
             border-radius: 999px;
-            border: 1px solid rgba(108, 135, 100, 0.45);
-            background: rgba(255, 255, 252, 0.08);
+            border: 1.5px solid rgba(0, 0, 0, 0.35);
+            background: rgba(255, 255, 255, 0.35);
             animation: hotel-hero-beacon-pulse 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
         }
 
@@ -4779,15 +4930,10 @@
         .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-beacon-core,
         .hotel-hero-hotspot--beacon:focus-visible .hotel-hero-hotspot-beacon-core {
             transform: scale(1.08);
-            border-color: rgba(34, 61, 20, 0.32);
+            border-color: #000;
             box-shadow:
-                0 1px 0 rgba(255, 255, 255, 0.95) inset,
-                0 10px 28px rgba(34, 61, 20, 0.22);
-        }
-
-        .hotel-hero-hotspot--beacon:hover .hotel-hero-hotspot-icon,
-        .hotel-hero-hotspot--beacon:focus-visible .hotel-hero-hotspot-icon {
-            opacity: 1;
+                0 0 0 2px rgba(255, 255, 255, 1),
+                0 6px 20px rgba(0, 0, 0, 0.38);
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -4845,7 +4991,7 @@
             filter: none;
         }
 
-        /* Pool teaser: two layers — question nearer façade, reply offset left. */
+        /* Pool teaser: compact thread — question above, reply tucked in from the left. */
         .hotel-hero-pool-msg {
             --guest-phone-ui-scale: 0.7518;
             position: absolute;
@@ -4854,22 +5000,29 @@
             max-width: min(240px, 46vw);
             pointer-events: none;
             transform: scale(var(--guest-phone-ui-scale));
-            transform-origin: bottom right;
         }
 
         .hotel-hero-pool-msg--question {
-            left: 28%;
+            left: 22%;
             top: 18%;
+            transform: scale(var(--guest-phone-ui-scale));
+            transform-origin: bottom right;
         }
 
         .hotel-hero-pool-msg--reply {
-            left: 8%;
+            left: 24%;
             top: 26%;
+            transform: scale(var(--guest-phone-ui-scale));
+            transform-origin: bottom left;
         }
 
         .hotel-hero-pool-msg .guest-phone-row {
             width: auto;
             justify-content: flex-end;
+        }
+
+        .hotel-hero-pool-msg--reply .guest-phone-row {
+            justify-content: flex-start;
         }
 
         .hotel-hero-pool-msg .guest-phone-bubble {
@@ -4917,17 +5070,21 @@
             }
         }
 
-        /* ── Mobile hero: centered copy over full-width hotel ── */
-        @media (max-width: 899px) {
+        /* ── Mobile hero: copy stack, then hotel (width < 768 — avoids 767.01–767.99px dead zone vs min-width: 768px) ── */
+        @media (width < 768px) {
             .hero-static {
-                --hero-waitlist-btn-h: 100px;
-                --hero-mobile-hotel-drop: calc(var(--hero-waitlist-btn-h) * 2);
+                --hero-waitlist-btn-h: 66px;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
                 min-height: calc(100svh - var(--hero-nav-offset));
                 padding-bottom: clamp(24px, 5vh, 40px);
                 overflow-x: hidden;
             }
 
             .hero-static-inner {
+                flex: 0 0 auto;
                 width: 100%;
                 max-width: 100%;
                 padding-left: clamp(1rem, 5vw, 1.5rem);
@@ -4940,7 +5097,7 @@
                 min-height: auto;
                 height: auto;
                 padding-top: clamp(0.5rem, 2vh, 1rem);
-                padding-bottom: min(66vh, 620px);
+                padding-bottom: clamp(0.75rem, 2.5vh, 1.25rem);
             }
 
             .hero-static-copy {
@@ -4951,6 +5108,7 @@
 
             .hero-static-cta-inline {
                 align-self: center;
+                margin-bottom: clamp(0.5rem, 1.5vh, 0.85rem);
             }
 
             .hero-static .hero-static-tagline-stack {
@@ -4977,36 +5135,54 @@
             }
 
             .hero-static-media {
-                position: absolute;
-                top: 0;
-                right: 0;
-                left: 0;
-                bottom: 0;
+                position: relative;
+                top: auto;
+                right: auto;
+                left: auto;
+                bottom: auto;
+                flex: 1 0 auto;
+                flex-shrink: 0;
                 z-index: 1;
                 width: 100%;
-                height: 100%;
+                min-height: min(52vh, calc(100vw / var(--hotel-hero-art-aspect)));
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 justify-content: center;
                 overflow: visible;
+                margin-top: auto;
             }
 
             .hotel-hero {
-                width: 100vw;
-                max-width: 100vw;
-                height: min(68vh, 620px);
-                max-height: min(68vh, 620px);
-                margin-left: calc(50% - 50vw);
-                margin-right: calc(50% - 50vw);
-                transform: translateY(var(--hero-mobile-hotel-drop));
-                justify-items: stretch;
-                align-content: center;
-                align-self: center;
+                width: 100%;
+                max-width: 100%;
+                flex-shrink: 0;
+                height: min(76vh, max(320px, calc(100vw / var(--hotel-hero-art-aspect))));
+                min-height: min(76vh, max(320px, calc(100vw / var(--hotel-hero-art-aspect))));
+                max-height: min(82vh, 760px);
+                margin-left: 0;
+                margin-right: 0;
+                transform: none;
+                align-self: flex-end;
+                overflow: visible;
+            }
+
+            .hotel-hero-art-frame {
+                width: min(100cqw, calc(100cqh * var(--hotel-hero-art-aspect)));
+                height: min(100cqh, calc(100cqw / var(--hotel-hero-art-aspect)));
+            }
+
+            .hotel-hero-visual {
+                overflow: hidden;
             }
 
             .hotel-hero-img {
+                object-fit: contain;
                 object-position: center bottom;
                 clip-path: none;
+            }
+
+            .hero-static-media {
+                overflow: visible;
             }
 
             .hotel-hero-overlays {
@@ -5019,24 +5195,120 @@
             }
 
             .hotel-hero-pool-msg--question {
-                left: 32%;
+                left: 26%;
                 top: 20%;
             }
 
             .hotel-hero-pool-msg--reply {
-                left: 12%;
+                left: 26%;
                 top: 28%;
+            }
+
+            .hotel-hero-hotspot[data-hotspot="towels"] {
+                left: 48%;
+                top: 56%;
+            }
+
+            .hotel-hero-hotspot[data-hotspot="crib"] {
+                left: 62%;
+                top: 43%;
+            }
+        }
+
+        /* Very squat viewports only: contain + width-fit frame (wide layouts keep full height) */
+        @media (max-aspect-ratio: 5/4) {
+            .hotel-hero-img {
+                object-fit: contain;
+                object-position: center bottom;
+                clip-path: none;
+            }
+
+            .hotel-hero-visual {
+                overflow: visible;
+            }
+
+            .hotel-hero {
+                overflow: visible;
+            }
+
+            .hero-static-media {
+                overflow: visible;
+            }
+
+            /* Squat desktop shrink only below ~1096px — not on wide landscape */
+            @media (min-width: 768px) and (max-width: 1095px) and (orientation: portrait) {
+                .hotel-hero {
+                    --hotel-hero-scale: 1.18;
+                    --hotel-hero-shift-x: 10%;
+                    height: calc(100% / var(--hotel-hero-scale));
+                    max-height: calc(100% / var(--hotel-hero-scale));
+                }
+
+                .hotel-hero-art-frame {
+                    width: min(100cqw, calc(100cqh * var(--hotel-hero-art-aspect)));
+                    height: min(100cqh, calc(100cqw / var(--hotel-hero-art-aspect)));
+                    max-width: 100%;
+                }
+
+                .hotel-hero-img {
+                    object-fit: contain;
+                    clip-path: none;
+                }
+            }
+
+        }
+
+        /*
+         * Landscape desktop (768px+): full-height frame, contain art, no vertical clip.
+         */
+        @media (min-width: 768px) and (orientation: landscape) {
+            .hotel-hero {
+                --hotel-hero-scale: 1.14;
+                --hotel-hero-shift-x: 12%;
+                height: 100%;
+                max-height: 100%;
+                overflow: visible;
+                justify-content: flex-end;
+                transform: translateX(var(--hotel-hero-shift-x)) scale(var(--hotel-hero-scale));
+                transform-origin: 100% 100%;
+            }
+
+            .hotel-hero-art-frame {
+                height: 96%;
+                width: auto;
+                max-width: none;
+                max-height: 96%;
+                aspect-ratio: var(--hotel-hero-art-aspect);
+                margin-left: auto;
+                margin-right: 0;
+            }
+
+            .hotel-hero-visual {
+                overflow: visible;
+            }
+
+            .hotel-hero-img {
+                object-fit: contain;
+                object-position: right bottom;
+                clip-path: inset(0 12% 0 12%);
+            }
+        }
+
+        @media (width < 768px) and (max-aspect-ratio: 1) {
+            .hero-static-media {
+                min-height: min(48vh, calc(100vw / var(--hotel-hero-art-aspect)));
+            }
+
+            .hotel-hero {
+                height: min(72vh, max(300px, calc(100vw / var(--hotel-hero-art-aspect))));
+                max-height: min(78vh, 680px);
             }
         }
 
         @media (max-width: 520px) {
-            .hero-static-stage {
-                padding-bottom: min(56vh, 500px);
-            }
-
             .hotel-hero {
-                height: min(64vh, 520px);
-                max-height: min(64vh, 520px);
+                height: min(70vh, max(280px, calc(100vw / var(--hotel-hero-art-aspect))));
+                max-height: min(74vh, 620px);
             }
 
             .hotel-hero-hotspot--beacon {
@@ -5059,13 +5331,55 @@
             }
 
             .hotel-hero-pool-msg--question {
-                left: 34%;
+                left: 28%;
                 top: 22%;
             }
 
             .hotel-hero-pool-msg--reply {
-                left: 14%;
+                left: 28%;
                 top: 30%;
+            }
+        }
+
+        /* Narrow phones: hotel art full-bleed width, full building visible (no crop) */
+        @media (width < 700px) {
+            .hero-static-media {
+                width: 100vw;
+                max-width: 100vw;
+                margin-left: calc(50% - 50vw);
+                margin-right: calc(50% - 50vw);
+                align-items: flex-end;
+                justify-content: center;
+                min-height: calc(100vw / var(--hotel-hero-art-aspect));
+            }
+
+            .hotel-hero {
+                container-type: normal;
+                width: 100%;
+                max-width: 100%;
+                height: calc(100vw / var(--hotel-hero-art-aspect));
+                min-height: calc(100vw / var(--hotel-hero-art-aspect));
+                max-height: min(78vh, calc(100vw / var(--hotel-hero-art-aspect)));
+            }
+
+            .hotel-hero-art-frame {
+                width: 100%;
+                max-width: 100%;
+                height: 100%;
+                aspect-ratio: var(--hotel-hero-art-aspect);
+                overflow: visible;
+            }
+
+            .hotel-hero-visual {
+                overflow: visible;
+            }
+
+            .hotel-hero-img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center bottom;
+                clip-path: none;
             }
         }
 
@@ -5302,7 +5616,7 @@
         }
 
         .hero-tagline-every {
-            font-style: italic;
+            font-style: normal;
         }
 
         .hero-tagline-text {
@@ -5514,10 +5828,20 @@
             align-items: center;
         }
 
-        @media (min-width: 1020px) {
+        @media (min-width: 1030px) {
             .guest-say-hi-grid {
                 grid-template-columns: max-content minmax(0, 1fr);
-                gap: clamp(28px, 4vw, 56px);
+                gap: clamp(20px, 2.5vw, 36px);
+            }
+
+            .guest-say-hi-phone {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .guest-say-hi-copy {
+                grid-column: 2;
+                grid-row: 1;
             }
         }
 
@@ -5564,7 +5888,7 @@
             align-items: center;
         }
 
-        @media (min-width: 1020px) {
+        @media (min-width: 1030px) {
             .guest-inbox-grid {
                 grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
                 gap: clamp(28px, 4vw, 56px);
@@ -5656,11 +5980,27 @@
             align-items: center;
         }
 
-        @media (min-width: 1020px) {
+        @media (min-width: 1030px) {
             .ops-lead-grid {
                 grid-template-columns: minmax(0, 1fr) minmax(260px, 0.38fr);
                 gap: clamp(28px, 4vw, 56px);
             }
+
+            .ops-lead-demo {
+                grid-column: 1;
+                grid-row: 1;
+                min-width: 0;
+            }
+
+            .ops-lead-copy {
+                grid-column: 2;
+                grid-row: 1;
+            }
+        }
+
+        .ops-lead-demo {
+            min-width: 0;
+            width: 100%;
         }
 
         .ops-lead-copy {
@@ -5960,10 +6300,20 @@
             align-items: center;
         }
 
-        @media (min-width: 1020px) {
+        @media (min-width: 1030px) {
             .review-specialist-grid {
                 grid-template-columns: minmax(0, 1fr) minmax(260px, 0.38fr);
                 gap: clamp(28px, 4vw, 56px);
+            }
+
+            .review-routing-shell {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .review-specialist-copy {
+                grid-column: 2;
+                grid-row: 1;
             }
         }
 
@@ -5978,6 +6328,24 @@
         .review-specialist-copy .solution-summary {
             max-width: 38ch;
             margin: 0;
+        }
+
+        /* Marketing body copy — black; solution summaries match .landing-h3 (1.35rem) */
+        .hero-static .hero-tagline-text--primary,
+        .hero-static .hero-static-tagline-primary .hero-tagline-text {
+            color: #000;
+        }
+
+        .guest-say-hi-lead,
+        .guest-say-hi-copy .solution-summary,
+        .guest-inbox-copy .solution-summary,
+        .ops-lead-copy .solution-summary,
+        .review-specialist-copy .solution-summary,
+        #help-desk .solution-panel-explanatory .solution-summary {
+            color: #000;
+            font-size: 1.35rem;
+            letter-spacing: -0.02em;
+            line-height: 1.45;
         }
 
         .review-routing-shell {
@@ -6732,6 +7100,7 @@
             height: 935px;
             background: #fff;
             user-select: none;
+            overflow: hidden;
         }
 
         .guest-phone-bezel {
@@ -7022,6 +7391,10 @@
         }
 
         .guest-phone-composer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -7029,7 +7402,6 @@
             flex-shrink: 0;
             background: #fff;
             z-index: 100;
-            margin-top: auto;
         }
 
         .guest-phone-composer-plus {
@@ -7642,18 +8014,197 @@
             }
         }
 
-        @media (min-width: 1020px) {
+        .guest-phone-stage--autoplay,
+        .guest-say-hi-phone--autoplay .guest-phone-stage {
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .guest-phone-stage--autoplay .guest-phone-suggestions-rail,
+        .guest-say-hi-phone--autoplay .guest-phone-suggestions-rail {
+            display: none !important;
+        }
+
+        /*
+         * < 1030px: Cursor-style stack — copy first, large phone below (autoplay, no chips).
+         */
+        @media (width < 1030px) {
+            .solutions-wrap {
+                --demo-shell-h: min(440px, 64svh);
+                --demo-shell-h-inbox: min(400px, 58svh);
+                --solution-viewport-min-h: auto;
+            }
+
+            .solution-panel--viewport {
+                min-height: auto;
+                justify-content: flex-start;
+                padding-block: clamp(32px, 5vh, 48px);
+            }
+
+            .guest-expert-section--inbox.solution-panel--viewport {
+                min-height: auto;
+            }
+
+            .guest-say-hi-grid,
+            .guest-inbox-grid,
+            .ops-lead-grid,
+            .review-specialist-grid {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: clamp(28px, 5vw, 40px);
+            }
+
+            .guest-say-hi-copy,
+            .guest-inbox-copy,
+            .ops-lead-copy,
+            .review-specialist-copy {
+                width: 100%;
+                max-width: 100%;
+                padding-left: clamp(1rem, 5vw, 2rem);
+                padding-right: clamp(1rem, 5vw, 2rem);
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .guest-say-hi-title,
+            .guest-say-hi-lead,
+            .guest-say-hi-copy .solution-summary:not(.guest-say-hi-lead),
+            .guest-inbox-copy .solution-summary,
+            .ops-lead-copy .solution-summary,
+            .review-specialist-copy .solution-summary {
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+
+            .guest-say-hi-phone {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                min-width: 0;
+                max-width: 100%;
+                padding-right: 0;
+                box-sizing: border-box;
+            }
+
+            .guest-phone-stage {
+                width: 100%;
+                max-width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .guest-phone-with-suggestions {
+                width: min(82vw, 400px);
+                max-width: 82vw;
+            }
+
+            .guest-phone-device {
+                width: min(82vw, 400px);
+                max-width: 82vw;
+                flex: 0 0 auto;
+            }
+
+            .guest-phone-halo {
+                width: min(92vw, 440px);
+            }
+
+            .ops-lead-demo,
+            .guest-inbox-grid .solution-window,
+            .review-routing-shell {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .review-routing-shell {
+                height: min(400px, 58svh);
+                max-height: min(400px, 58svh);
+            }
+
+            .solution-demo-row--sidecopy {
+                display: flex;
+                flex-direction: column;
+                gap: clamp(24px, 4vw, 36px);
+            }
+
+            .solution-demo-row--sidecopy .solution-panel-explanatory--side {
+                order: 1;
+                padding-bottom: 0;
+                border-bottom: none;
+                text-align: center;
+            }
+
+            .solution-demo-row--sidecopy .solution-panel-explanatory--side .solution-summary {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .solution-demo-row--sidecopy .solution-demo-col {
+                order: 2;
+                width: 100%;
+            }
+
+            .solution-demo-row--sidecopy .solution-demo-gutter {
+                display: none;
+            }
+
+            .solution-window--guest-inbox:not(.solution-window--mobile-snapshot) .solution-window-aspect-root {
+                height: var(--demo-shell-h-inbox);
+                max-height: var(--demo-shell-h-inbox);
+            }
+
+            .solution-window--ops-kanban:not(.solution-window--mobile-snapshot) .solution-window-aspect-root {
+                height: var(--demo-shell-h);
+                max-height: var(--demo-shell-h);
+            }
+        }
+
+        @media (min-width: 1030px) {
             .guest-say-hi-grid {
                 grid-template-columns: minmax(570px, max-content) minmax(0, 1fr);
-                gap: clamp(40px, 6vw, 96px);
+                gap: clamp(32px, 4vw, 56px);
                 padding-left: clamp(20px, 3vw, 40px);
             }
 
             .guest-say-hi-copy {
-                padding-left: clamp(28px, 6vw, 96px);
-                margin-left: clamp(8px, 2vw, 40px);
+                padding-left: clamp(20px, 3vw, 44px);
+                margin-left: clamp(12px, 2vw, 28px);
                 align-self: start;
+                text-align: left;
             }
+        }
+
+        /* Mobile: scaled desktop screenshots (inbox, kanban, help desk) */
+        .demo-mobile-snapshot-wrap {
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            background: #fff;
+            line-height: 0;
+        }
+
+        .demo-mobile-snapshot {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .solution-window--mobile-snapshot {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .solution-window--mobile-snapshot .solution-window-aspect-root {
+            height: auto !important;
+            max-height: none !important;
+        }
+
+        .solution-window--mobile-snapshot .demo-resize-handle {
+            display: none;
         }
 
         /* Safari demo shell */
@@ -7960,10 +8511,17 @@
             border-bottom-left-radius: 4px;
         }
 
-        .inbox-v2-bubble--assistant,
-        .inbox-v2-bubble--staff {
+        .inbox-v2-bubble--assistant {
             background: #262626;
             color: #fafafa;
+            border-bottom-right-radius: 4px;
+        }
+
+        .inbox-v2-bubble--staff {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.32);
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.12);
             border-bottom-right-radius: 4px;
         }
 
@@ -8055,6 +8613,27 @@
             font-size: 0.75rem;
         }
 
+        .inbox-v2-compose-input {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+            background: #fff;
+            color: #262626;
+            font: inherit;
+            font-size: 0.75rem;
+        }
+
+        .inbox-v2-compose-input::placeholder {
+            color: #a3a3a3;
+        }
+
+        .inbox-v2-compose-input:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.35);
+            outline-offset: 1px;
+        }
+
         .inbox-v2-compose-send {
             width: 28px;
             height: 28px;
@@ -8064,6 +8643,17 @@
             display: grid;
             place-items: center;
             font-size: 0.82rem;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        .inbox-v2-compose-send:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .inbox-v2-compose-send:not(:disabled) {
+            cursor: pointer;
         }
 
         /* Acme kanban — v0 task board */
@@ -8239,23 +8829,42 @@
 
         .acme-main-toolbar {
             display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
             gap: 6px;
         }
 
         .acme-toolbar-btn {
-            padding: 5px 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: fit-content;
+            max-width: 100%;
+            margin: 0;
+            padding: 4px 10px;
             border-radius: 8px;
             border: 1px solid #e5e5e5;
             background: #fff;
+            font-family: inherit;
             font-size: 0.68rem;
             font-weight: 600;
+            line-height: 1.2;
             color: #525252;
+            white-space: nowrap;
+            cursor: default;
+            box-sizing: border-box;
         }
 
         .acme-toolbar-btn--pro {
             border: none;
             background: linear-gradient(135deg, #ede9fe, #fce7f3);
             color: #7c3aed;
+        }
+
+        .acme-toolbar-btn--pro svg {
+            flex-shrink: 0;
         }
 
         .acme-kanban-board {
@@ -8413,22 +9022,18 @@
             color: #a3a3a3;
         }
 
-        .acme-task-avatars {
-            display: flex;
-            margin-left: auto;
+        .acme-task-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
         }
 
-        .acme-task-avatar {
-            width: 18px;
-            height: 18px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #fde047, #f97316);
-            border: 1.5px solid #fff;
-            margin-left: -4px;
+        .acme-task-meta--icon {
+            color: #a3a3a3;
         }
 
-        .acme-task-avatar:first-child {
-            margin-left: 0;
+        .acme-task-meta--icon svg {
+            display: block;
         }
 
         .acme-kanban-empty {
@@ -8708,6 +9313,18 @@
             color: #fafafa;
         }
 
+        .helpdesk-v4-msg--staff {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .helpdesk-v4-msg--staff .helpdesk-v4-msg-bubble {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid rgba(16, 185, 129, 0.32);
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.12);
+        }
+
         .helpdesk-v4-compose {
             display: flex;
             align-items: center;
@@ -8881,9 +9498,19 @@
             grid-template-columns: 1fr;
         }
 
-        @media (min-width: 1020px) {
+        @media (min-width: 1030px) {
             .review-specialist-grid--stacked {
                 grid-template-columns: minmax(0, 1fr) minmax(260px, 0.32fr);
+            }
+
+            .review-specialist-grid--stacked .review-routing-shell {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .review-specialist-grid--stacked .review-specialist-copy {
+                grid-column: 2;
+                grid-row: 1;
             }
         }
 

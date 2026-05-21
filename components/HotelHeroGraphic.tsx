@@ -12,9 +12,6 @@ import { Icon2 } from "@/components/solutions/guest-phone/icons";
 type Hotspot = {
   id: string;
   scenarioId: HeroGuestScenarioId;
-  /** Percentage-based positioning relative to the image box */
-  leftPct: number;
-  topPct: number;
   sizePx: number;
   tooltip: string;
 };
@@ -90,16 +87,12 @@ export default function HotelHeroGraphic() {
       {
         id: "click-towels",
         scenarioId: "towels",
-        leftPct: 42,
-        topPct: 52,
         sizePx: 44,
         tooltip: getHeroGuestUserMessage("towels"),
       },
       {
         id: "click-crib",
         scenarioId: "crib",
-        leftPct: 70,
-        topPct: 32,
         sizePx: 44,
         tooltip: getHeroGuestUserMessage("crib"),
       },
@@ -120,17 +113,18 @@ export default function HotelHeroGraphic() {
 
   return (
     <div className="hotel-hero">
-      <div className="hotel-hero-visual">
-        {/* eslint-disable-next-line @next/next/no-img-element -- hero art is static and pre-optimized */}
-        <img
-          src="/hotel/riverside-hero-ebeee3.webp"
-          alt="Isometric view of Riverside Hotel"
-          className="hotel-hero-img"
-          draggable={false}
-        />
-      </div>
+      <div className="hotel-hero-art-frame">
+        <div className="hotel-hero-visual">
+          {/* eslint-disable-next-line @next/next/no-img-element -- hero art is static and pre-optimized */}
+          <img
+            src="/hotel/riverside-hero-ebeee3.webp"
+            alt="Isometric view of Riverside Hotel"
+            className="hotel-hero-img"
+            draggable={false}
+          />
+        </div>
 
-      <div className="hotel-hero-overlays" aria-hidden={false}>
+        <div className="hotel-hero-overlays" aria-hidden={false}>
         {/* Stacked autoplay: Pool hours → hours (hero mockup) */}
         {reducedMotion ? (
           <HotelHeroPoolMessages showReply />
@@ -143,10 +137,9 @@ export default function HotelHeroGraphic() {
             <button
               key={h.id}
               type="button"
+              data-hotspot={h.scenarioId}
               className="hotel-hero-hotspot hotel-hero-hotspot--beacon"
               style={{
-                left: `${h.leftPct}%`,
-                top: `${h.topPct}%`,
                 width: h.sizePx,
                 height: h.sizePx,
               }}
@@ -179,6 +172,7 @@ export default function HotelHeroGraphic() {
               </span>
             </button>
           ))}
+        </div>
       </div>
     </div>
   );

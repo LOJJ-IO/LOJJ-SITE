@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import type { DemoChatMessage, DemoSuggestion } from "@/components/solutions/DemoSimulationContext";
 import GuestPhoneHeader from "@/components/solutions/guest-phone/GuestPhoneHeader";
@@ -29,11 +29,48 @@ const GUEST_PHONE_TRANSLATE_X = (GUEST_PHONE_CLIP_W - GUEST_PHONE_INNER_W * GUES
 const GUEST_PHONE_TRANSLATE_Y = (GUEST_PHONE_CLIP_H - GUEST_PHONE_INNER_H * GUEST_PHONE_SCALE) / 2;
 const GUEST_PHONE_BEZEL_H = Math.round((GUEST_PHONE_DEVICE_W * 1000) / 490);
 
+type GuestPhoneFit = { scale: number; tx: number; ty: number };
+
+const DEFAULT_GUEST_PHONE_FIT: GuestPhoneFit = {
+  scale: GUEST_PHONE_SCALE,
+  tx: GUEST_PHONE_TRANSLATE_X,
+  ty: GUEST_PHONE_TRANSLATE_Y,
+};
+
+function useGuestPhoneScreenFit(clipRef: React.RefObject<HTMLDivElement | null>): GuestPhoneFit {
+  const [fit, setFit] = useState<GuestPhoneFit>(DEFAULT_GUEST_PHONE_FIT);
+
+  useLayoutEffect(() => {
+    const clip = clipRef.current;
+    if (!clip) return;
+
+    const update = () => {
+      const { width: clipW, height: clipH } = clip.getBoundingClientRect();
+      if (clipW <= 0 || clipH <= 0) return;
+      const scale = Math.min(clipW / GUEST_PHONE_INNER_W, clipH / GUEST_PHONE_INNER_H);
+      setFit({
+        scale,
+        tx: (clipW - GUEST_PHONE_INNER_W * scale) / 2,
+        ty: (clipH - GUEST_PHONE_INNER_H * scale) / 2,
+      });
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(clip);
+    return () => ro.disconnect();
+  }, [clipRef]);
+
+  return fit;
+}
+
 type GuestPhoneProps = {
   messages: DemoChatMessage[];
   suggestions: DemoSuggestion[];
   onPickSuggestion: (id: string) => void;
   highlightedSuggestionId?: string;
+  /** When false, hides chips and blocks taps (mobile autoplay). */
+  interactive?: boolean;
 };
 
 function GuestPhoneMessageList({ messages }: { messages: DemoChatMessage[] }) {
@@ -83,9 +120,12 @@ export default function GuestPhone({
   suggestions,
   onPickSuggestion,
   highlightedSuggestionId,
+  interactive = true,
 }: GuestPhoneProps) {
   const [lojjOpen, setLojjOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const clipRef = useRef<HTMLDivElement>(null);
+  const { scale, tx, ty } = useGuestPhoneScreenFit(clipRef);
 
   const openLojj = () => {
     setBookingOpen(false);
@@ -97,19 +137,23 @@ export default function GuestPhone({
     setBookingOpen(true);
   };
 
+  const showSuggestions = interactive && suggestions.length > 0;
+
   return (
-    <div className="guest-phone-stage demo-ui-font">
+    <div
+      className={`guest-phone-stage demo-ui-font${interactive ? "" : " guest-phone-stage--autoplay"}`}
+    >
       <div className="guest-phone-halo" aria-hidden />
 
       <div className="guest-phone-with-suggestions">
         <div className="guest-phone-device">
-          <div className="guest-phone-screen-clip">
+          <div ref={clipRef} className="guest-phone-screen-clip">
             <div
               className="guest-phone-screen-inner"
               style={{
                 width: GUEST_PHONE_INNER_W,
                 height: GUEST_PHONE_INNER_H,
-                transform: `translate(${GUEST_PHONE_TRANSLATE_X}px, ${GUEST_PHONE_TRANSLATE_Y}px) scale(${GUEST_PHONE_SCALE})`,
+                transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
               }}
             >
               <div className="guest-phone-ui">
@@ -159,7 +203,7 @@ export default function GuestPhone({
           />
         </div>
 
-        {suggestions.length > 0 ? (
+        {showSuggestions ? (
           <div className="guest-phone-suggestions-rail" role="group" aria-label="Suggested replies">
             {suggestions.map((s) => (
               <button

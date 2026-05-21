@@ -56,8 +56,6 @@ export const SOLUTIONS: SolutionDefinition[] = [
     id: "guest",
     anchor: "guest-expert",
     heading: "Guest Expert",
-    lead:
-      "From guest FAQ automation to routed requests and shift-wide task tracking, LOJJ's all-in-one platform streamlines front desk operations, reduces manager interruptions, and keeps service consistent across every stay.",
     summary:
       "Talk to every guest, track every task, and answer every question—perfectly, every time.",
     phoneImage: "/teammates/ai-manager.png",
@@ -171,7 +169,7 @@ export const SOLUTIONS: SolutionDefinition[] = [
     anchor: "review-specialist",
     heading: "Review Specialist",
     summary:
-      "LOJJ finds your happiest guests across the hotel and automatically asks them to leave a review based on how likely they are to post a positive one.",
+      "LOJJ finds happy guests across your property and automatically asks them to leave a review based on how likely they are to post a positive one.",
     demo: {
       title: "Review routing",
       guests: [

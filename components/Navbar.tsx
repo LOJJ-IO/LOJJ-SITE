@@ -47,22 +47,25 @@ export default function Navbar() {
         data-scrolled={isSolid ? "true" : "false"}
         className={`fixed top-0 right-0 left-0 z-50 transform transition-all duration-200 ease-out${isSolid ? " nav-solid" : " nav-transparent"}`}
       >
-        <div className="flex w-full items-center justify-between px-10 py-6 md:px-16">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="lojj-logo font-romantica">
+        <div className="lojj-nav-bar flex w-full items-center justify-between px-5 py-5 md:px-16 md:py-6">
+          <div className="lojj-nav-start flex min-w-0 items-center gap-4 md:gap-6">
+            <Link href="/" className="lojj-logo font-romantica shrink-0">
               lojj.io
             </Link>
-            <div className="lojj-left-pill hidden md:inline-flex">
-              <a href="#features" className="lojj-left-link">
-                About
-              </a>
-              <a href="#features" className="lojj-left-link">
-                Features
-              </a>
+
+            <div className="lojj-nav-desktop-links hidden md:block">
+              <div className="lojj-left-pill inline-flex">
+                <a href="#features" className="lojj-left-link">
+                  About
+                </a>
+                <a href="#features" className="lojj-left-link">
+                  Features
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="lojj-nav-desktop-cta hidden items-center gap-4 md:flex">
             <WaitlistDialogTrigger
               className={`rotating-border-btn inline-flex h-10 cursor-pointer items-center justify-center rounded-full px-6 py-2 text-white transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 ${WAITLIST_BTN_LABEL_CLASS}`}
             >
@@ -77,7 +80,7 @@ export default function Navbar() {
 
           <button
             onClick={openMenu}
-            className="flex flex-col gap-1.5 p-2 md:hidden"
+            className="lojj-nav-menu-btn flex shrink-0 flex-col gap-1.5 p-2 md:hidden"
             aria-label="Open menu"
             type="button"
           >
@@ -108,6 +111,9 @@ export default function Navbar() {
         <div className="flex flex-col items-center gap-10 text-3xl font-medium tracking-tight text-[rgb(34,61,20)]">
           <a href="#features" onClick={closeMenu} className="hover:opacity-60 transition-opacity">About</a>
           <a href="#features" onClick={closeMenu} className="hover:opacity-60 transition-opacity">Features</a>
+          <a href="mailto:info@lojj.io" onClick={closeMenu} className="hover:opacity-60 transition-opacity">
+            Contact
+          </a>
           <WaitlistDialogTrigger asChild>
             <button
               type="button"

@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import DemoWindowChrome from "@/components/solutions/DemoWindowChrome";
+import { IconArrowUp, IconPaperclip } from "@/components/solutions/demo-icons";
 import PhoneMockup from "@/components/PhoneMockup";
 import {
   useDemoSimulation,
@@ -10,8 +11,11 @@ import {
 } from "@/components/solutions/DemoSimulationContext";
 import MagePhoneChat from "@/components/solutions/MagePhoneChat";
 import ReviewGuestPhone from "@/components/solutions/ReviewGuestPhone";
+import DemoMobileSnapshot from "@/components/solutions/DemoMobileSnapshot";
 import ManagerSplitDemo from "@/components/solutions/ManagerSplitDemo";
 import SafariDemoShell from "@/components/solutions/SafariDemoShell";
+import { DEMO_MOBILE_SNAPSHOTS } from "@/lib/demo-mobile-snapshots";
+import { useDemoMobileSnapshot } from "@/lib/use-match-media";
 import type { SolutionDefinition } from "@/lib/solutions";
 
 type SolutionWindowProps = {
@@ -113,8 +117,17 @@ function GuestDesktopPanel() {
   const { guestMessages, guestAppend, guestJumpShowOps, guestJumpShowReviews, guestJumpShowManager } =
     useDemoSimulation();
 
-  const [staffComposeForId, setStaffComposeForId] = useState<string | null>(null);
   const [staffDraft, setStaffDraft] = useState("");
+
+  const lastMessage = guestMessages[guestMessages.length - 1];
+  const canStaffReply = guestMessages.length > 0 && lastMessage?.role !== "staff";
+
+  const sendStaffReply = () => {
+    const text = staffDraft.trim();
+    if (!text || !canStaffReply) return;
+    guestAppend("staff", text);
+    setStaffDraft("");
+  };
 
   const guestRoleLabel = (role: DemoChatMessage["role"]) => {
     if (role === "user") return "Guest";
@@ -153,76 +166,49 @@ function GuestDesktopPanel() {
             {guestMessages.length === 0 ? (
               <p className="demo-guest-desktop-empty">Waiting for the first message from the phone…</p>
             ) : (
-              guestMessages.map((m) =>
-                m.role === "assistant" ? (
-                  <div key={m.id} className="demo-guest-assistant-wrap">
-                    <div className="demo-guest-assistant-row">
-                      <div className="demo-guest-line demo-guest-line--assistant">
-                        <span className="demo-guest-role">Mage</span>
-                        <p>{m.body}</p>
-                        <span className="demo-guest-time">{m.time}</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="demo-guest-jump-in-btn"
-                        onClick={() => {
-                          setStaffComposeForId((open) => (open === m.id ? null : m.id));
-                          setStaffDraft("");
-                        }}
-                      >
-                        Jump in
-                      </button>
-                    </div>
-                    {staffComposeForId === m.id ? (
-                      <div className="demo-guest-staff-compose">
-                        <label className="demo-guest-staff-label" htmlFor={`staff-reply-${m.id}`}>
-                          Reply as staff
-                        </label>
-                        <textarea
-                          id={`staff-reply-${m.id}`}
-                          className="demo-guest-staff-input"
-                          rows={3}
-                          value={staffDraft}
-                          onChange={(e) => setStaffDraft(e.target.value)}
-                          placeholder="Your message to the guest…"
-                        />
-                        <div className="demo-guest-staff-actions">
-                          <button
-                            type="button"
-                            className="demo-chip"
-                            onClick={() => {
-                              const t = staffDraft.trim();
-                              if (t) guestAppend("staff", t);
-                              setStaffComposeForId(null);
-                              setStaffDraft("");
-                            }}
-                          >
-                            Send
-                          </button>
-                          <button
-                            type="button"
-                            className="demo-guest-staff-cancel"
-                            onClick={() => {
-                              setStaffComposeForId(null);
-                              setStaffDraft("");
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div key={m.id} className={`demo-guest-line demo-guest-line--${m.role}`}>
-                    <span className="demo-guest-role">{guestRoleLabel(m.role)}</span>
-                    <p>{m.body}</p>
-                    <span className="demo-guest-time">{m.time}</span>
-                  </div>
-                ),
-              )
+              guestMessages.map((m) => (
+                <div key={m.id} className={`demo-guest-line demo-guest-line--${m.role}`}>
+                  <span className="demo-guest-role">{guestRoleLabel(m.role)}</span>
+                  <p>{m.body}</p>
+                  <span className="demo-guest-time">{m.time}</span>
+                </div>
+              ))
             )}
           </div>
+          <footer className="demo-guest-compose-bar" aria-label="Message guest">
+            <span className="demo-guest-compose-attach" aria-hidden={canStaffReply}>
+              <IconPaperclip size={16} />
+            </span>
+            {canStaffReply ? (
+              <input
+                type="text"
+                className="demo-guest-compose-input"
+                value={staffDraft}
+                onChange={(e) => setStaffDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    sendStaffReply();
+                  }
+                }}
+                placeholder="Your message to the guest…"
+                aria-label="Staff reply to guest"
+              />
+            ) : (
+              <span className="demo-guest-compose-field" aria-hidden>
+                Message guest…
+              </span>
+            )}
+            <button
+              type="button"
+              className="demo-guest-compose-send"
+              aria-label="Send message"
+              disabled={!canStaffReply || !staffDraft.trim()}
+              onClick={sendStaffReply}
+            >
+              <IconArrowUp size={16} />
+            </button>
+          </footer>
         </div>
       ) : (
         <div className="demo-guest-desktop">
@@ -451,6 +437,7 @@ function ReviewsDemoSynced() {
 
 export default function SolutionWindow({ solution }: SolutionWindowProps) {
   const demo = useDemoSimulation();
+  const mobileSnapshot = useDemoMobileSnapshot();
   const [managerDemoKey, setManagerDemoKey] = useState(0);
 
   const copyLink = () => {
@@ -493,14 +480,20 @@ export default function SolutionWindow({ solution }: SolutionWindowProps) {
           solution.id === "guest"
             ? "solution-window--guest-tall"
             : solution.id === "manager"
-              ? "solution-window--manager-split solution-window--safari"
+              ? mobileSnapshot
+                ? "solution-window--manager-split solution-window--mobile-snapshot"
+                : "solution-window--manager-split solution-window--safari"
               : undefined
         }
       >
         {solution.id === "manager" && solution.demo.topics ? (
-          <SafariDemoShell url="riverside.lojj.io/help-desk">
-            <ManagerSplitDemo key={managerDemoKey} />
-          </SafariDemoShell>
+          mobileSnapshot ? (
+            <DemoMobileSnapshot {...DEMO_MOBILE_SNAPSHOTS.helpDesk} />
+          ) : (
+            <SafariDemoShell url="riverside.lojj.io/help-desk">
+              <ManagerSplitDemo key={managerDemoKey} />
+            </SafariDemoShell>
+          )
         ) : (
           <>
             <div className="solution-window-bar">

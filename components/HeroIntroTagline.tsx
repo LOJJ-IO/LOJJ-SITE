@@ -45,7 +45,7 @@ export default function HeroIntroTagline({ ready, reducedMotion }: HeroIntroTagl
   if (reducedMotion) {
     return (
       <p className="hero-tagline-text hero-tagline-text--primary">
-        Your best, <em className="hero-tagline-every">every</em> time.
+        Your best, <span className="hero-tagline-every">every</span> time.
       </p>
     );
   }
@@ -64,9 +64,9 @@ export default function HeroIntroTagline({ ready, reducedMotion }: HeroIntroTagl
       <motion.span className="hero-tagline-chunk" variants={chunk} custom={0.05}>
         Your best,
       </motion.span>{" "}
-      <motion.em className="hero-tagline-every" variants={everyVariants}>
+      <motion.span className="hero-tagline-every" variants={everyVariants}>
         every
-      </motion.em>{" "}
+      </motion.span>{" "}
       <motion.span className="hero-tagline-chunk" variants={chunk} custom={0.58}>
         time.
       </motion.span>

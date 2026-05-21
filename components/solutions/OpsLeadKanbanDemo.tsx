@@ -164,30 +164,23 @@ function TaskCard({ task }: { task: KanbanTask }) {
       <footer className="acme-task-card-foot">
         {task.date ? <span className="acme-task-meta">{task.date}</span> : null}
         {task.comments != null ? (
-          <span className="acme-task-meta">
-            <IconMessage size={12} /> {task.comments}
+          <span className="acme-task-meta acme-task-meta--icon" aria-hidden>
+            <IconMessage size={12} />
           </span>
         ) : null}
         {task.attachments != null ? (
-          <span className="acme-task-meta">
-            <IconPaperclip size={12} /> {task.attachments}
+          <span className="acme-task-meta acme-task-meta--icon" aria-hidden>
+            <IconPaperclip size={12} />
           </span>
         ) : null}
         {task.links != null ? (
-          <span className="acme-task-meta">
-            <IconLink size={12} /> {task.links}
+          <span className="acme-task-meta acme-task-meta--icon" aria-hidden>
+            <IconLink size={12} />
           </span>
         ) : null}
         {task.checklist ? (
-          <span className="acme-task-meta">
-            <IconCheckSquare size={12} /> {task.checklist}
-          </span>
-        ) : null}
-        {task.avatars ? (
-          <span className="acme-task-avatars" aria-hidden>
-            {Array.from({ length: task.avatars }, (_, i) => (
-              <span key={i} className="acme-task-avatar" />
-            ))}
+          <span className="acme-task-meta acme-task-meta--icon" aria-hidden>
+            <IconCheckSquare size={12} />
           </span>
         ) : null}
       </footer>
@@ -382,14 +375,16 @@ export default function OpsLeadKanbanDemo() {
             <h4 className="acme-main-title">Riverside task board</h4>
           </div>
           <div className="acme-main-toolbar" aria-hidden>
-            <span className="acme-toolbar-btn">Filter</span>
-            <span className="acme-toolbar-btn">Sort</span>
-            <span className="acme-toolbar-btn acme-toolbar-btn--pro">
-              <span className="acme-toolbar-pro-star">
-                <IconSparkles size={12} />
-              </span>{" "}
+            <button type="button" className="acme-toolbar-btn" tabIndex={-1}>
+              Filter
+            </button>
+            <button type="button" className="acme-toolbar-btn" tabIndex={-1}>
+              Sort
+            </button>
+            <button type="button" className="acme-toolbar-btn acme-toolbar-btn--pro" tabIndex={-1}>
+              <IconSparkles size={12} />
               Automate
-            </span>
+            </button>
           </div>
         </header>
 

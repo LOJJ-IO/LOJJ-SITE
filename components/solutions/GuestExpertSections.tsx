@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
+import DemoMobileSnapshot from "@/components/solutions/DemoMobileSnapshot";
 import DemoWindowChrome from "@/components/solutions/DemoWindowChrome";
 import { useDemoSimulation } from "@/components/solutions/DemoSimulationContext";
 import GuestPhone from "@/components/solutions/GuestPhone";
 import GuestInboxDesktopDemo from "@/components/solutions/GuestInboxDesktopDemo";
 import SafariDemoShell from "@/components/solutions/SafariDemoShell";
+import { DEMO_MOBILE_SNAPSHOTS } from "@/lib/demo-mobile-snapshots";
 import { Highlighter } from "@/components/ui/highlighter";
+import { runGuestPhoneAutoplay } from "@/lib/guest-phone-autoplay";
+import { useDemoMobileSnapshot, useNarrowSolutionLayout } from "@/lib/use-match-media";
 import type { SolutionDefinition } from "@/lib/solutions";
 
 type GuestExpertSectionsProps = {
@@ -16,15 +20,36 @@ type GuestExpertSectionsProps = {
 
 export default function GuestExpertSections({ solution }: GuestExpertSectionsProps) {
   const demo = useDemoSimulation();
+  const narrow = useNarrowSolutionLayout();
+  const mobileSnapshot = useDemoMobileSnapshot();
   const phoneMessages = demo.guestMessages;
   const heroIntent = demo.heroIntent;
+  const skipAutoplayRef = useRef(false);
 
   useEffect(() => {
     if (!heroIntent) return;
     const { scenarioId } = heroIntent;
+    skipAutoplayRef.current = true;
     demo.playHeroScenario(scenarioId);
     demo.setHeroIntent(null);
   }, [heroIntent, demo.playHeroScenario, demo.setHeroIntent]);
+
+  const pickRef = useRef(demo.guestPickSuggestion);
+  const resetRef = useRef(demo.resetGuestDemo);
+  pickRef.current = demo.guestPickSuggestion;
+  resetRef.current = demo.resetGuestDemo;
+
+  useEffect(() => {
+    if (!narrow || heroIntent) return;
+    if (skipAutoplayRef.current) {
+      skipAutoplayRef.current = false;
+      return;
+    }
+    return runGuestPhoneAutoplay(
+      (id) => pickRef.current(id),
+      () => resetRef.current(),
+    );
+  }, [narrow, heroIntent]);
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#${solution.anchor}`;
@@ -35,14 +60,6 @@ export default function GuestExpertSections({ solution }: GuestExpertSectionsPro
     <>
       <article id={solution.anchor} className="solution-panel guest-expert-section">
         <div className="guest-say-hi-grid">
-          <div className="guest-say-hi-phone">
-            <GuestPhone
-              messages={phoneMessages}
-              suggestions={demo.guestSuggestions}
-              onPickSuggestion={demo.guestPickSuggestion}
-              highlightedSuggestionId={demo.guestPhase === "after_hi" ? "late" : undefined}
-            />
-          </div>
           <div className="guest-say-hi-copy">
             <h1 className="guest-say-hi-title">
               Say{" "}
@@ -55,6 +72,15 @@ export default function GuestExpertSections({ solution }: GuestExpertSectionsPro
               <p className="landing-p solution-summary guest-say-hi-lead">{solution.lead}</p>
             ) : null}
             <p className="landing-p solution-summary">{solution.summary}</p>
+          </div>
+          <div className={`guest-say-hi-phone${narrow ? " guest-say-hi-phone--autoplay" : ""}`}>
+            <GuestPhone
+              messages={phoneMessages}
+              suggestions={narrow ? [] : demo.guestSuggestions}
+              onPickSuggestion={demo.guestPickSuggestion}
+              highlightedSuggestionId={narrow ? undefined : demo.guestPhase === "after_hi" ? "late" : undefined}
+              interactive={!narrow}
+            />
           </div>
         </div>
       </article>
@@ -73,12 +99,20 @@ export default function GuestExpertSections({ solution }: GuestExpertSectionsPro
             ariaLabel="Guest Expert desktop inbox"
             onCopyLink={copyLink}
             onResetScenario={() => demo.resetGuestDemo()}
-            shellClassName="solution-window--guest-inbox solution-window--safari"
+            shellClassName={
+              mobileSnapshot
+                ? "solution-window--guest-inbox solution-window--mobile-snapshot"
+                : "solution-window--guest-inbox solution-window--safari"
+            }
             fillWidth
           >
-            <SafariDemoShell url="riverside.lojj.io/inbox">
-              <GuestInboxDesktopDemo />
-            </SafariDemoShell>
+            {mobileSnapshot ? (
+              <DemoMobileSnapshot {...DEMO_MOBILE_SNAPSHOTS.guestInbox} />
+            ) : (
+              <SafariDemoShell url="riverside.lojj.io/inbox">
+                <GuestInboxDesktopDemo />
+              </SafariDemoShell>
+            )}
           </DemoWindowChrome>
         </div>
       </article>

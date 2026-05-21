@@ -157,10 +157,11 @@ export default function ManagerSplitDemo() {
             <div className="helpdesk-v4-messages demo-scroll-hidden">
               {visibleMessages.map((msg) => {
                 const isGuest = msg.role === "guest";
+                const side = isGuest ? "guest" : msg.role === "staff" ? "staff" : "agent";
                 return (
                   <div
                     key={msg.id}
-                    className={`helpdesk-v4-msg helpdesk-v4-msg--${isGuest ? "guest" : "agent"} helpdesk-v4-msg--animate`}
+                    className={`helpdesk-v4-msg helpdesk-v4-msg--${side} helpdesk-v4-msg--animate`}
                   >
                     {isGuest ? (
                       <DemoAvatar guest={GUEST} size="sm" className="helpdesk-v4-msg-avatar-ui" />
