@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { WAITLIST_BTN_LABEL_CLASS, WaitlistDialogTrigger } from "@/components/WaitlistDialog";
 
 const SCROLL_THRESHOLD = 50;
@@ -9,6 +9,7 @@ const SCROLL_THRESHOLD = 50;
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const leftPillRef = useRef<HTMLDivElement | null>(null);
 
   const isSolid = isScrolled || mobileMenuOpen;
 
@@ -27,6 +28,39 @@ export default function Navbar() {
       window.removeEventListener("scroll", checkScroll);
     };
   }, [checkScroll]);
+
+  useEffect(() => {
+    const pill = leftPillRef.current;
+    if (!pill) return;
+
+    const apply = () => {
+      // Desktop pill is hidden below md; don't drive hero split on mobile.
+      if (window.matchMedia("(width < 768px)").matches) return;
+
+      const rect = pill.getBoundingClientRect();
+      if (!Number.isFinite(rect.right) || rect.right <= 0) return;
+      // Add some breathing room so the pattern definitely spans past the pill.
+      const minSplitPx = Math.round(rect.right + 18);
+      document.documentElement.style.setProperty("--hero-split-min-px", `${minSplitPx}px`);
+      document.documentElement.style.setProperty("--nav-features-pill-right-px", `${minSplitPx}px`);
+    };
+
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(pill);
+    window.addEventListener("resize", apply);
+
+    // Fonts can shift width after initial paint.
+    if ("fonts" in document) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- document.fonts is not in TS lib in some setups
+      (document as any).fonts?.ready?.then?.(apply).catch?.(() => null);
+    }
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", apply);
+    };
+  }, []);
 
   const openMenu = useCallback(() => {
     setMobileMenuOpen(true);
@@ -54,7 +88,7 @@ export default function Navbar() {
             </Link>
 
             <div className="lojj-nav-desktop-links hidden md:block">
-              <div className="lojj-left-pill inline-flex">
+              <div ref={leftPillRef} className="lojj-left-pill inline-flex">
                 <a href="#features" className="lojj-left-link">
                   About
                 </a>

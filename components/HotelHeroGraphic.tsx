@@ -1,20 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import HeroRequestPin from "@/components/HeroRequestPin";
 import {
   getHeroGuestUserMessage,
   useDemoSimulation,
   type HeroGuestScenarioId,
 } from "@/components/solutions/DemoSimulationContext";
 import { Icon2 } from "@/components/solutions/guest-phone/icons";
-
-type Hotspot = {
-  id: string;
-  scenarioId: HeroGuestScenarioId;
-  sizePx: number;
-  tooltip: string;
-};
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
@@ -57,11 +51,29 @@ function HotelHeroPoolMessages({
   );
 }
 
+type RequestPinConfig = {
+  scenarioId: HeroGuestScenarioId;
+  align: "left" | "right";
+  /** Window-aligned placement on the riverside hero art (%) */
+  left: string;
+  top: string;
+};
+
+const REQUEST_PINS: RequestPinConfig[] = [
+  // Moved to the circled window on the right tower.
+  { scenarioId: "towels", align: "left", left: "58.6%", top: "63.8%" },
+  { scenarioId: "crib", align: "right", left: "64.4%", top: "39.6%" },
+];
+
+/** After pool reply animation (~0.9s) before request pins enter */
+const PINS_AFTER_POOL_MS = 950;
+const PIN_STAGGER_MS = 220;
+
 export default function HotelHeroGraphic() {
   const demo = useDemoSimulation();
   const [reducedMotion, setReducedMotion] = useState(true);
-  /** Stacked pool-hours teaser (matches hero mockup). */
   const [poolPhase, setPoolPhase] = useState<"off" | "question" | "answered">("off");
+  const [pinsActive, setPinsActive] = useState(false);
 
   useEffect(() => {
     setReducedMotion(prefersReducedMotion());
@@ -72,7 +84,13 @@ export default function HotelHeroGraphic() {
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      setPoolPhase("answered");
+      setPinsActive(true);
+      return;
+    }
+    setPoolPhase("off");
+    setPinsActive(false);
     const t1 = window.setTimeout(() => setPoolPhase("question"), 1600);
     const t2 = window.setTimeout(() => setPoolPhase("answered"), 4000);
     return () => {
@@ -81,35 +99,38 @@ export default function HotelHeroGraphic() {
     };
   }, [reducedMotion]);
 
-  const hotspots = useMemo<Hotspot[]>(
-    () => [
-      // Mockup: middle floor left-ish; slightly higher toward right façade.
-      {
-        id: "click-towels",
-        scenarioId: "towels",
-        sizePx: 44,
-        tooltip: getHeroGuestUserMessage("towels"),
-      },
-      {
-        id: "click-crib",
-        scenarioId: "crib",
-        sizePx: 44,
-        tooltip: getHeroGuestUserMessage("crib"),
-      },
-    ],
+  useEffect(() => {
+    if (reducedMotion) return;
+    if (poolPhase !== "answered") {
+      setPinsActive(false);
+      return;
+    }
+    const t = window.setTimeout(() => setPinsActive(true), PINS_AFTER_POOL_MS);
+    return () => window.clearTimeout(t);
+  }, [poolPhase, reducedMotion]);
+
+  const pins = useMemo(
+    () =>
+      REQUEST_PINS.map((pin) => ({
+        ...pin,
+        question: getHeroGuestUserMessage(pin.scenarioId),
+      })),
     [],
   );
 
-  const scrollToGuestExpert = () => {
+  const scrollToGuestExpert = useCallback(() => {
     const el = document.getElementById("guest-expert");
     if (!el) return;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  }, []);
 
-  const onClickScenario = (scenarioId: HeroGuestScenarioId) => {
-    demo.playHeroScenario(scenarioId);
-    scrollToGuestExpert();
-  };
+  const onActivateScenario = useCallback(
+    (scenarioId: HeroGuestScenarioId) => {
+      demo.playHeroScenario(scenarioId);
+      scrollToGuestExpert();
+    },
+    [demo, scrollToGuestExpert],
+  );
 
   return (
     <div className="hotel-hero">
@@ -125,56 +146,27 @@ export default function HotelHeroGraphic() {
         </div>
 
         <div className="hotel-hero-overlays" aria-hidden={false}>
-        {/* Stacked autoplay: Pool hours → hours (hero mockup) */}
-        {reducedMotion ? (
-          <HotelHeroPoolMessages showReply />
-        ) : poolPhase !== "off" ? (
-          <HotelHeroPoolMessages showReply={poolPhase === "answered"} animate />
-        ) : null}
+          {reducedMotion ? (
+            <HotelHeroPoolMessages showReply />
+          ) : poolPhase !== "off" ? (
+            <HotelHeroPoolMessages showReply={poolPhase === "answered"} animate />
+          ) : null}
 
-        {/* Tap-to-ask concierge beacons */}
-        {hotspots.map((h) => (
-            <button
-              key={h.id}
-              type="button"
-              data-hotspot={h.scenarioId}
-              className="hotel-hero-hotspot hotel-hero-hotspot--beacon"
-              style={{
-                width: h.sizePx,
-                height: h.sizePx,
-              }}
-              onClick={() => onClickScenario(h.scenarioId)}
-              aria-label={h.tooltip}
-            >
-              <span className="hotel-hero-hotspot-tooltip" role="tooltip">
-                {h.tooltip}
-              </span>
-              <span className="hotel-hero-hotspot-beacon" aria-hidden>
-                <span className="hotel-hero-hotspot-beacon-pulse" />
-                <span className="hotel-hero-hotspot-beacon-pulse hotel-hero-hotspot-beacon-pulse--delayed" />
-                <span className="hotel-hero-hotspot-beacon-core">
-                  <svg
-                    className="hotel-hero-hotspot-icon"
-                    viewBox="0 0 14 11"
-                    width="14"
-                    height="11"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M1 1.75h12M1 5.5H9M1 9.25h10"
-                      stroke="currentColor"
-                      strokeWidth="1.2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-              </span>
-            </button>
+          {pins.map((pin, index) => (
+            <HeroRequestPin
+              key={pin.scenarioId}
+              scenarioId={pin.scenarioId}
+              question={pin.question}
+              left={pin.left}
+              top={pin.top}
+              align={pin.align}
+              active={pinsActive}
+              entranceDelayMs={index * PIN_STAGGER_MS}
+              onActivate={onActivateScenario}
+            />
           ))}
         </div>
       </div>
     </div>
   );
 }
-

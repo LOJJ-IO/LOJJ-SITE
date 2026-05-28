@@ -75,17 +75,45 @@ type GuestPhoneProps = {
 
 function GuestPhoneMessageList({ messages }: { messages: DemoChatMessage[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const shouldStickToBottomRef = useRef(true);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    const onScroll = () => {
+      // If the user scrolls up, stop forcing to bottom.
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      shouldStickToBottomRef.current = distanceFromBottom < 80;
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!shouldStickToBottomRef.current) return;
     el.scrollTop = el.scrollHeight;
   }, [messages]);
 
   const isEmpty = messages.length === 0;
 
   return (
-    <div ref={scrollRef} className={`guest-phone-thread${isEmpty ? " guest-phone-thread--empty" : ""}`}>
+    <div
+      ref={scrollRef}
+      className={`guest-phone-thread${isEmpty ? " guest-phone-thread--empty" : ""}`}
+      onWheelCapture={(e) => {
+        // Prevent the page from scrolling when pointer is over the phone thread.
+        e.stopPropagation();
+      }}
+      onTouchMoveCapture={(e) => {
+        // Same for touch scroll chaining.
+        e.stopPropagation();
+      }}
+    >
       {isEmpty ? (
         <p className="guest-phone-thread-empty">Choose a suggested reply on the right to start the conversation.</p>
       ) : (
