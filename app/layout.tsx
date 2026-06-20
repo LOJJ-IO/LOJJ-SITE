@@ -90,10 +90,6 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${montserrat.variable} ${inter.variable}`}>
       <head>
         <link rel="icon" href="/favicon.png" sizes="any" />
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap"
-          rel="stylesheet"
-        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
