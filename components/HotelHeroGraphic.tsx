@@ -126,7 +126,7 @@ export default function HotelHeroGraphic() {
 
   const onActivateScenario = useCallback(
     (scenarioId: HeroGuestScenarioId) => {
-      demo.playHeroScenario(scenarioId);
+      demo.setHeroIntent({ scenarioId });
       scrollToGuestExpert();
     },
     [demo, scrollToGuestExpert],

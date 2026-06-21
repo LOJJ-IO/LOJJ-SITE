@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@heroui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import DemoAvatar from "@/components/solutions/DemoAvatar";
 import {
@@ -20,6 +20,8 @@ import {
   type DemoChatMessage,
 } from "@/components/solutions/DemoSimulationContext";
 import { DEMO_GUESTS, LIVE_GUEST, guestById, guestLabel, type DemoGuestProfile } from "@/lib/demo-guests";
+import { demoChatTypingDuration } from "@/lib/demo-chat-animation";
+import { useGuestPhoneInView } from "@/lib/use-guest-phone-in-view";
 
 type InboxThread = {
   id: string;
@@ -125,54 +127,116 @@ function roleLabel(role: DemoChatMessage["role"]) {
   return "LOJJ";
 }
 
+function bubbleVariant(role: DemoChatMessage["role"]) {
+  return role === "user" ? "guest" : role === "staff" ? "staff" : "assistant";
+}
+
+function InboxTypingBubble({ role }: { role: DemoChatMessage["role"] }) {
+  const variant = bubbleVariant(role);
+  return (
+    <div className={`inbox-v2-bubble inbox-v2-bubble--${variant} inbox-v2-bubble--typing`}>
+      <span className="guest-phone-typing-dots" aria-label="Typing">
+        <span />
+        <span />
+        <span />
+      </span>
+    </div>
+  );
+}
+
+function InboxAnimatedMessage({
+  message,
+  guest,
+  animate,
+  onReveal,
+}: {
+  message: DemoChatMessage;
+  guest: DemoGuestProfile | undefined;
+  animate: boolean;
+  onReveal?: () => void;
+}) {
+  const [revealed, setRevealed] = useState(!animate);
+  const isUser = message.role === "user";
+  const isStaff = message.role === "staff";
+  const variant = bubbleVariant(message.role);
+
+  useEffect(() => {
+    if (!animate) {
+      setRevealed(true);
+      return;
+    }
+    setRevealed(false);
+    const timer = window.setTimeout(
+      () => setRevealed(true),
+      demoChatTypingDuration(message.body, message.role),
+    );
+    return () => window.clearTimeout(timer);
+  }, [animate, message.body, message.id, message.role]);
+
+  useEffect(() => {
+    if (revealed) onReveal?.();
+  }, [revealed, onReveal]);
+
+  return (
+    <div
+      className={`inbox-v2-msg inbox-v2-msg--${isUser ? "guest" : isStaff ? "staff" : "assistant"}`}
+    >
+      {isUser && guest ? <DemoAvatar guest={guest} size="sm" className="inbox-v2-msg-avatar-ui" /> : null}
+      <div className="inbox-v2-msg-content">
+        <span className="inbox-v2-msg-role">{roleLabel(message.role)}</span>
+        {!revealed ? (
+          <InboxTypingBubble role={message.role} />
+        ) : (
+          <div className={`inbox-v2-bubble inbox-v2-bubble--${variant} inbox-v2-bubble--appear`}>
+            <p>{message.body}</p>
+          </div>
+        )}
+        {revealed ? <span className="inbox-v2-msg-time">{message.time}</span> : null}
+      </div>
+      {!isUser ? (
+        <DemoAvatar
+          name={isStaff ? "Staff" : "LOJJ"}
+          initials={isStaff ? "SW" : "L"}
+          size="sm"
+          className="inbox-v2-msg-avatar-ui"
+        />
+      ) : null}
+    </div>
+  );
+}
+
 function ChatBubbles({
   messages,
   guest,
   scrollRef,
+  animate = false,
 }: {
   messages: DemoChatMessage[];
   guest: DemoGuestProfile | undefined;
   scrollRef: React.RefObject<HTMLDivElement | null>;
+  animate?: boolean;
 }) {
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [messages, scrollRef]);
+  }, [scrollRef]);
+
+  useLayoutEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   return (
     <div ref={scrollRef} className="inbox-v2-chat-scroll demo-scroll-hidden" aria-live="polite">
-      {messages.map((m) => {
-        const isUser = m.role === "user";
-        const isStaff = m.role === "staff";
-        return (
-          <div
-            key={m.id}
-            className={`inbox-v2-msg inbox-v2-msg--${isUser ? "guest" : isStaff ? "staff" : "assistant"}`}
-          >
-            {isUser && guest ? <DemoAvatar guest={guest} size="sm" className="inbox-v2-msg-avatar-ui" /> : null}
-            <div className="inbox-v2-msg-content">
-              <span className="inbox-v2-msg-role">{roleLabel(m.role)}</span>
-              <div
-                className={`inbox-v2-bubble inbox-v2-bubble--${
-                  isUser ? "guest" : isStaff ? "staff" : "assistant"
-                }`}
-              >
-                <p>{m.body}</p>
-              </div>
-              <span className="inbox-v2-msg-time">{m.time}</span>
-            </div>
-            {!isUser ? (
-              <DemoAvatar
-                name={isStaff ? "Staff" : "LOJJ"}
-                initials={isStaff ? "SW" : "L"}
-                size="sm"
-                className="inbox-v2-msg-avatar-ui"
-              />
-            ) : null}
-          </div>
-        );
-      })}
+      {messages.map((m) => (
+        <InboxAnimatedMessage
+          key={m.id}
+          message={m}
+          guest={guest}
+          animate={animate}
+          onReveal={scrollToBottom}
+        />
+      ))}
     </div>
   );
 }
@@ -188,17 +252,17 @@ function NavIcon({ children }: { children: React.ReactNode }) {
 export default function GuestInboxDesktopDemo() {
   const { guestMessages, guestAppend } = useDemoSimulation();
   const splitRef = useRef<HTMLDivElement>(null);
+  const inboxInView = useGuestPhoneInView(splitRef);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<string>("live");
   const [previewCount, setPreviewCount] = useState(0);
   const [listWidthPx, setListWidthPx] = useState<number | null>(null);
   const [staffDraft, setStaffDraft] = useState("");
 
-  const liveMessages = guestMessages;
-  const usingLive = liveMessages.length > 0;
+  const usingLive = inboxInView && guestMessages.length > 0;
 
   useEffect(() => {
-    if (usingLive) {
+    if (!inboxInView || usingLive) {
       setPreviewCount(0);
       return;
     }
@@ -212,7 +276,7 @@ export default function GuestInboxDesktopDemo() {
       );
     });
     return () => timers.forEach((t) => window.clearTimeout(t));
-  }, [usingLive]);
+  }, [inboxInView, usingLive]);
 
   const previewMessages: DemoChatMessage[] = useMemo(
     () =>
@@ -225,13 +289,15 @@ export default function GuestInboxDesktopDemo() {
     [previewCount],
   );
 
-  const displayLive = usingLive ? liveMessages : previewMessages;
+  const displayLive = usingLive ? guestMessages : inboxInView ? previewMessages : [];
 
   const livePreview =
-    displayLive.length > 0
-      ? displayLive[displayLive.length - 1]?.body.slice(0, 48) +
-        (displayLive[displayLive.length - 1]!.body.length > 48 ? "…" : "")
-      : "Tap Hello on the phone to start";
+    !inboxInView
+      ? "…"
+      : displayLive.length > 0
+        ? displayLive[displayLive.length - 1]?.body.slice(0, 48) +
+          (displayLive[displayLive.length - 1]!.body.length > 48 ? "…" : "")
+        : "Waiting for guest messages…";
 
   const selectedStatic = STATIC_THREADS.find((t) => t.id === selectedId);
   const selectedGuest =
@@ -239,6 +305,8 @@ export default function GuestInboxDesktopDemo() {
 
   const chatMessages =
     selectedId === "live" ? displayLive : (selectedStatic?.staticMessages ?? []);
+
+  const animateLiveChat = selectedId === "live" && inboxInView;
 
   const lastMessage = chatMessages[chatMessages.length - 1];
   const canStaffReply =
@@ -407,7 +475,12 @@ export default function GuestInboxDesktopDemo() {
           {chatMessages.length === 0 ? (
             <p className="inbox-v2-empty">Conversation will appear here…</p>
           ) : (
-            <ChatBubbles messages={chatMessages} guest={selectedGuest} scrollRef={chatScrollRef} />
+            <ChatBubbles
+              messages={chatMessages}
+              guest={selectedGuest}
+              scrollRef={chatScrollRef}
+              animate={animateLiveChat}
+            />
           )}
         </div>
 

@@ -9,9 +9,13 @@ import GuestPhone from "@/components/solutions/GuestPhone";
 import GuestInboxDesktopDemo from "@/components/solutions/GuestInboxDesktopDemo";
 import SafariDemoShell from "@/components/solutions/SafariDemoShell";
 import { DEMO_MOBILE_SNAPSHOTS } from "@/lib/demo-mobile-snapshots";
+import {
+  GUEST_PHONE_INTRO_READY_MS,
+  runGuestPhoneAutoplay,
+} from "@/lib/guest-phone-autoplay";
+import { useGuestPhoneInView } from "@/lib/use-guest-phone-in-view";
 import { Highlighter } from "@/components/ui/highlighter";
-import { runGuestPhoneAutoplay } from "@/lib/guest-phone-autoplay";
-import { useDemoMobileSnapshot, useNarrowSolutionLayout } from "@/lib/use-match-media";
+import { useDemoMobileSnapshot } from "@/lib/use-match-media";
 import type { SolutionDefinition } from "@/lib/solutions";
 
 type GuestExpertSectionsProps = {
@@ -20,36 +24,47 @@ type GuestExpertSectionsProps = {
 
 export default function GuestExpertSections({ solution }: GuestExpertSectionsProps) {
   const demo = useDemoSimulation();
-  const narrow = useNarrowSolutionLayout();
   const mobileSnapshot = useDemoMobileSnapshot();
-  const phoneMessages = demo.guestMessages;
-  const heroIntent = demo.heroIntent;
+  const phoneWrapRef = useRef<HTMLDivElement>(null);
+  const phoneInView = useGuestPhoneInView(phoneWrapRef);
+  const cancelAutoplayRef = useRef<(() => void) | null>(null);
   const skipAutoplayRef = useRef(false);
-
-  useEffect(() => {
-    if (!heroIntent) return;
-    const { scenarioId } = heroIntent;
-    skipAutoplayRef.current = true;
-    demo.playHeroScenario(scenarioId);
-    demo.setHeroIntent(null);
-  }, [heroIntent, demo.playHeroScenario, demo.setHeroIntent]);
-
   const pickRef = useRef(demo.guestPickSuggestion);
-  const resetRef = useRef(demo.resetGuestDemo);
   pickRef.current = demo.guestPickSuggestion;
-  resetRef.current = demo.resetGuestDemo;
 
   useEffect(() => {
-    if (!narrow || heroIntent) return;
+    if (!demo.heroIntent) return;
+
+    cancelAutoplayRef.current?.();
+    cancelAutoplayRef.current = null;
+    skipAutoplayRef.current = true;
+
+    const { scenarioId } = demo.heroIntent;
+    demo.resetGuestDemo();
+    demo.setHeroIntent(null);
+
+    const timer = window.setTimeout(() => {
+      demo.playHeroScenario(scenarioId);
+    }, GUEST_PHONE_INTRO_READY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [demo.heroIntent, demo.playHeroScenario, demo.resetGuestDemo, demo.setHeroIntent]);
+
+  useEffect(() => {
+    if (!phoneInView) return;
     if (skipAutoplayRef.current) {
       skipAutoplayRef.current = false;
       return;
     }
-    return runGuestPhoneAutoplay(
-      (id) => pickRef.current(id),
-      () => resetRef.current(),
-    );
-  }, [narrow, heroIntent]);
+
+    cancelAutoplayRef.current?.();
+    cancelAutoplayRef.current = runGuestPhoneAutoplay((id) => pickRef.current(id));
+
+    return () => {
+      cancelAutoplayRef.current?.();
+      cancelAutoplayRef.current = null;
+    };
+  }, [phoneInView, demo.guestDemoEpoch]);
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#${solution.anchor}`;
@@ -73,14 +88,8 @@ export default function GuestExpertSections({ solution }: GuestExpertSectionsPro
             ) : null}
             <p className="landing-p solution-summary">{solution.summary}</p>
           </div>
-          <div className={`guest-say-hi-phone${narrow ? " guest-say-hi-phone--autoplay" : ""}`}>
-            <GuestPhone
-              messages={phoneMessages}
-              suggestions={narrow ? [] : demo.guestSuggestions}
-              onPickSuggestion={demo.guestPickSuggestion}
-              highlightedSuggestionId={narrow ? undefined : demo.guestPhase === "after_hi" ? "late" : undefined}
-              interactive={!narrow}
-            />
+          <div ref={phoneWrapRef} className="guest-say-hi-phone guest-say-hi-phone--autoplay">
+            <GuestPhone messages={demo.guestMessages} introActive={phoneInView} />
           </div>
         </div>
       </article>

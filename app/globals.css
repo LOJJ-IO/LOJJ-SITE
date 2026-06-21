@@ -6258,12 +6258,13 @@
         @media (min-width: 1030px) {
             .guest-say-hi-grid {
                 grid-template-columns: max-content minmax(0, 1fr);
-                gap: clamp(20px, 2.5vw, 36px);
+                gap: clamp(12px, 1.4vw, 20px);
             }
 
             .guest-say-hi-phone {
                 grid-column: 1;
                 grid-row: 1;
+                justify-self: start;
             }
 
             .guest-say-hi-copy {
@@ -6279,7 +6280,7 @@
             flex: 0 0 auto;
             width: 360px;
             min-width: 360px;
-            padding-right: 210px;
+            padding-right: 0;
             box-sizing: content-box;
             overflow: visible;
         }
@@ -7525,6 +7526,7 @@
             flex-direction: column;
             width: 430px;
             height: 935px;
+            padding-top: 58px;
             background: #fff;
             user-select: none;
             overflow: hidden;
@@ -7541,16 +7543,18 @@
         }
 
         .lojj-phone-topbar {
-            position: absolute;
+            position: relative;
             z-index: 40;
-            top: 58px;
+            top: auto;
             left: 0;
             right: 0;
+            flex-shrink: 0;
             height: 61px;
             padding-bottom: 5px;
             box-sizing: border-box;
             pointer-events: none;
             border-bottom: 1px solid rgba(60, 60, 67, 0.12);
+            background: #fff;
         }
 
         .lojj-phone-topbar--imessage .lojj-phone-topbar-back,
@@ -7688,8 +7692,8 @@
             flex: 1;
             min-height: 0;
             overflow-y: auto;
-            margin-top: 176px;
-            padding: 10px 14px 28px;
+            margin-top: 0;
+            padding: 10px 14px 88px;
             display: flex;
             flex-direction: column;
             gap: 11px;
@@ -7699,9 +7703,12 @@
             touch-action: pan-y;
         }
 
-        .guest-phone-thread--empty {
-            justify-content: flex-end;
-            padding-bottom: 20px;
+        .guest-phone-thread--intro {
+            justify-content: flex-start;
+        }
+
+        .guest-phone-ui--with-chips .guest-phone-thread {
+            padding-bottom: 148px;
         }
 
         .guest-phone-thread-empty {
@@ -7792,14 +7799,100 @@
             fill: #000;
         }
 
+        .guest-phone-bubble--typing {
+            min-width: 56px;
+            justify-content: center;
+        }
+
+        .guest-phone-typing-dots {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            min-height: 8px;
+        }
+
+        .guest-phone-typing-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(60, 60, 67, 0.42);
+            animation: guest-phone-typing-dot 1.15s ease-in-out infinite;
+        }
+
+        .guest-phone-typing-dots span:nth-child(2) {
+            animation-delay: 0.16s;
+        }
+
+        .guest-phone-typing-dots span:nth-child(3) {
+            animation-delay: 0.32s;
+        }
+
+        .guest-phone-bubble--out.guest-phone-bubble--typing .guest-phone-typing-dots span {
+            background: rgba(255, 255, 255, 0.95);
+            animation-name: guest-phone-typing-dot-on-dark;
+        }
+
+        .guest-phone-bubble--staff.guest-phone-bubble--typing .guest-phone-typing-dots span {
+            background: rgba(6, 95, 70, 0.45);
+        }
+
+        @keyframes guest-phone-typing-dot {
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.45;
+            }
+
+            30% {
+                transform: translateY(-3px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes guest-phone-typing-dot-on-dark {
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.62;
+            }
+
+            30% {
+                transform: translateY(-3px);
+                opacity: 1;
+            }
+        }
+
+        .guest-phone-bubble--appear {
+            animation: guest-phone-bubble-appear 240ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes guest-phone-bubble-appear {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         .guest-phone-chips {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 82px;
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             padding: 4px 14px 10px;
             flex-shrink: 0;
-            background: #fff;
-            z-index: 20;
+            background: linear-gradient(to top, #fff 78%, rgba(255, 255, 255, 0));
+            z-index: 90;
         }
 
         .guest-phone-chip {
@@ -7813,11 +7906,19 @@
             line-height: 1.3;
             box-shadow: 0 1px 2px rgba(15, 15, 15, 0.06);
             transition: background 140ms ease, transform 140ms ease;
+            max-width: 100%;
+            text-align: left;
         }
 
         .guest-phone-chip:hover {
             background: #f7f7f7;
             transform: translateY(-1px);
+        }
+
+        .guest-phone-chip--prompt {
+            border-color: rgba(34, 61, 20, 0.35);
+            color: var(--brand-green);
+            animation: guest-suggestion-glow 2.2s ease-in-out infinite;
         }
 
         .guest-phone-composer {
@@ -8384,50 +8485,11 @@
             letter-spacing: -0.31px;
         }
 
-        /* Guest phone — suggestions rail on the right (aligned with message area) */
+        /* Guest phone — in-screen suggestion chips */
         .guest-phone-with-suggestions {
             position: relative;
             width: 360px;
             max-width: 100%;
-        }
-
-        .guest-phone-suggestions-rail {
-            position: absolute;
-            left: calc(100% + 14px);
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-            padding-top: clamp(64px, 13%, 104px);
-            min-width: max-content;
-            z-index: 5;
-            pointer-events: auto;
-        }
-
-        .guest-phone-suggestion-chip {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: #fff;
-            color: #0f0f0f;
-            font-size: 14px;
-            padding: 8px 14px;
-            border-radius: 18px;
-            cursor: pointer;
-            line-height: 1.3;
-            box-shadow: 0 2px 8px rgba(15, 15, 15, 0.08);
-            transition: background 140ms ease, transform 140ms ease;
-            white-space: nowrap;
-        }
-
-        .guest-phone-suggestion-chip:hover {
-            background: #f7f7f7;
-            transform: translateX(2px);
-        }
-
-        .guest-phone-suggestion-chip--prompt {
-            border-color: rgba(34, 61, 20, 0.35);
-            color: var(--brand-green);
-            animation: guest-suggestion-glow 2.2s ease-in-out infinite;
         }
 
         @keyframes guest-suggestion-glow {
@@ -8450,8 +8512,8 @@
             user-select: none;
         }
 
-        .guest-phone-stage--autoplay .guest-phone-suggestions-rail,
-        .guest-say-hi-phone--autoplay .guest-phone-suggestions-rail {
+        .guest-phone-stage--autoplay .guest-phone-chips,
+        .guest-say-hi-phone--autoplay .guest-phone-chips {
             display: none !important;
         }
 
@@ -8592,14 +8654,15 @@
 
         @media (min-width: 1030px) {
             .guest-say-hi-grid {
-                grid-template-columns: minmax(570px, max-content) minmax(0, 1fr);
-                gap: clamp(32px, 4vw, 56px);
+                grid-template-columns: max-content minmax(0, 1fr);
+                gap: clamp(12px, 1.4vw, 20px);
                 padding-left: clamp(20px, 3vw, 40px);
+                padding-right: clamp(20px, 3vw, 40px);
             }
 
             .guest-say-hi-copy {
-                padding-left: clamp(20px, 3vw, 44px);
-                margin-left: clamp(12px, 2vw, 28px);
+                padding-left: clamp(8px, 1vw, 16px);
+                margin-left: 0;
                 align-self: start;
                 text-align: left;
             }
@@ -8953,6 +9016,36 @@
             border: 1px solid rgba(16, 185, 129, 0.32);
             box-shadow: 0 1px 2px rgba(16, 185, 129, 0.12);
             border-bottom-right-radius: 4px;
+        }
+
+        .inbox-v2-bubble--typing {
+            min-width: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+        }
+
+        .inbox-v2-bubble--typing .guest-phone-typing-dots span {
+            width: 6px;
+            height: 6px;
+        }
+
+        .inbox-v2-bubble--guest.inbox-v2-bubble--typing .guest-phone-typing-dots span {
+            background: rgba(38, 38, 38, 0.38);
+        }
+
+        .inbox-v2-bubble--assistant.inbox-v2-bubble--typing .guest-phone-typing-dots span {
+            background: rgba(255, 255, 255, 0.95);
+            animation-name: guest-phone-typing-dot-on-dark;
+        }
+
+        .inbox-v2-bubble--staff.inbox-v2-bubble--typing .guest-phone-typing-dots span {
+            background: rgba(6, 95, 70, 0.45);
+        }
+
+        .inbox-v2-bubble--appear {
+            animation: guest-phone-bubble-appear 240ms cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .inbox-v2-msg-time {

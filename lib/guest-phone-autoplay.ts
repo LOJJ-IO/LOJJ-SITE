@@ -1,36 +1,26 @@
 export type GuestAutoplayPick = (id: string) => void;
-export type GuestAutoplayReset = () => void;
 
-/** Delays tuned for guestAppend + assistant reply timeouts (320–380ms). */
-const STEP_MS = {
-  hello: 400,
-  late: 3600,
-  no: 8200,
-  cycleGap: 4000,
-} as const;
+/** Matches intro typing sequence in `GuestPhone` (650 + 380 + 950 ms). */
+export const GUEST_PHONE_INTRO_READY_MS = 2100;
 
-/** Scripted demo loop for mobile (no suggestion chips). */
-export function runGuestPhoneAutoplay(
-  pick: GuestAutoplayPick,
-  reset: GuestAutoplayReset,
-): () => void {
+/** Default scripted demo: late checkout → decline → review prompt side effects. */
+const DEFAULT_SCENARIO = [
+  { pick: "late" as const, at: GUEST_PHONE_INTRO_READY_MS },
+  { pick: "no" as const, at: GUEST_PHONE_INTRO_READY_MS + 6800 },
+];
+
+/** Runs the default guest-phone scenario once (no suggestion chips required). */
+export function runGuestPhoneAutoplay(pick: GuestAutoplayPick): () => void {
   const timeouts: number[] = [];
   let cancelled = false;
 
-  const schedule = (fn: () => void, ms: number) => {
-    timeouts.push(window.setTimeout(fn, ms));
-  };
-
-  const runCycle = () => {
-    if (cancelled) return;
-    reset();
-    schedule(() => pick("hello"), STEP_MS.hello);
-    schedule(() => pick("late"), STEP_MS.late);
-    schedule(() => pick("no"), STEP_MS.no);
-    schedule(() => runCycle(), STEP_MS.hello + STEP_MS.no + STEP_MS.cycleGap);
-  };
-
-  runCycle();
+  for (const step of DEFAULT_SCENARIO) {
+    timeouts.push(
+      window.setTimeout(() => {
+        if (!cancelled) pick(step.pick);
+      }, step.at),
+    );
+  }
 
   return () => {
     cancelled = true;

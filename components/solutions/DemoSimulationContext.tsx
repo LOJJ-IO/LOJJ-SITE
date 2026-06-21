@@ -55,9 +55,6 @@ function firstName(displayName: string) {
   return displayName.split(/\s+/)[0] ?? displayName;
 }
 
-const GUEST_INTRO =
-  "Hello Alex! I'm LOJJ, your Riverside Hotel assistant. I can help with Wi‑Fi, checkout, parking, amenities, or anything about your stay in Room 412.";
-
 const GUEST_WIFI_REPLY =
   "The WiFi network is 'HotelGuest' and the password is on the card in your room. Let me know if you have any trouble connecting! Do you require any further assistance? (Yes / No)";
 
@@ -130,6 +127,8 @@ type DemoSimulationValue = {
   setHeroIntent: (intent: HeroIntent | null) => void;
   playHeroScenario: (scenarioId: HeroGuestScenarioId) => void;
   resetGuestDemo: () => void;
+  /** Increments whenever the guest demo is reset — use to restart autoplay. */
+  guestDemoEpoch: number;
 
   guestJumpShowOps: boolean;
   guestJumpShowReviews: boolean;
@@ -162,7 +161,11 @@ type DemoSimulationValue = {
 
 const DemoSimulationContext = createContext<DemoSimulationValue | null>(null);
 
-const initialGuestSuggestions: DemoSuggestion[] = [{ id: "hello", label: "Hello" }];
+const initialGuestSuggestions: DemoSuggestion[] = [
+  { id: "late", label: "Can I get a late checkout?" },
+  { id: "wifi", label: "I can't find the wi-fi password." },
+  { id: "park", label: "Where should I park overnight?" },
+];
 
 function clearReviewGuestPhoneState(setters: {
   setReviewGuestScreen: (v: ReviewGuestScreen) => void;
@@ -189,6 +192,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
   const [guestManagerJumpUnlocked, setGuestManagerJumpUnlocked] = useState(false);
   const [guestTriggeredReviewFlow, setGuestTriggeredReviewFlow] = useState(false);
   const [heroIntent, setHeroIntent] = useState<HeroIntent | null>(null);
+  const [guestDemoEpoch, setGuestDemoEpoch] = useState(0);
 
   const [opsExtraQueue, setOpsExtraQueue] = useState<DemoQueueItem[]>([]);
 
@@ -210,6 +214,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
 
   const playHeroScenario = useCallback(
     (scenarioId: HeroGuestScenarioId) => {
+      setGuestManagerJumpUnlocked(true);
       guestAppend("user", getHeroGuestUserMessage(scenarioId));
       window.setTimeout(() => {
         guestAppend("assistant", getHeroGuestAssistantMessage(scenarioId));
@@ -227,6 +232,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
     setGuestManagerJumpUnlocked(false);
     setGuestTriggeredReviewFlow(false);
     setHeroIntent(null);
+    setGuestDemoEpoch((epoch) => epoch + 1);
     setOpsExtraQueue((extras) => extras.filter((t) => t.id !== LATE_CHECKOUT_TASK.id));
     clearReviewGuestPhoneState({
       setReviewGuestScreen,
@@ -295,37 +301,29 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       const phase = guestPhaseRef.current;
       const pendingFollowup = guestTopicPendingFollowupRef.current;
 
-      if (id === "hello") {
-        guestAppend("user", "Hello");
-        window.setTimeout(() => {
-          guestAppend("assistant", GUEST_INTRO);
-          setGuestPhase("after_hi");
-          setGuestTopicPendingFollowup(false);
-        }, 320);
-        return;
-      }
-
-      if (phase === "after_hi" && (id === "wifi" || id === "late" || id === "park")) {
-        setGuestManagerJumpUnlocked(true);
-        const userText =
-          id === "wifi"
-            ? "I can't find the wi-fi password."
-            : id === "late"
-              ? "Can I get a late checkout?"
-              : "Where should I park overnight?";
-        guestAppend("user", userText);
-        window.setTimeout(() => {
-          if (id === "wifi") guestAppend("assistant", GUEST_WIFI_REPLY);
-          else if (id === "late") {
-            guestAppend("assistant", GUEST_LATE_REPLY);
-            setOpsExtraQueue((prev) =>
-              prev.some((t) => t.id === LATE_CHECKOUT_TASK.id) ? prev : [...prev, LATE_CHECKOUT_TASK],
-            );
-          } else guestAppend("assistant", GUEST_PARK_REPLY);
-          setGuestPhase("after_topic");
-          setGuestTopicPendingFollowup(true);
-        }, 380);
-        return;
+      if (phase === "idle" || phase === "after_hi") {
+        if (id === "wifi" || id === "late" || id === "park") {
+          setGuestManagerJumpUnlocked(true);
+          const userText =
+            id === "wifi"
+              ? "I can't find the wi-fi password."
+              : id === "late"
+                ? "Can I get a late checkout?"
+                : "Where should I park overnight?";
+          guestAppend("user", userText);
+          window.setTimeout(() => {
+            if (id === "wifi") guestAppend("assistant", GUEST_WIFI_REPLY);
+            else if (id === "late") {
+              guestAppend("assistant", GUEST_LATE_REPLY);
+              setOpsExtraQueue((prev) =>
+                prev.some((t) => t.id === LATE_CHECKOUT_TASK.id) ? prev : [...prev, LATE_CHECKOUT_TASK],
+              );
+            } else guestAppend("assistant", GUEST_PARK_REPLY);
+            setGuestPhase("after_topic");
+            setGuestTopicPendingFollowup(true);
+          }, 380);
+          return;
+        }
       }
 
       if (pendingFollowup && id === "yes") {
@@ -484,6 +482,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       setHeroIntent,
       playHeroScenario,
       resetGuestDemo,
+      guestDemoEpoch,
       guestJumpShowOps: opsExtraQueue.length > 0,
       guestJumpShowReviews: guestTriggeredReviewFlow,
       guestJumpShowManager: guestManagerJumpUnlocked,
@@ -516,6 +515,7 @@ export function DemoSimulationProvider({ children }: { children: ReactNode }) {
       guestPickSuggestionWrapped,
       guestSuggestions,
       guestTriggeredReviewFlow,
+      guestDemoEpoch,
       heroIntent,
       opsExtraQueue,
       playHeroScenario,
